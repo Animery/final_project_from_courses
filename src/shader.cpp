@@ -170,12 +170,12 @@ void gfx_prog_impl::check_validate()
 
 gfx_prog_impl::~gfx_prog_impl()
 {
-    std::cout << "--- destor gfx_prog_impl" << std::endl;
     glDetachShader(prog_id, vert_shader);
     glDetachShader(prog_id, frag_shader);
     glDeleteShader(vert_shader);
     glDeleteShader(frag_shader);
     glDeleteProgram(prog_id);
+    std::cout << "--- destor gfx_prog_impl" << std::endl;
 }
 
 } // namespace my_engine

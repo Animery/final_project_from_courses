@@ -1,25 +1,21 @@
 #include "game_impl.hpp"
+// #include "Bullet.hpp"
 #include <cmath>
-#include <numbers>
 
 namespace my_game
 {
 
-constexpr float size_tank    = 0.3f;
-constexpr float size_tank_qw = 1.0f + size_tank / 2;
-constexpr float pi           = std::numbers::pi_v<float>;
-
 game_impl::game_impl(my_engine::engine* _engine)
 {
+    engine = _engine;
+
     std::cout << "+++ ctor game_impl" << std::endl;
-    player    = std::make_shared<Player>();
-    engine    = _engine;
-    isRunning = true;
 }
 
 game_impl::~game_impl()
 {
     // delete engine;
+    delete gfx01;
     std::cout << "--- destor game_impl" << std::endl;
 }
 
@@ -28,7 +24,58 @@ bool game_impl::getIsRunning()
     return isRunning;
 }
 
-void game_impl::on_initialize() {}
+void game_impl::on_initialize()
+{
+    engine->initialize("");
+
+    // gfx_prog
+    const std::string path("shader/");
+    const std::string name_shader("corpse");
+    gfx01 = my_engine::create_gfx_prog(path, name_shader);
+    gfx01->bind_attrib(0, "a_position");
+    gfx01->bind_attrib(1, "a_tex_coord");
+    gfx01->bind_attrib(2, "a_color");
+    gfx01->link();
+    // gfx_prog
+
+    // Texture init
+    std::string tex_name = "s_texture";
+    texture_head         = std::make_unique<Texture>(tex_name);
+    {
+        Image image = Image::loadFromFile("res/head.png");
+        texture_head->setImage(image);
+    }
+
+    texture_corpse = std::make_unique<Texture>(tex_name);
+    {
+        Image image = Image::loadFromFile("res/corpse.png");
+        texture_corpse->setImage(image);
+    }
+
+    texture_bullet = std::make_unique<Texture>(tex_name);
+    {
+        Image image = Image::loadFromFile("res/bullet.png");
+        texture_bullet->setImage(image);
+    }
+    // Texture init
+
+    // Render_obj
+    tank_obj = my_engine::create_RenderObj();
+    tank_obj->setProg(gfx01);
+    tank_obj->load_mesh_from_file("res/tank.txt");
+
+    // head = my_engine::create_RenderObj();
+    // head->setProg(gfx01);
+    // head->load_mesh_from_file("res/tank.txt");
+
+    bullet_obj = my_engine::create_RenderObj();
+    bullet_obj->setProg(gfx01);
+    bullet_obj->load_mesh_from_file("res/bullet.txt");
+    // Render_obj
+
+    player    = std::make_unique<Player>();
+    isRunning = true;
+}
 
 void game_impl::on_event(my_engine::event& event)
 {
@@ -49,6 +96,10 @@ void game_impl::on_event(my_engine::event& event)
             {
                 const auto& key_data =
                     std::get<my_engine::input_data>(event.info);
+
+                controls[static_cast<unsigned>(key_data.key)] =
+                    key_data.is_down;
+
                 if (key_data.is_down)
                 {
                     if (key_data.key == my_engine::keys_type::select)
@@ -58,10 +109,22 @@ void game_impl::on_event(my_engine::event& event)
 
                     else if (key_data.key == my_engine::keys_type::button1)
                     {
+                        my_engine::matrix2x3 rot_head =
+                            my_engine::matrix2x3::rotation(
+                                player->getCurrent_head_direction());
+                        std::cout << "rotation head:\n"
+                                  << rot_head << std::endl;
                         // s->play(my_engine::SoundBuffer::properties::once);
                     }
                     else if (key_data.key == my_engine::keys_type::button2)
                     {
+                        if (bullet == nullptr)
+                        {
+                            bullet =
+                                new Bullet(player->getCurrent_tank_pos(),
+                                           player->getCurrent_head_direction());
+                        }
+
                         // s->play(my_engine::SoundBuffer::properties::looped);
                     }
                 }
@@ -71,18 +134,18 @@ void game_impl::on_event(my_engine::event& event)
             {
                 my_engine::vec2 temp = my_engine::vec2{
                     event.x / (1920 / 2) - 1, -(event.y / (1080 / 2) - 1)
-                } - player->current_tank_pos;
+                } - player->getCurrent_tank_pos();
 
-                std::cout << "coord : " << temp.x << "\t" << temp.y
-                          << std::endl;
+                // std::cout << "coord : " << temp.x << "\t" << temp.y
+                //           << std::endl;
 
                 float a;
                 // if (temp.x == 0)
                 //     a = (temp.y > 0) ? pi : 0;
                 a = std::atan2(temp.y, temp.x) + pi / 2;
                 a = -a;
-                std::cout << "current_head_direction : " << a << std::endl;
-                player->current_head_direction = a;
+                // std::cout << "current_head_direction : " << a << std::endl;
+                player->setCurrent_head_direction(a);
 
                 break;
             }
@@ -94,70 +157,29 @@ void game_impl::on_event(my_engine::event& event)
 
 void game_impl::on_update(std::chrono::milliseconds frame_delta)
 {
-
-    if (engine->is_key_down(my_engine::keys_type::left))
+    player->update(controls);
+    if (bullet != nullptr)
     {
-        player->current_tank_pos.x -= 0.01f;
-        if (player->current_tank_pos.x < -size_tank_qw)
+        bullet->update();
+        if (bullet->getPosition().x > (1 / size) ||
+            bullet->getPosition().x < -(1 / size) ||
+            bullet->getPosition().y > (1 / aspect) / size ||
+            bullet->getPosition().y < -(1 / aspect) / size)
         {
-            player->current_tank_pos.x = size_tank_qw;
+            delete bullet;
+            bullet = nullptr;
         }
-        player->current_tank_direction = pi / 2.f;
     }
-    else if (engine->is_key_down(my_engine::keys_type::right))
-    {
-        player->current_tank_pos.x += 0.01f;
-        if (player->current_tank_pos.x > size_tank_qw)
-        {
-            player->current_tank_pos.x = -size_tank_qw;
-        }
-        player->current_tank_direction = -pi / 2.f;
-    }
-    else if (engine->is_key_down(my_engine::keys_type::up))
-    {
-        player->current_tank_pos.y += 0.01f;
-        if (player->current_tank_pos.y > (size_tank_qw - size_tank))
-        {
-            player->current_tank_pos.y = -(size_tank_qw - size_tank);
-        }
-        player->current_tank_direction = pi;
-    }
-    else if (engine->is_key_down(my_engine::keys_type::down))
-    {
-        player->current_tank_pos.y -= 0.01f;
-        if (player->current_tank_pos.y < -(size_tank_qw - size_tank))
-        {
-            player->current_tank_pos.y = (size_tank_qw - size_tank);
-        }
-        player->current_tank_direction = 0.0f;
-        // player->current_tank_direction = pi;
-    }
-
-    my_engine::matrix2x3 move =
-        my_engine::matrix2x3::move(player->current_tank_pos);
-
-    my_engine::matrix2x3 rot =
-        my_engine::matrix2x3::rotation(player->current_tank_direction);
-    player->matrix_corpse = rot * move * player->aspect;
-    my_engine::matrix2x3 rot_head =
-        my_engine::matrix2x3::rotation(player->current_head_direction);
-    player->matrix_head = rot_head * move * player->aspect;
-}
-
-void game_impl::on_render(my_engine::RenderObj& vao, Texture& tex) const
-{
-    engine->render(vao, tex, player->matrix_corpse);
 }
 
 void game_impl::on_render() const
 {
-    // engine->render(*(player->getCorpse()), *(player->getTexture_corpse()),
-    // matrix); engine->render(*(player->getHead()),
-    // *(player->getTexture_head()), matrix);
-    engine->render(
-        *(player->corpse), *(player->texture_corpse), player->matrix_corpse);
-    engine->render(
-        *(player->head), *(player->texture_head), player->matrix_head);
+    if (bullet != nullptr)
+    {
+        engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
+    }
+    engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
+    engine->render(*tank_obj, *texture_head, player->getMatrix_head());
 }
 
 } // namespace my_game

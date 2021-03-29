@@ -15,6 +15,9 @@ typedef int GLint;
 namespace my_engine
 {
 /// dendy gamepad emulation events
+
+
+
 enum class event_type
 {
     input_key,
@@ -144,7 +147,7 @@ public:
     virtual void on_initialize()                                  = 0;
     virtual void on_event(my_engine::event&)                      = 0;
     virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
-    virtual void on_render(RenderObj&, Texture&) const            = 0;
+    // virtual void on_render(RenderObj&, Texture&) const            = 0;
     virtual void on_render() const                                = 0;
 };
 

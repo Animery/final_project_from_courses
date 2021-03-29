@@ -114,7 +114,7 @@ SoundBuffer_impl::SoundBuffer_impl(std::string_view  path,
                           << " to audio device format" << std::endl;
             }
 
-            buffer = tmp_buf.get();
+            buffer = tmp_buf.release();
             length = static_cast<uint32_t>(cvt.len_cvt);
         }
         else
@@ -122,6 +122,7 @@ SoundBuffer_impl::SoundBuffer_impl(std::string_view  path,
             // TODO no need to convert buffer, use as is
         }
     }
+
     std::cout << "+++ ctor SoundBuffer_impl" << std::endl;
 }
 
@@ -130,9 +131,11 @@ SoundBuffer_impl::~SoundBuffer_impl()
     if (tmp_buf != nullptr)
     {
         SDL_FreeWAV(buffer);
+        std::cout << "SDL_FreeWAV(buffer)" << std::endl;
     }
     buffer = nullptr;
     length = 0;
+
     std::cout << "--- destor SoundBuffer_impl" << std::endl;
 }
 

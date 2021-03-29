@@ -411,7 +411,7 @@ void engine_impl::initAudio()
     //     std::cout << "audio_driver #:" << i << " " << SDL_GetAudioDriver(i)
     //               << '\n';
     // }
-    // std::cout << std::flush;
+    std::cout << std::flush;
 
     const char* default_audio_device_name = nullptr;
 
@@ -525,7 +525,6 @@ bool engine_impl::read_event(my_engine::event& ev)
     SDL_Event sdl_event;
     while (SDL_PollEvent(&sdl_event))
     {
-        // if (!sdl_event.key.repeat)
         {
             const bind* binding = nullptr;
 
@@ -702,7 +701,13 @@ void engine_impl::destroy_sound_buffer(SoundBuffer* sound)
 }
 
 void engine_impl::uninitialize()
-{
+{   
+    for (auto &&it : sounds)
+    {
+        destroy_sound_buffer(it);
+    }
+    
+
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -738,7 +743,7 @@ void destroy_engine(engine* e)
 RenderObj* create_RenderObj()
 {
     RenderObj* result = new RenderObj_impl();
-    std::cout << &result << std::endl;
+    // std::cout << &result << std::endl;
     return result;
 }
 
