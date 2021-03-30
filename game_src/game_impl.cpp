@@ -73,7 +73,6 @@ void game_impl::on_initialize()
     gun_current = std::make_unique<GunSimple>();
     // Gun
 
-
     player    = std::make_unique<Player>();
     isRunning = true;
 }
@@ -119,8 +118,8 @@ void game_impl::on_event(my_engine::event& event)
                     }
                     else if (key_data.key == my_engine::keys_type::button2)
                     {
-                        gun_current->shoot(player->getCurrent_tank_pos(),
-                                           player->getCurrent_head_direction());
+                        // gun_current->shoot(player->getCurrent_tank_pos(),
+                        //                    player->getCurrent_head_direction());
                         // if (bullet == nullptr)
                         // {
                         //     bullet =
@@ -161,6 +160,12 @@ void game_impl::on_event(my_engine::event& event)
 void game_impl::on_update(std::chrono::milliseconds frame_delta)
 {
     player->update(controls);
+    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
+    {
+        gun_current->shoot(player->getCurrent_tank_pos(),
+                           player->getCurrent_head_direction());
+    }
+
     gun_current->update_bullets();
     // if (bullet != nullptr)
     // {
@@ -180,13 +185,11 @@ void game_impl::on_render() const
 {
 
     std::list<Bullet*> temp_bullets = gun_current->getList_bullets();
-    for (auto &&bullet : temp_bullets)
+    for (auto&& bullet : temp_bullets)
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
-    
-    
-    
+
     // if (bullet != nullptr)
     // {
     //     engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
