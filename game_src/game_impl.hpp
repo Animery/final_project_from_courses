@@ -1,9 +1,11 @@
 #pragma once
 
 #include "../include/engine.hpp"
+#include "Gun.hpp"
+#include "GunSimple.hpp"
 
 #include "Player.hpp"
-#include "Bullet.hpp"
+// #include "Bullet.hpp"
 
 #include <memory>
 // #include <chrono>
@@ -27,7 +29,8 @@ private:
     bool isRunning;
     my_engine::engine*   engine;
     std::unique_ptr<Player> player;
-    Bullet* bullet;
+    std::unique_ptr<Gun> gun_current;
+    // Bullet* bullet;
     my_engine::gfx_prog* gfx01;
 
     std::unique_ptr<Texture> texture_corpse;
@@ -35,7 +38,6 @@ private:
     std::unique_ptr<Texture> texture_bullet;
 
     my_engine::RenderObj* tank_obj = nullptr;
-    // my_engine::RenderObj* head = nullptr;
     my_engine::RenderObj* bullet_obj = nullptr;
         
     

@@ -1,5 +1,5 @@
 #include "Bullet.hpp"
-#include "Player.hpp"
+
 
 
 Bullet::Bullet(my_engine::vec2& temp_position, float temp_direction)

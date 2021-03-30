@@ -64,14 +64,15 @@ void game_impl::on_initialize()
     tank_obj->setProg(gfx01);
     tank_obj->load_mesh_from_file("res/tank.txt");
 
-    // head = my_engine::create_RenderObj();
-    // head->setProg(gfx01);
-    // head->load_mesh_from_file("res/tank.txt");
-
     bullet_obj = my_engine::create_RenderObj();
     bullet_obj->setProg(gfx01);
     bullet_obj->load_mesh_from_file("res/bullet.txt");
     // Render_obj
+
+    // Gun
+    gun_current = std::make_unique<GunSimple>();
+    // Gun
+
 
     player    = std::make_unique<Player>();
     isRunning = true;
@@ -118,12 +119,14 @@ void game_impl::on_event(my_engine::event& event)
                     }
                     else if (key_data.key == my_engine::keys_type::button2)
                     {
-                        if (bullet == nullptr)
-                        {
-                            bullet =
-                                new Bullet(player->getCurrent_tank_pos(),
+                        gun_current->shoot(player->getCurrent_tank_pos(),
                                            player->getCurrent_head_direction());
-                        }
+                        // if (bullet == nullptr)
+                        // {
+                        //     bullet =
+                        //         new Bullet(player->getCurrent_tank_pos(),
+                        //                    player->getCurrent_head_direction());
+                        // }
 
                         // s->play(my_engine::SoundBuffer::properties::looped);
                     }
@@ -158,26 +161,37 @@ void game_impl::on_event(my_engine::event& event)
 void game_impl::on_update(std::chrono::milliseconds frame_delta)
 {
     player->update(controls);
-    if (bullet != nullptr)
-    {
-        bullet->update();
-        if (bullet->getPosition().x > (1 / size) ||
-            bullet->getPosition().x < -(1 / size) ||
-            bullet->getPosition().y > (1 / aspect) / size ||
-            bullet->getPosition().y < -(1 / aspect) / size)
-        {
-            delete bullet;
-            bullet = nullptr;
-        }
-    }
+    gun_current->update_bullets();
+    // if (bullet != nullptr)
+    // {
+    //     bullet->update();
+    //     if (bullet->getPosition().x > (1 / size) ||
+    //         bullet->getPosition().x < -(1 / size) ||
+    //         bullet->getPosition().y > (1 / aspect) / size ||
+    //         bullet->getPosition().y < -(1 / aspect) / size)
+    //     {
+    //         delete bullet;
+    //         bullet = nullptr;
+    //     }
+    // }
 }
 
 void game_impl::on_render() const
 {
-    if (bullet != nullptr)
+
+    std::list<Bullet*> temp_bullets = gun_current->getList_bullets();
+    for (auto &&bullet : temp_bullets)
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
+    
+    
+    
+    // if (bullet != nullptr)
+    // {
+    //     engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
+    // }
+
     engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
     engine->render(*tank_obj, *texture_head, player->getMatrix_head());
 }

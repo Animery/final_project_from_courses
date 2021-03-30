@@ -584,20 +584,11 @@ void engine_impl::render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
 {
     vao.useProg();
     tex.bind();
-    // vao.setUniform(tex.getName(), 0); // 0 - magic
     vao.setUniform(tex); // 0 - magic
     vao.setUniform("u_matrix", mat);
     vao.draw();
 }
 
-// void engine_impl::render(RenderObj* vao, Texture* tex, const matrix2x3& mat)
-// {
-//     vao->useProg();
-//     tex->bind();
-//     vao->setUniform(*tex); // 0 - magic
-//     vao->setUniform("u_matrix", mat);
-//     vao->draw();
-// }
 
 void engine_impl::renderImGui()
 {
