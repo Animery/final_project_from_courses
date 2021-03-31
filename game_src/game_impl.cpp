@@ -159,6 +159,9 @@ void game_impl::on_event(my_engine::event& event)
 
 void game_impl::on_update(std::chrono::milliseconds frame_delta)
 {
+    // double time = static_cast<double> (frame_delta);
+    // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
+
     player->update(controls);
     if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
     {
@@ -166,7 +169,8 @@ void game_impl::on_update(std::chrono::milliseconds frame_delta)
                            player->getCurrent_head_direction());
     }
 
-    gun_current->update_bullets();
+    gun_current->update_gun();
+    // gun_current->update_bullets();
     // if (bullet != nullptr)
     // {
     //     bullet->update();
@@ -184,8 +188,8 @@ void game_impl::on_update(std::chrono::milliseconds frame_delta)
 void game_impl::on_render() const
 {
 
-    std::list<Bullet*> temp_bullets = gun_current->getList_bullets();
-    for (auto&& bullet : temp_bullets)
+    std::list<Bullet*>* temp_bullets = gun_current->getList_bullets();
+    for (auto&& bullet : *temp_bullets)
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
