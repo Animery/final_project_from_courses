@@ -1,17 +1,18 @@
 #pragma once
 
+#include "GameConst.hpp"
 // #include "../include/engine.hpp"
-#include "../include/matrix.hpp"
-#include <iostream>
+// #include "../include/matrix.hpp"
+// #include <iostream>
+// #include <numbers>
 #include <memory>
-#include <numbers>
 
-constexpr float            aspect     = 320.0f / 180.0f;
-const my_engine::matrix2x3 aspect_mat = my_engine::matrix2x3::scale(1, aspect);
+// constexpr float            aspect     = 320.0f / 180.0f;
+// const my_engine::matrix2x3 aspect_mat = my_engine::matrix2x3::scale(1, aspect);
 
-constexpr float            size       = 1.0f;
-const my_engine::matrix2x3 size_mat   = my_engine::matrix2x3::scale(size);
-constexpr float pi = std::numbers::pi_v<float>;
+// constexpr float            size       = 1.0f;
+// const my_engine::matrix2x3 size_mat   = my_engine::matrix2x3::scale(size);
+// constexpr float pi = std::numbers::pi_v<float>;
 
 class Player
 {
@@ -46,6 +47,6 @@ private:
     my_engine::vec2 current_tank_pos       = { 0.0f, 0.0f };
     float           current_tank_direction = 0.0f;
     float           current_head_direction = 0.0f;
-    float           speed                  = 0.01f;
-    float           speed_diagonal         = 0.0071f;
+    float           speed                  = 0.005f;
+    float           speed_diagonal         = 0.00353553f;
 };

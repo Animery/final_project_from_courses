@@ -2,6 +2,7 @@
 // #include "include/Image.hpp"
 // #include "include/Texture.hpp"
 #include "include/engine.hpp"
+#include "game_src/GameConst.hpp"
 
 #include <algorithm>
 #include <array>
@@ -43,35 +44,33 @@ int main(int /*argc*/, char* /*argv*/[])
 
     // Time
     clock_timer timer;
-    time_point  start    = timer.now();
-    size_t      frame_if = 0;
+    time_point  start          = timer.now();
+    time_point  end_last_frame = timer.now();
+    size_t      frame_if       = 0;
     // Time
 
     while (game->getIsRunning())
     {
-        
-        time_point       end_last_frame = timer.now();
+        milli_sec  frame_delta =
+            std::chrono::duration_cast<milli_sec>(end_last_frame - start);
+        start = timer.now();
         my_engine::event event;
-
         game->on_event(event);
 
-        milli_sec frame_delta =
-            std::chrono::duration_cast<milli_sec>(end_last_frame - start);
+        // if (frame_delta.count() < 15) // 1000 % 60 = 16.666 FPS
+        // {
+        //     std::cout << "frame_delta:\t" << frame_delta.count() <<
+        //     "\tframe_if"
+        //               << frame_if << std::endl;
+        //     frame_if++;
+        //     std::this_thread::yield(); // too fast, give other apps CPU time
+        //     continue;                  // wait till more time
+        // }
 
-        if (frame_delta.count() < 16.666) // 1000 % 60 = 16.666 FPS
-        {
-            std::cout << "frame_delta:\t" << frame_delta.count() << "\tframe_if"
-                      << frame_if << std::endl;
-            frame_if++;
-            std::this_thread::yield(); // too fast, give other apps CPU time
-            continue;                  // wait till more time
-        }
-        
-       
         game->on_update(frame_delta);
         game->on_render();
-
         engine->swap_buffers();
+        end_last_frame = timer.now();
     }
 
     engine->uninitialize();

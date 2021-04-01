@@ -5,29 +5,11 @@
 
 Player::Player()
 {
-
-    // // Corpse
-    // corpse = my_engine::create_RenderObj();
-    // corpse->setProg(gfx_prog);
-    // corpse->load_mesh_from_file("res/tank.txt");
-    // // Corpse
-
-    // Head
-    // head = my_engine::create_RenderObj();
-    // head->setProg(gfx_prog);
-    // head->load_mesh_from_file("res/tank.txt");
-
-    // std::cout << "corpse_prt\t" << &corpse << std::endl;
-    // std::cout << "head_prt\t" << &head << std::endl;
-
     std::cout << "+++ ctor Player" << std::endl;
 }
 
 Player::~Player()
 {
-    // my_engine::destroy_RenderObj(corpse);
-    // my_engine::destroy_RenderObj(head);
-
     std::cout << "--- destor Player" << std::endl;
 }
 
@@ -36,86 +18,86 @@ void Player::update(std::array<bool, 8>& controls)
     if (controls[static_cast<unsigned>(my_engine::keys_type::left)] &&
         controls[static_cast<unsigned>(my_engine::keys_type::up)])
     {
-        if (current_tank_pos.x > -(1 / size - (0.15 / 2)))
+        if (current_tank_pos.x > -(1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x -= speed_diagonal;
         }
-        if (current_tank_pos.y < (1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y < (1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y += speed_diagonal;
         }
 
-        current_tank_direction = 3 * (pi / 4.f);
+        current_tank_direction = 3 * (gameConst::pi / 4.f);
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::left)] &&
              controls[static_cast<unsigned>(my_engine::keys_type::down)])
     {
-        if (current_tank_pos.x > -(1 / size - (0.15 / 2)))
+        if (current_tank_pos.x > -(1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x -= speed_diagonal;
         }
-        if (current_tank_pos.y > -(1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y > -(1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y -= speed_diagonal;
         }
-        current_tank_direction = pi / 4.f;
+        current_tank_direction = gameConst::pi / 4.f;
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::right)] &&
              controls[static_cast<unsigned>(my_engine::keys_type::up)])
     {
-        if (current_tank_pos.x < (1 / size - (0.15 / 2)))
+        if (current_tank_pos.x < (1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x += speed_diagonal;
         }
-        if (current_tank_pos.y < (1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y < (1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y += speed_diagonal;
         }
-        current_tank_direction = -3 * (pi / 4.f);
+        current_tank_direction = -3 * (gameConst::pi / 4.f);
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::right)] &&
              controls[static_cast<unsigned>(my_engine::keys_type::down)])
     {
-        if (current_tank_pos.x < (1 / size - (0.15 / 2)))
+        if (current_tank_pos.x < (1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x += speed_diagonal;
         }
-        if (current_tank_pos.y > -(1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y > -(1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y -= speed_diagonal;
         }
-        current_tank_direction = -pi / 4.f;
+        current_tank_direction = -gameConst::pi / 4.f;
     }
 
     // Simple
     else if (controls[static_cast<unsigned>(my_engine::keys_type::left)])
     {
-        if (current_tank_pos.x > -(1 / size - (0.15 / 2)))
+        if (current_tank_pos.x > -(1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x -= speed;
         }
 
-        current_tank_direction = pi / 2.f;
+        current_tank_direction = gameConst::pi / 2.f;
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::right)])
     {
-        if (current_tank_pos.x < (1 / size - (0.15 / 2)))
+        if (current_tank_pos.x < (1 / gameConst::size - (0.15 / 2)))
         {
             current_tank_pos.x += speed;
         }
-        current_tank_direction = -pi / 2.f;
+        current_tank_direction = -gameConst::pi / 2.f;
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::up)])
     {
-        if (current_tank_pos.y < (1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y < (1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y += speed;
         }
-        current_tank_direction = pi;
+        current_tank_direction = gameConst::pi;
     }
     else if (controls[static_cast<unsigned>(my_engine::keys_type::down)])
     {
-        if (current_tank_pos.y > -(1 / aspect - (0.15 / 2)) / size)
+        if (current_tank_pos.y > -(1 / gameConst::aspect - (0.15 / 2)) / gameConst::size)
         {
             current_tank_pos.y -= speed;
         }
@@ -146,12 +128,12 @@ void Player::update(std::array<bool, 8>& controls)
     my_engine::matrix2x3 rot =
         my_engine::matrix2x3::rotation(current_tank_direction);
 
-    matrix_corpse = rot * move * aspect_mat * size_mat;
+    matrix_corpse = rot * move * gameConst::aspect_mat * gameConst::size_mat;
 
     my_engine::matrix2x3 rot_head =
         my_engine::matrix2x3::rotation(current_head_direction);
 
-    matrix_head = rot_head * move * aspect_mat * size_mat;
+    matrix_head = rot_head * move * gameConst::aspect_mat * gameConst::size_mat;
 }
 
 // my_engine::RenderObj* Player::getCorpse()

@@ -144,7 +144,7 @@ void game_impl::on_event(my_engine::event& event)
                 float a;
                 // if (temp.x == 0)
                 //     a = (temp.y > 0) ? pi : 0;
-                a = std::atan2(temp.y, temp.x) + pi / 2;
+                a = std::atan2(temp.y, temp.x) + gameConst::pi / 2;
                 a = -a;
                 // std::cout << "current_head_direction : " << a << std::endl;
                 player->setCurrent_head_direction(a);
@@ -159,7 +159,6 @@ void game_impl::on_event(my_engine::event& event)
 
 void game_impl::on_update(std::chrono::milliseconds frame_delta)
 {
-    // double time = static_cast<double> (frame_delta);
     // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
 
     player->update(controls);
@@ -169,20 +168,7 @@ void game_impl::on_update(std::chrono::milliseconds frame_delta)
                            player->getCurrent_head_direction());
     }
 
-    gun_current->update_gun();
-    // gun_current->update_bullets();
-    // if (bullet != nullptr)
-    // {
-    //     bullet->update();
-    //     if (bullet->getPosition().x > (1 / size) ||
-    //         bullet->getPosition().x < -(1 / size) ||
-    //         bullet->getPosition().y > (1 / aspect) / size ||
-    //         bullet->getPosition().y < -(1 / aspect) / size)
-    //     {
-    //         delete bullet;
-    //         bullet = nullptr;
-    //     }
-    // }
+    gun_current->update_gun(frame_delta.count());
 }
 
 void game_impl::on_render() const
@@ -193,11 +179,6 @@ void game_impl::on_render() const
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
-
-    // if (bullet != nullptr)
-    // {
-    //     engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
-    // }
 
     engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
     engine->render(*tank_obj, *texture_head, player->getMatrix_head());

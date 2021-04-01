@@ -1,5 +1,6 @@
 // #define DEBUG_more
 
+#include "../game_src/GameConst.hpp"
 #include "../include/RenderObj_impl.hpp"
 #include "../include/SoundBuffer_impl.hpp"
 #include "../include/shader.hpp"
@@ -24,6 +25,12 @@
 #include "../imgui_src/imgui_impl_sdl.h"
 #include "../include/glad/glad.h"
 #include <SDL2/SDL.h>
+
+using clock_timer = std::chrono::high_resolution_clock;
+using nano_sec    = std::chrono::nanoseconds;
+using milli_sec   = std::chrono::milliseconds;
+using time_point  = std::chrono::time_point<clock_timer, nano_sec>;
+clock_timer timer;
 
 namespace my_engine
 {
@@ -179,8 +186,8 @@ private:
     ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     SDL_Window*   window     = nullptr;
-    size_t        width      = 320 * 6; // * 6 = 1920
-    size_t        height     = 180 * 6; // * 6 = 1080
+    size_t        width      = gameConst::screen_width;  // * 6 = 1920
+    size_t        height     = gameConst::screen_height; // * 6 = 1080
     SDL_GLContext gl_context = nullptr;
 
     SDL_AudioDeviceID              audio_device;
@@ -589,7 +596,6 @@ void engine_impl::render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
     vao.draw();
 }
 
-
 void engine_impl::renderImGui()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -670,8 +676,17 @@ void engine_impl::renderImGui()
 
 void engine_impl::swap_buffers()
 {
+
     renderImGui();
+
+    time_point start = timer.now();
     SDL_GL_SwapWindow(window);
+    time_point end_last_frame = timer.now();
+
+    milli_sec frame_delta =
+        std::chrono::duration_cast<milli_sec>(end_last_frame - start);
+    std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
+
     glClear(GL_COLOR_BUFFER_BIT);
     OM_GL_CHECK()
 }
@@ -692,12 +707,11 @@ void engine_impl::destroy_sound_buffer(SoundBuffer* sound)
 }
 
 void engine_impl::uninitialize()
-{   
-    for (auto &&it : sounds)
+{
+    for (auto&& it : sounds)
     {
         destroy_sound_buffer(it);
     }
-    
 
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
