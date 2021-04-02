@@ -13,7 +13,7 @@ Timer::~Timer()
     std::cout << "--- destor Timer" << std::endl;
 }
 
-void Timer::update(const double delta)
+void Timer::update(const float delta)
 {
     if (isRunning)
     {
@@ -26,7 +26,7 @@ void Timer::update(const double delta)
     }
 }
 
-void Timer::start(const double duration)
+void Timer::start(const float duration)
 {
     timeLeft  = duration;
     isRunning = true;

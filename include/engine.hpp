@@ -16,8 +16,6 @@ namespace my_engine
 {
 /// dendy gamepad emulation events
 
-
-
 enum class event_type
 {
     input_key,
@@ -82,7 +80,7 @@ public:
 
     virtual void render(/*const*/ RenderObj&, /*const*/ Texture&) = 0;
     virtual void render(RenderObj&, Texture&, const matrix2x3&)   = 0;
-    // virtual void render(RenderObj*, Texture*, const matrix2x3&)   = 0;
+    // virtual void render(RenderObj*, Texture*, const matrix2x3&)= 0;
     virtual void swap_buffers() = 0;
 
     virtual SoundBuffer* create_sound_buffer(std::string_view path) = 0;
@@ -112,7 +110,7 @@ public:
     virtual void load_mesh_from_file(const std::string_view path) = 0;
     virtual void bind() const                                     = 0;
     virtual void setProg(gfx_prog* prog_)                         = 0;
-    // virtual void linkProg()                                              = 0;
+    // virtual void linkProg()                                           = 0;
     virtual void useProg() const                                         = 0;
     virtual void setUniform(Texture& tex) const                          = 0;
     virtual void setUniform(std::string_view name, const matrix2x3& mat) = 0;
@@ -146,9 +144,9 @@ public:
     virtual bool getIsRunning()                                   = 0;
     virtual void on_initialize()                                  = 0;
     virtual void on_event(my_engine::event&)                      = 0;
-    virtual void on_update(std::chrono::milliseconds frame_delta) = 0;
-    // virtual void on_render(RenderObj&, Texture&) const            = 0;
-    virtual void on_render() const                                = 0;
+    virtual void on_update(std::chrono::microseconds frame_delta) = 0;
+    // virtual void on_render(RenderObj&, Texture&) const         = 0;
+    virtual void on_render()  = 0;
 };
 
 engine* create_engine();

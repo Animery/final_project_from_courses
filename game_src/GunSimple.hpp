@@ -10,21 +10,24 @@ public:
     GunSimple();
     ~GunSimple();
     void shoot(my_engine::vec2& temp_position, float temp_direction) override;
-    void update_gun(size_t delta) override;
+    void update_gun(float delta, std::list<Enemy*>& enemy_list) override;
     unsigned int        count_bullets() override;
     std::list<Bullet*>* getList_bullets();
 
 protected:
-    void update_bullets() override;
+    bool check_collision(Bullet*            bullet,
+                         std::list<Enemy*>& enemy_list) override;
+    void update_bullets(float delta, std::list<Enemy*>& enemy_list) override;
 
 private:
     std::list<Bullet*> bullets;
 
     Timer timer_to_shoot;
-    //milliseconds
-    unsigned int speed_shoot = 100;  
-    float speed_bullet = 0.01f;
-    bool  readyGun;
+    // 1 in X milliseconds
+    unsigned int speed_shoot   = 500;
+    float        speed_bullet  = 0.001f;
+    float        damage_bullet = 10.f;
+    bool         readyGun;
 
     // Bullet* bullet = nullptr;
 };

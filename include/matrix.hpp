@@ -36,6 +36,7 @@ struct  matrix2x3
 
 vec2 operator+(const vec2& l, const vec2& r);
 vec2 operator-(const vec2& l, const vec2& r);
+
 vec2 operator*(const vec2& v, const matrix2x3& m);
 matrix2x3 operator*(const matrix2x3& m1, const matrix2x3& m2);
 
@@ -43,5 +44,6 @@ std::istream& operator>>(std::istream& is, vec2&);
 std::istream& operator>>(std::istream& is, vec3& v);
 std::istream& operator>>(std::istream& is, matrix2x3&);
 
+std::ostream& operator<<(std::ostream& out, vec2&);
 std::ostream& operator<<(std::ostream& out, matrix2x3&);
 } // namespace my_engine

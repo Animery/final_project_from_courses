@@ -7,8 +7,8 @@ public:
     Timer();
     ~Timer();
    
-    void update(const double delta);
-    void start(const double duration);
+    void update(const float delta);
+    void start(const float duration);
     void setCallback(std::function<void()> callback);
 
 private:

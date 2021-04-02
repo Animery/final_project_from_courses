@@ -114,6 +114,12 @@ std::istream& operator>>(std::istream& is, matrix2x3& m)
     return is;
 }
 
+std::ostream& operator<<(std::ostream& out, vec2& vec) 
+{
+    out << vec.x << "||" << vec.y << "\n";
+    return out;
+}
+
 std::ostream& operator<<(std::ostream& out, matrix2x3& m) 
 {
     out << m.col0.x << "||" << m.col0.y << "\n";
@@ -161,4 +167,6 @@ vec2 operator-(const vec2& l, const vec2& r)
     result.y = l.y - r.y;
     return result; 
 }
+
+
 } // namespace my_engine

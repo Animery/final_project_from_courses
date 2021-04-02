@@ -244,7 +244,7 @@ std::string engine_impl::initialize(std::string_view /*config*/)
                               SDL_WINDOWPOS_CENTERED,
                               width,
                               height,
-                              SDL_WINDOW_OPENGL);
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
     if (window == nullptr)
     {
         const char* err_message = SDL_GetError();
@@ -331,6 +331,17 @@ std::string engine_impl::initialize(std::string_view /*config*/)
             GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 #endif
+
+    if (SDL_GL_SetSwapInterval(0) != 0)
+    {
+        const char* error_message = SDL_GetError();
+        std::cout << "error: failed call SDL_GL_SetSwapInterval: "
+                  << error_message << std::endl;
+    }
+    else
+    {
+        std::cout << "call SDL_GL_SetSwapInterval: " << std::endl;
+    }
 
     // Init ImGui
     initImGui(glsl_version);
@@ -566,10 +577,10 @@ bool engine_impl::read_event(my_engine::event& ev)
     return false;
 }
 
-bool engine_impl::is_key_down(const enum keys_type key)
+bool engine_impl::is_key_down(const enum keys_type _key)
 {
     const auto it = std::find_if(
-        begin(keys), end(keys), [&](const bind& b) { return b.my_key == key; });
+        begin(keys), end(keys), [&](const bind& b) { return b.my_key == _key; });
 
     if (it != end(keys))
     {
@@ -679,13 +690,13 @@ void engine_impl::swap_buffers()
 
     renderImGui();
 
-    time_point start = timer.now();
+    // time_point start = timer.now();
     SDL_GL_SwapWindow(window);
-    time_point end_last_frame = timer.now();
+    // time_point end_last_frame = timer.now();
 
-    milli_sec frame_delta =
-        std::chrono::duration_cast<milli_sec>(end_last_frame - start);
-    std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
+    // milli_sec frame_delta =
+    //     std::chrono::duration_cast<milli_sec>(end_last_frame - start);
+    // // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT);
     OM_GL_CHECK()

@@ -8,13 +8,22 @@ namespace my_game
 game_impl::game_impl(my_engine::engine* _engine)
 {
     engine = _engine;
-
+    enemy_list.push_back(new Enemy({ 0.5, 0.5 }));
+    enemy_list.push_back(new Enemy({ -0.5, 0.5 }));
+    // enemy_list.push_back(new Enemy);
+    std::cout << "sizeof Player" << sizeof(Player) << std::endl;
+    std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
     std::cout << "+++ ctor game_impl" << std::endl;
 }
 
 game_impl::~game_impl()
 {
     // delete engine;
+    for (auto it : enemy_list)
+    {
+        delete it;
+    }
+
     delete gfx01;
     std::cout << "--- destor game_impl" << std::endl;
 }
@@ -75,6 +84,10 @@ void game_impl::on_initialize()
 
     player    = std::make_unique<Player>();
     isRunning = true;
+
+    // Enemy
+
+    // Enemy
 }
 
 void game_impl::on_event(my_engine::event& event)
@@ -135,8 +148,11 @@ void game_impl::on_event(my_engine::event& event)
             case my_engine::event_type::mouse:
             {
                 my_engine::vec2 temp = my_engine::vec2{
-                    event.x / (1920 / 2) - 1, -(event.y / (1080 / 2) - 1)
+                    event.x / (gameConst::screen_width / 2) - 1,
+                    -(event.y / ((gameConst::screen_height / 2)) - 1)
                 } - player->getCurrent_tank_pos();
+
+                temp.y /= gameConst::aspect;
 
                 // std::cout << "coord : " << temp.x << "\t" << temp.y
                 //           << std::endl;
@@ -157,23 +173,29 @@ void game_impl::on_event(my_engine::event& event)
     }
 }
 
-void game_impl::on_update(std::chrono::milliseconds frame_delta)
+void game_impl::on_update(std::chrono::microseconds frame_delta)
 {
     // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
+    const float delta = frame_delta.count() * 0.001f;
 
-    player->update(controls);
     if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
     {
         gun_current->shoot(player->getCurrent_tank_pos(),
                            player->getCurrent_head_direction());
     }
 
-    gun_current->update_gun(frame_delta.count());
+    gun_current->update_gun(delta, enemy_list);
+
+    player->update(controls, delta);
+
+    for (auto&& monster : enemy_list)
+    {
+        monster->update();
+    }
 }
 
-void game_impl::on_render() const
+void game_impl::on_render()
 {
-
     std::list<Bullet*>* temp_bullets = gun_current->getList_bullets();
     for (auto&& bullet : *temp_bullets)
     {
@@ -182,6 +204,40 @@ void game_impl::on_render() const
 
     engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
     engine->render(*tank_obj, *texture_head, player->getMatrix_head());
+
+    // for (auto monster : enemy_list)
+    // {
+    //     if (monster->getHealth() <= 0)
+    //     {
+    //         delete monster;
+    //         enemy_list.erase(monster);
+    //     }
+    //     else
+    //     {
+    //         engine->render(
+    //             *tank_obj, *texture_corpse, monster->getMatrix_corpse());
+    //         engine->render(*tank_obj, *texture_head,
+    //         monster->getMatrix_head());
+    //     }
+    // }
+
+    for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
+    {
+        if (enemy.operator*()->getHealth() <= 0)
+        {
+            delete enemy.operator*();
+            enemy = enemy_list.erase(enemy);
+        }
+        else
+        {
+            engine->render(*tank_obj,
+                           *texture_corpse,
+                           enemy.operator*()->getMatrix_corpse());
+            engine->render(
+                *tank_obj, *texture_head, enemy.operator*()->getMatrix_head());
+            ++enemy;
+        }
+    }
 }
 
 } // namespace my_game

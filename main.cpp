@@ -1,8 +1,8 @@
 // #include "game_src/game_impl.hpp"
 // #include "include/Image.hpp"
 // #include "include/Texture.hpp"
-#include "include/engine.hpp"
 #include "game_src/GameConst.hpp"
+#include "include/engine.hpp"
 
 #include <algorithm>
 #include <array>
@@ -18,6 +18,7 @@
 
 using clock_timer = std::chrono::high_resolution_clock;
 using nano_sec    = std::chrono::nanoseconds;
+using micro_sec   = std::chrono::microseconds;
 using milli_sec   = std::chrono::milliseconds;
 using time_point  = std::chrono::time_point<clock_timer, nano_sec>;
 
@@ -44,33 +45,33 @@ int main(int /*argc*/, char* /*argv*/[])
 
     // Time
     clock_timer timer;
-    time_point  start          = timer.now();
-    time_point  end_last_frame = timer.now();
-    size_t      frame_if       = 0;
+    time_point  start = timer.now();
+    time_point  end_last_frame;
     // Time
 
     while (game->getIsRunning())
     {
-        milli_sec  frame_delta =
-            std::chrono::duration_cast<milli_sec>(end_last_frame - start);
+        end_last_frame = timer.now();
+        micro_sec frame_delta =
+            std::chrono::duration_cast<micro_sec>(end_last_frame - start);
+
+        if (frame_delta.count() / 1000.0f < 16.667f) // 1000 % 60 = 16.6 FPS
+        {
+            std::this_thread::yield(); // too fast, give other apps CPU time
+            micro_sec duration(50);
+            std::this_thread::sleep_for(duration); // sleep 50 microsecconds
+            continue; // wait till more time
+        }
+
         start = timer.now();
+
         my_engine::event event;
         game->on_event(event);
-
-        // if (frame_delta.count() < 15) // 1000 % 60 = 16.666 FPS
-        // {
-        //     std::cout << "frame_delta:\t" << frame_delta.count() <<
-        //     "\tframe_if"
-        //               << frame_if << std::endl;
-        //     frame_if++;
-        //     std::this_thread::yield(); // too fast, give other apps CPU time
-        //     continue;                  // wait till more time
-        // }
-
         game->on_update(frame_delta);
+
+
         game->on_render();
         engine->swap_buffers();
-        end_last_frame = timer.now();
     }
 
     engine->uninitialize();
