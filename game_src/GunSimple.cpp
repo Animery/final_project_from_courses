@@ -86,20 +86,21 @@ bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
     {
         my_engine::vec2 pos_enemy_A = enemy.operator*()->getPosition_A();
         my_engine::vec2 pos_enemy_B = enemy.operator*()->getPosition_B();
-        if (pos_bullet_A.x < pos_enemy_B.x && pos_bullet_A.y < pos_enemy_B.y &&
-            pos_bullet_B.x > pos_enemy_A.x && pos_bullet_B.y > pos_enemy_A.y)
+        if (my_engine::vec2::check_AABB(
+                pos_bullet_A, pos_bullet_B, pos_enemy_A, pos_enemy_B))
         {
-            enemy.operator*()->setHealth(bullet->getDamage());    
+            enemy.operator*()->setHealth(bullet->getDamage());
+
+#ifdef DEBUG_LEVEL
             std::cout << "hit" << std::endl;
-            std::cout << "health enemy:\t" << enemy.operator*()->getHealth() << std::endl;
+            std::cout << "health enemy:\t" << enemy.operator*()->getHealth()
+                      << std::endl;
+#endif
             // std::cout << "position bullet A\t" << pos_bullet_A << std::endl;
             // std::cout << "position bullet B\t" << pos_bullet_B << std::endl;
             // std::cout << "position enemy A\t" << pos_enemy_A << std::endl;
             // std::cout << "position enemy B\t" << pos_enemy_B << std::endl;
-
-
-            // delete enemy.operator*();
-            // enemy = enemy_list.erase(enemy);
+            
             return true;
         }
         else

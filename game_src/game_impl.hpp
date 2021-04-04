@@ -27,6 +27,8 @@ public:
     void on_render()  final;
 
 private:
+
+
     bool isRunning;
     my_engine::engine*   engine;
     my_engine::gfx_prog* gfx01;

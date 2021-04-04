@@ -31,13 +31,14 @@ public:
 
     float getCurrent_head_direction();
     void  setCurrent_head_direction(const float a);
+    void  setMouse_pos(const my_engine::vec2& a);
 
     my_engine::vec2& getCurrent_tank_pos();
     my_engine::vec2  getPosition_A();
     my_engine::vec2  getPosition_B();
 
-    float           getHealth();
-    void            setHealth(float damage);
+    float getHealth();
+    void  setHealth(float damage);
 
     // private:
 protected:
@@ -49,11 +50,15 @@ protected:
     my_engine::matrix2x3 matrix_head;
 
     my_engine::vec2 current_tank_pos       = { 0.0f, 0.0f };
-    float           half_size              = 0.07;
+    float           half_size              = 0.05;
     float           current_tank_direction = 0.0f;
     float           current_head_direction = 0.0f;
 
     float health         = 100;
     float speed          = 0.0003125f;
     float speed_diagonal = 0.00022097f;
+
+private:
+    void            update_Head_dirrection();
+    my_engine::vec2 mouse_pos_vec = { 0, 0 };
 };

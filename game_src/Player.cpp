@@ -1,21 +1,28 @@
 #include "Player.hpp"
 #include "../include/RenderObj_impl.hpp"
 
+#include <cmath>
 #include <iostream>
 
 Player::Player()
 {
-    current_tank_pos.y /=  gameConst::aspect;
+    current_tank_pos.y /= gameConst::aspect;
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Player" << std::endl;
+#endif
 }
 
 Player::~Player()
 {
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor Player" << std::endl;
+#endif
 }
 
 void Player::update(std::array<bool, 8>& controls, float delta)
 {
+    update_Head_dirrection();
+
     if (controls[static_cast<unsigned>(my_engine::keys_type::left)] &&
         controls[static_cast<unsigned>(my_engine::keys_type::up)])
     {
@@ -174,6 +181,12 @@ void Player::setCurrent_head_direction(const float a)
     current_head_direction = a;
 }
 
+void Player::setMouse_pos(const my_engine::vec2& a)
+{
+    mouse_pos_vec = { a.x / (gameConst::screen_width / 2) - 1,
+                      -(a.y / ((gameConst::screen_height / 2)) - 1) };
+}
+
 my_engine::vec2& Player::getCurrent_tank_pos()
 {
     return current_tank_pos;
@@ -193,14 +206,44 @@ my_engine::vec2 Player::getPosition_B()
     return result;
 }
 
-float Player::getHealth() 
+float Player::getHealth()
 {
     return health;
 }
 
-void Player::setHealth(float damage) 
+void Player::setHealth(float damage)
 {
     health -= damage;
+}
+
+void Player::update_Head_dirrection()
+{
+    my_engine::vec2 temp_pos_tank = current_tank_pos;
+    temp_pos_tank.y *= gameConst::aspect;
+
+    my_engine::vec2 temp = mouse_pos_vec - temp_pos_tank;
+
+    temp.y /= gameConst::aspect;
+
+#ifdef DEBUG_LEVEL_2
+
+    std::cout << "current_pos_tank\t" << temp_pos_tank << std::endl;
+    std::cout << "mouse_pos\t" << mouse_pos_vec << std::endl;
+    std::cout << "temp\t" << temp << std::endl;
+#endif
+
+    float a;
+    // if (temp.x == 0)
+    //     a = (temp.y > 0) ? pi : 0;
+    a = std::atan2(temp.y, temp.x) + gameConst::pi / 2.0f;
+    // a = -a;
+
+#ifdef DEBUG_LEVEL_2
+    std::cout << "current_head_direction : " << a << std::endl;
+    std::cout << "####################" << std::endl;
+#endif
+
+    current_head_direction = -a;
 }
 
 // void Player::loadRenderObj() {}

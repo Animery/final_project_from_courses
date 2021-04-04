@@ -158,7 +158,7 @@ class engine_impl : public engine
 public:
     engine_impl();
     ~engine_impl();
-    std::string initialize(std::string_view /*config*/) final;
+    std::string initialize(std::string_view config, game* game) final;
     float       get_time_from_init() final;
 
     bool read_event(event& e) final;
@@ -175,9 +175,9 @@ public:
     void uninitialize() final;
 
 private:
-    void        renderImGui();
     void        initImGui(const char* glsl_version);
     void        initAudio();
+    void        renderImGui();
     static void audio_callback(void*, uint8_t*, int);
 
     // Our state
@@ -186,6 +186,8 @@ private:
     ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     SDL_Window*   window     = nullptr;
+    game* m_game = nullptr;
+
     size_t        width      = gameConst::screen_width;  // * 6 = 1920
     size_t        height     = gameConst::screen_height; // * 6 = 1080
     SDL_GLContext gl_context = nullptr;
@@ -206,9 +208,10 @@ engine_impl::~engine_impl()
     std::cout << "--- destor engine_impl" << std::endl;
 }
 
-std::string engine_impl::initialize(std::string_view /*config*/)
-
+std::string engine_impl::initialize(std::string_view config, game* temp_game) 
 {
+    m_game = temp_game;
+
     std::stringstream serr;
 
     SDL_version compiled;
@@ -579,8 +582,9 @@ bool engine_impl::read_event(my_engine::event& ev)
 
 bool engine_impl::is_key_down(const enum keys_type _key)
 {
-    const auto it = std::find_if(
-        begin(keys), end(keys), [&](const bind& b) { return b.my_key == _key; });
+    const auto it = std::find_if(begin(keys), end(keys), [&](const bind& b) {
+        return b.my_key == _key;
+    });
 
     if (it != end(keys))
     {
@@ -652,7 +656,7 @@ void engine_impl::renderImGui()
                            // return true when edited/activated)
             counter++;
         ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
+        ImGui::Text("bullets = %d", counter);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                     1000.0f / ImGui::GetIO().Framerate,

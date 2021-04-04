@@ -2,8 +2,6 @@
 # include <iostream>
 
 Timer::Timer()
-    : isRunning(false)
-    , timeLeft(0)
 {
     std::cout << "+++ ctor Timer" << std::endl;
 }

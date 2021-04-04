@@ -17,6 +17,19 @@ vec2::vec2(float x_, float y_)
 {
 }
 
+bool vec2::check_AABB(vec2 vec_1_A, vec2 vec_1_B, vec2 vec_2_A, vec2 vec_2_B)
+{
+    if (vec_1_A.x < vec_2_B.x && vec_1_A.y < vec_2_B.y &&
+        vec_1_B.x > vec_2_A.x && vec_1_B.y > vec_2_A.y)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 vec3::vec3()
     : x(0.f)
     , y(0.f)
@@ -38,7 +51,7 @@ matrix2x3::matrix2x3()
 {
 }
 
-matrix2x3 matrix2x3::invert() 
+matrix2x3 matrix2x3::invert()
 {
     matrix2x3 result;
     result.col0.x = -1;
@@ -87,23 +100,20 @@ matrix2x3 matrix2x3::move(const vec2& delta)
     return r;
 }
 
-
-
-std::istream& operator>>(std::istream& is, vec2& v) 
+std::istream& operator>>(std::istream& is, vec2& v)
 {
     is >> v.x;
     is >> v.y;
     return is;
 }
 
-std::istream& operator>>(std::istream& is, vec3& v) 
+std::istream& operator>>(std::istream& is, vec3& v)
 {
     is >> v.x;
     is >> v.y;
     is >> v.z;
     return is;
 }
-
 
 std::istream& operator>>(std::istream& is, matrix2x3& m)
 {
@@ -114,17 +124,17 @@ std::istream& operator>>(std::istream& is, matrix2x3& m)
     return is;
 }
 
-std::ostream& operator<<(std::ostream& out, vec2& vec) 
+std::ostream& operator<<(std::ostream& out, vec2& vec)
 {
-    out << vec.x << "||" << vec.y << "\n";
+    out << "x: " << vec.x << "||" << " y: "<< vec.y;
     return out;
 }
 
-std::ostream& operator<<(std::ostream& out, matrix2x3& m) 
+std::ostream& operator<<(std::ostream& out, matrix2x3& m)
 {
     out << m.col0.x << "||" << m.col0.y << "\n";
     out << m.col1.x << "||" << m.col1.y << "\n";
-    out << m.delta.x << "||" << m.delta.y << "\n";
+    out << m.delta.x << "||" << m.delta.y;
     return out;
 }
 
@@ -151,7 +161,6 @@ matrix2x3 operator*(const matrix2x3& m1, const matrix2x3& m2)
     return r;
 }
 
-
 vec2 operator+(const vec2& l, const vec2& r)
 {
     vec2 result;
@@ -160,13 +169,12 @@ vec2 operator+(const vec2& l, const vec2& r)
     return result;
 }
 
-vec2 operator-(const vec2& l, const vec2& r) 
+vec2 operator-(const vec2& l, const vec2& r)
 {
-   vec2 result;
+    vec2 result;
     result.x = l.x - r.x;
     result.y = l.y - r.y;
-    return result; 
+    return result;
 }
-
 
 } // namespace my_engine

@@ -10,12 +10,16 @@ Bullet::Bullet(my_engine::vec2& temp_position,
     , speed(temp_speed)
     , damage(temp_damage)
 {
+    #ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Bullet" << std::endl;
+    #endif
 }
 
 Bullet::~Bullet()
 {
+    #ifdef DEBUG_LEVEL
     std::cout << "--- destor Bullet" << std::endl;
+    #endif
 }
 
 void Bullet::update(float delta)

@@ -3,7 +3,7 @@
 Enemy::Enemy(my_engine::vec2 pos)
 {
     current_tank_pos       = pos;
-    half_size              = 0.07f;
+    half_size              = 0.04f;
     current_tank_direction = 0.0f;
     current_head_direction = 0.0f;
     health                 = 100;
@@ -11,12 +11,16 @@ Enemy::Enemy(my_engine::vec2 pos)
     speed_diagonal         = 0.00022097f;
 
     current_tank_pos.y /= gameConst::aspect;
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Enemy" << std::endl;
+#endif
 }
 
 Enemy::~Enemy()
 {
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor Enemy" << std::endl;
+#endif
 }
 
 // my_engine::matrix2x3& Enemy::getMatrix_corpse()

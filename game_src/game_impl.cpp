@@ -1,6 +1,6 @@
 #include "game_impl.hpp"
 // #include "Bullet.hpp"
-#include <cmath>
+// #include <cmath>
 
 namespace my_game
 {
@@ -8,8 +8,14 @@ namespace my_game
 game_impl::game_impl(my_engine::engine* _engine)
 {
     engine = _engine;
-    enemy_list.push_back(new Enemy({ 0.5, 0.5 }));
-    enemy_list.push_back(new Enemy({ -0.5, 0.5 }));
+    for (size_t i = 0; i < 1; i++)
+    {
+        enemy_list.push_back(new Enemy({ 0.5, 0.5 }));
+        enemy_list.push_back(new Enemy({ -0.5, 0.5 }));
+        enemy_list.push_back(new Enemy({ 0.5, -0.5 }));
+        enemy_list.push_back(new Enemy({ -0.5, -0.5 }));
+    }
+
     // enemy_list.push_back(new Enemy);
     std::cout << "sizeof Player" << sizeof(Player) << std::endl;
     std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
@@ -35,7 +41,7 @@ bool game_impl::getIsRunning()
 
 void game_impl::on_initialize()
 {
-    engine->initialize("");
+    engine->initialize("", this);
 
     // gfx_prog
     const std::string path("shader/");
@@ -131,15 +137,6 @@ void game_impl::on_event(my_engine::event& event)
                     }
                     else if (key_data.key == my_engine::keys_type::button2)
                     {
-                        // gun_current->shoot(player->getCurrent_tank_pos(),
-                        //                    player->getCurrent_head_direction());
-                        // if (bullet == nullptr)
-                        // {
-                        //     bullet =
-                        //         new Bullet(player->getCurrent_tank_pos(),
-                        //                    player->getCurrent_head_direction());
-                        // }
-
                         // s->play(my_engine::SoundBuffer::properties::looped);
                     }
                 }
@@ -147,23 +144,7 @@ void game_impl::on_event(my_engine::event& event)
             }
             case my_engine::event_type::mouse:
             {
-                my_engine::vec2 temp = my_engine::vec2{
-                    event.x / (gameConst::screen_width / 2) - 1,
-                    -(event.y / ((gameConst::screen_height / 2)) - 1)
-                } - player->getCurrent_tank_pos();
-
-                temp.y /= gameConst::aspect;
-
-                // std::cout << "coord : " << temp.x << "\t" << temp.y
-                //           << std::endl;
-
-                float a;
-                // if (temp.x == 0)
-                //     a = (temp.y > 0) ? pi : 0;
-                a = std::atan2(temp.y, temp.x) + gameConst::pi / 2;
-                a = -a;
-                // std::cout << "current_head_direction : " << a << std::endl;
-                player->setCurrent_head_direction(a);
+                player->setMouse_pos(my_engine::vec2{ event.x, event.y });
 
                 break;
             }
@@ -204,22 +185,6 @@ void game_impl::on_render()
 
     engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
     engine->render(*tank_obj, *texture_head, player->getMatrix_head());
-
-    // for (auto monster : enemy_list)
-    // {
-    //     if (monster->getHealth() <= 0)
-    //     {
-    //         delete monster;
-    //         enemy_list.erase(monster);
-    //     }
-    //     else
-    //     {
-    //         engine->render(
-    //             *tank_obj, *texture_corpse, monster->getMatrix_corpse());
-    //         engine->render(*tank_obj, *texture_head,
-    //         monster->getMatrix_head());
-    //     }
-    // }
 
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
     {

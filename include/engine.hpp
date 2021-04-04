@@ -61,6 +61,7 @@ class engine;
 class RenderObj;
 class gfx_prog;
 class SoundBuffer;
+class game;
 
 /// return not null on success
 
@@ -70,7 +71,7 @@ public:
     virtual ~engine();
     /// create main window
     /// on success return empty string
-    virtual std::string initialize(std::string_view config) = 0;
+    virtual std::string initialize(std::string_view config, game* game) = 0;
     virtual float       get_time_from_init()                = 0;
 
     /// pool event from input queue

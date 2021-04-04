@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Image.hpp"
-#include "string"
+#include <string>
 
 typedef unsigned int GLuint;
 
