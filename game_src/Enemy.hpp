@@ -6,7 +6,7 @@
 class Enemy : public Player
 {
 public:
-    void update();
+    void update(const float delta, const my_engine::vec2& player_pos);
     Enemy(my_engine::vec2 pos);
     ~Enemy();
 
@@ -20,6 +20,9 @@ public:
     // void            setHealth();
 
 private:
+    void update_direction(const float delta, const my_engine::vec2& player_pos);
+
+    float speed_rotation = 0.0015f;
     // my_engine::matrix2x3 matrix_corpse;
     // my_engine::matrix2x3 matrix_head;
 

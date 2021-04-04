@@ -7,13 +7,7 @@
 // #include <numbers>
 #include <memory>
 
-// constexpr float            aspect     = 320.0f / 180.0f;
-// const my_engine::matrix2x3 aspect_mat = my_engine::matrix2x3::scale(1,
-// aspect);
 
-// constexpr float            size       = 1.0f;
-// const my_engine::matrix2x3 size_mat   = my_engine::matrix2x3::scale(size);
-// constexpr float pi = std::numbers::pi_v<float>;
 
 class Player
 {
@@ -40,16 +34,11 @@ public:
     float getHealth();
     void  setHealth(float damage);
 
-    // private:
 protected:
-    // void loadRenderObj();
-    // my_engine::RenderObj* corpse = nullptr;
-    // my_engine::RenderObj* head   = nullptr;
-
     my_engine::matrix2x3 matrix_corpse;
     my_engine::matrix2x3 matrix_head;
 
-    my_engine::vec2 current_tank_pos       = { 0.0f, 0.0f };
+    my_engine::vec2 current_tank_pos       = { -1.0f, -0.00000000000000001f };
     float           half_size              = 0.05;
     float           current_tank_direction = 0.0f;
     float           current_head_direction = 0.0f;

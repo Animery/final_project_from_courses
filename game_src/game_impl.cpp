@@ -171,7 +171,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
     for (auto&& monster : enemy_list)
     {
-        monster->update();
+        monster->update(delta,player->getCurrent_tank_pos());
     }
 }
 

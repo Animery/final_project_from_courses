@@ -151,16 +151,6 @@ void Player::update(std::array<bool, 8>& controls, float delta)
     matrix_head = rot_head * move * gameConst::aspect_mat * gameConst::size_mat;
 }
 
-// my_engine::RenderObj* Player::getCorpse()
-// {
-//     return corpse;
-// }
-
-// my_engine::RenderObj* Player::getHead()
-// {
-//     return head;
-// }
-
 my_engine::matrix2x3& Player::getMatrix_corpse()
 {
     return matrix_corpse;
@@ -225,23 +215,15 @@ void Player::update_Head_dirrection()
 
     temp.y /= gameConst::aspect;
 
-#ifdef DEBUG_LEVEL_2
-
-    std::cout << "current_pos_tank\t" << temp_pos_tank << std::endl;
-    std::cout << "mouse_pos\t" << mouse_pos_vec << std::endl;
-    std::cout << "temp\t" << temp << std::endl;
-#endif
+    // std::cout << "current_pos_tank\t" << temp_pos_tank << std::endl;
+    // std::cout << "mouse_pos\t" << mouse_pos_vec << std::endl;
+    // std::cout << "temp\t" << temp << std::endl;
 
     float a;
-    // if (temp.x == 0)
-    //     a = (temp.y > 0) ? pi : 0;
     a = std::atan2(temp.y, temp.x) + gameConst::pi / 2.0f;
-    // a = -a;
 
-#ifdef DEBUG_LEVEL_2
-    std::cout << "current_head_direction : " << a << std::endl;
-    std::cout << "####################" << std::endl;
-#endif
+    // std::cout << "current_head_direction : " << a << std::endl;
+    // std::cout << "####################" << std::endl;
 
     current_head_direction = -a;
 }
