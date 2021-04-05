@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Bullet.hpp"
-#include "Enemy.hpp"
-#include "Timer.hpp"
+#include "../Enemy.hpp"
+#include "../Timer.hpp"
 
 #include <list>
+
+namespace guns
+{
+    
+
 
 class Gun
 {
@@ -37,3 +42,4 @@ protected:
 
 private:
 };
+} // namespace guns

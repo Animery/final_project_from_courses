@@ -1,5 +1,7 @@
 #include "game_impl.hpp"
 #include "spawn_levels/wave_1.hpp"
+#include "gun/simpleGun.hpp"
+#include "gun/shotGun.hpp"
 
 #include <ctime>
 // #include "Bullet.hpp"
@@ -12,8 +14,8 @@ game_impl::game_impl(my_engine::engine* _engine)
 {
     engine = _engine;
     srand(time(NULL));
-    float temp_pos_x;
-    float temp_pos_y;
+    // float temp_pos_x;
+    // float temp_pos_y;
 
     //  SPAWN
 
@@ -111,7 +113,8 @@ void game_impl::on_initialize()
     // Render_obj
 
     // Gun
-    gun_current = std::make_unique<GunSimple>();
+    gun_current = std::make_unique<guns::shotGun>();
+    
     // Gun
 
     player    = std::make_unique<Player>();

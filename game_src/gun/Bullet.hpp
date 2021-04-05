@@ -2,7 +2,7 @@
 // #include "Player.hpp"
 // #include "../include/engine.hpp"
 // #include "../include/matrix.hpp"
-#include "GameConst.hpp"
+#include "../GameConst.hpp"
 // #include <memory>
 
 class Bullet
@@ -25,7 +25,7 @@ public:
 
 private:
     my_engine::vec2      position;
-    float                half_size = 0.01;
+    float                half_size = 0.004;
     my_engine::matrix2x3 matrix;
     float                direction;
     float                speed;

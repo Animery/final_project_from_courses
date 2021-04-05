@@ -1,38 +1,53 @@
-#include "GunSimple.hpp"
+#include "shotGun.hpp"
 
-GunSimple::GunSimple()
+namespace guns
+{
+
+shotGun::shotGun()
     : readyGun(true)
 {
     timer_to_shoot.setCallback([&]() { readyGun = true; });
     std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
-    std::cout << "+++ ctor GunSimple" << std::endl;
+    std::cout << "+++ ctor shotGun" << std::endl;
 }
 
-GunSimple::~GunSimple()
+shotGun::~shotGun()
 {
     for (auto it = bullets.begin(); it != bullets.end();)
     {
         delete it.operator*();
         it = bullets.erase(it);
     }
-    std::cout << "--- destor GunSimple" << std::endl;
+    std::cout << "--- destor shotGun" << std::endl;
 }
 
-void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
+void shotGun::shoot(my_engine::vec2& temp_position, float temp_direction)
 {
     if (readyGun)
     {
-        bullets.push_back(new Bullet(
-            temp_position, temp_direction, speed_bullet, damage_bullet));
+        for (size_t i = 0; i < 7; i++)
+        {
+            float           rand_factor = rand() % 1001 / 10000.f - 0.05f;
+            my_engine::vec2 rand_pos{
+                temp_position.x + std::abs(temp_position.x * rand_factor ),
+                temp_position.y + std::abs(temp_position.y * rand_factor )
+            };
+            bullets.push_back(
+                new Bullet(rand_pos,
+                           temp_direction + temp_direction * rand_factor / 1.5f,
+                           speed_bullet ,
+                           damage_bullet + damage_bullet * rand_factor * 10));
+        }
+
         readyGun = false;
         timer_to_shoot.start(speed_shoot);
     }
 }
 
 #if defined(TEST_VECTOR)
-void GunSimple::update_gun(float delta, std::vector<Enemy*>& enemy_list)
+void shotGun::update_gun(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
+void shotGun::update_gun(float delta, std::list<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
@@ -40,15 +55,15 @@ void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
     timer_to_shoot.update_timer(delta);
 }
 
-unsigned int GunSimple::count_bullets()
+unsigned int shotGun::count_bullets()
 {
     return bullets.size();
 }
 
 #if defined(TEST_VECTOR)
-void GunSimple::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
+void shotGun::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
+void shotGun::update_bullets(float delta, std::list<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 
 {
@@ -82,18 +97,18 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
 }
 
 #if defined(TEST_VECTOR)
-std::vector<Bullet*>* GunSimple::getList_bullets()
+std::vector<Bullet*>* shotGun::getList_bullets()
 #else
-std::list<Bullet*>* GunSimple::getList_bullets()
+std::list<Bullet*>* shotGun::getList_bullets()
 #endif // TEST_VECTOR
 {
     return &bullets;
 }
 
 #if defined(TEST_VECTOR)
-bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
+bool shotGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
 #else
-bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
+bool shotGun::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 
 {
@@ -128,3 +143,4 @@ bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
     }
     return false;
 }
+} // namespace guns

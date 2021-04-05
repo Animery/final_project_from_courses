@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../include/engine.hpp"
-#include "Gun.hpp"
-#include "GunSimple.hpp"
+#include "gun/gun.hpp"
+
 
 #include "Enemy.hpp"
 #include "Player.hpp"
@@ -34,7 +34,7 @@ private:
     my_engine::gfx_prog* gfx01;
 
     std::unique_ptr<Player> player;
-    std::unique_ptr<Gun>    gun_current;
+    std::unique_ptr<guns::Gun>    gun_current;
 
 #if defined(TEST_VECTOR)
     std::vector<Enemy*> enemy_list;

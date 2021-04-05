@@ -1,7 +1,12 @@
 #pragma once
 
 // #include "../include/engine.hpp"
-#include "Gun.hpp"
+#include "gun.hpp"
+
+
+namespace guns
+{
+    
 
 class GunSimple : public Gun
 {
@@ -49,3 +54,4 @@ private:
 
     // Bullet* bullet = nullptr;
 };
+} // namespace guns
