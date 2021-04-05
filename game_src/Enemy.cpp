@@ -5,12 +5,13 @@
 Enemy::Enemy(my_engine::vec2 pos)
 {
     current_tank_pos       = pos;
-    half_size              = 0.04f;
+    half_size              = 0.015f;
     current_tank_direction = 0.0f;
     current_head_direction = 0.0f;
     health                 = 100;
-    speed                  = 0.0003125f / 2.0f;
-    speed_diagonal         = 0.00022097f;
+    speed                  = 0.0003125f / 2.f;
+    speed_diagonal         = 0.00022097f / 2.f;
+    speed_rotation         = 0.0015f / 2.f;
 
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
@@ -86,9 +87,9 @@ void Enemy::update_direction(const float            delta,
 
     need_direction = -need_direction + gameConst::half_pi;
     current_tank_direction += gameConst::half_pi;
-    
+
     float delta_rotation = need_direction - current_tank_direction;
-    delta_rotation = -delta_rotation;
+    delta_rotation       = -delta_rotation;
 
     if (delta_rotation >= 0)
     {
@@ -130,5 +131,4 @@ void Enemy::update_direction(const float            delta,
     //           << std::endl;
     // std::cout << "delta_rotation : " << delta_rotation << std::endl;
     // std::cout << "####################" << std::endl;
-
 }

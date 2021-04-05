@@ -44,9 +44,11 @@ private:
     std::unique_ptr<Texture> texture_corpse;
     std::unique_ptr<Texture> texture_head;
     std::unique_ptr<Texture> texture_bullet;
+    std::unique_ptr<Texture> texture_spider;
 
     my_engine::RenderObj* tank_obj   = nullptr;
     my_engine::RenderObj* bullet_obj = nullptr;
+    my_engine::RenderObj* enemy_1   = nullptr;
 
     std::array<bool, 8> controls{ false };
     // my_engine::matrix2x3 matrix;

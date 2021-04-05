@@ -13,7 +13,7 @@ game_impl::game_impl(my_engine::engine* _engine)
     float temp_pos_x;
     float temp_pos_y;
 
-    for (size_t i = 0; i < 4000; i++)
+    for (size_t i = 0; i < 100; i++)
     {
         temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
@@ -81,6 +81,14 @@ void game_impl::on_initialize()
         Image image = Image::loadFromFile("res/bullet.png");
         texture_bullet->setImage(image);
     }
+
+    texture_spider = std::make_unique<Texture>(tex_name);
+    {
+        Image image = Image::loadFromFile("res/spider.png");
+        texture_spider->setImage(image);
+    }
+    
+
     // Texture init
 
     // Render_obj
@@ -91,6 +99,10 @@ void game_impl::on_initialize()
     bullet_obj = my_engine::create_RenderObj();
     bullet_obj->setProg(gfx01);
     bullet_obj->load_mesh_from_file("res/bullet.txt");
+
+    enemy_1 = my_engine::create_RenderObj();
+    enemy_1->setProg(gfx01);
+    enemy_1->load_mesh_from_file("res/enemy_1.txt");
     // Render_obj
 
     // Gun
@@ -186,6 +198,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
 void game_impl::on_render()
 {
+    // RENDER BULLETS
 #if defined(TEST_VECTOR)
     std::vector<Bullet*>* temp_bullets = gun_current->getList_bullets();
 #else
@@ -195,10 +208,14 @@ void game_impl::on_render()
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
+    // RENDER BULLETS
 
+    // RENDER PLAYER
     engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
     engine->render(*tank_obj, *texture_head, player->getMatrix_head());
+    // RENDER PLAYER
 
+    // RENDER ENEMY
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
     {
         if (enemy.operator*()->getHealth() <= 0)
@@ -208,8 +225,8 @@ void game_impl::on_render()
         }
         else
         {
-            engine->render(*tank_obj,
-                           *texture_corpse,
+            engine->render(*enemy_1,
+                           *texture_spider,
                            enemy.operator*()->getMatrix_corpse());
             // engine->render(
             //     *tank_obj, *texture_head,
@@ -217,6 +234,7 @@ void game_impl::on_render()
             ++enemy;
         }
     }
+    // RENDER ENEMY
 }
 
 void game_impl::add_enemy(my_engine::vec2 pos_enemy)
