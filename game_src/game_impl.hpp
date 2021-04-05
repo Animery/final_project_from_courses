@@ -54,6 +54,7 @@ private:
     std::array<bool, 8> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
+    size_t max_enemy = 10;
     // my_engine::matrix2x3 matrix;
     // my_engine::matrix2x3 aspect = my_engine::matrix2x3::scale(1, 640.f /
     // 480.f); my_engine::vec2      current_tank_pos       = { 0.f, 0.f }; float

@@ -246,7 +246,7 @@ void game_impl::on_render()
 
 void game_impl::add_enemy(my_engine::vec2 pos_enemy)
 {
-    if (enemy_list.size() < 10)
+    if (enemy_list.size() < max_enemy)
     {
         enemy_list.push_back(new Enemy(pos_enemy));
     }

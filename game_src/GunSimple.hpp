@@ -42,7 +42,7 @@ private:
 
     Timer timer_to_shoot;
     // 1 in X milliseconds
-    unsigned int speed_shoot   = 20;
+    unsigned int speed_shoot   = 400;
     float        speed_bullet  = 0.001f;
     float        damage_bullet = 10.f;
     bool         readyGun;

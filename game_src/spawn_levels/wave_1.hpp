@@ -25,7 +25,7 @@ private:
     Timer  m_timer;
     size_t current_timer = 0;
     size_t count_timer   = 1;
-    float  timer_length  = 100;
+    float  timer_length  = 300;
     bool   readyTimer    = true;
 };
 } // namespace spawn
