@@ -226,6 +226,7 @@ void Player::update_Head_dirrection()
     // std::cout << "####################" << std::endl;
 
     current_head_direction = -a;
+    // std::cout << "current_head_direction : " << current_head_direction << std::endl;
 }
 
 // void Player::loadRenderObj() {}
