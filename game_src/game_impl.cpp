@@ -1,4 +1,5 @@
 #include "game_impl.hpp"
+#include <ctime>
 // #include "Bullet.hpp"
 // #include <cmath>
 
@@ -8,17 +9,25 @@ namespace my_game
 game_impl::game_impl(my_engine::engine* _engine)
 {
     engine = _engine;
-    for (size_t i = 0; i < 1; i++)
+    srand(time(NULL));
+    float temp_pos_x;
+    float temp_pos_y;
+
+    for (size_t i = 0; i < 4000; i++)
     {
-        enemy_list.push_back(new Enemy({ 0.5, 0.5 }));
-        enemy_list.push_back(new Enemy({ -0.5, 0.5 }));
-        enemy_list.push_back(new Enemy({ 0.5, -0.5 }));
-        enemy_list.push_back(new Enemy({ -0.5, -0.5 }));
+        temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+        temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+        add_enemy({ temp_pos_x, temp_pos_y });
+        // add_enemy({ 0.5, 0.5 });
+        // add_enemy({ -0.5, 0.5 });
+        // add_enemy({ 0.5, -0.5 });
+        // add_enemy({ -0.5, -0.5 });
     }
 
     // enemy_list.push_back(new Enemy);
     std::cout << "sizeof Player" << sizeof(Player) << std::endl;
     std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
+    std::cout << "size enemy_list" << enemy_list.size() << std::endl;
     std::cout << "+++ ctor game_impl" << std::endl;
 }
 
@@ -171,13 +180,17 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
     for (auto&& monster : enemy_list)
     {
-        monster->update(delta,player->getCurrent_tank_pos());
+        monster->update(delta, player->getCurrent_tank_pos());
     }
 }
 
 void game_impl::on_render()
 {
+#if defined(TEST_VECTOR)
+    std::vector<Bullet*>* temp_bullets = gun_current->getList_bullets();
+#else
     std::list<Bullet*>* temp_bullets = gun_current->getList_bullets();
+#endif // TEST_VECTOR
     for (auto&& bullet : *temp_bullets)
     {
         engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
@@ -198,11 +211,17 @@ void game_impl::on_render()
             engine->render(*tank_obj,
                            *texture_corpse,
                            enemy.operator*()->getMatrix_corpse());
-            engine->render(
-                *tank_obj, *texture_head, enemy.operator*()->getMatrix_head());
+            // engine->render(
+            //     *tank_obj, *texture_head,
+            //     enemy.operator*()->getMatrix_head());
             ++enemy;
         }
     }
+}
+
+void game_impl::add_enemy(my_engine::vec2 pos_enemy)
+{
+    enemy_list.push_back(new Enemy(pos_enemy));
 }
 
 } // namespace my_game

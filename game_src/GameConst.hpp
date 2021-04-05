@@ -1,5 +1,11 @@
 #pragma once
 
+#define TEST_VECTOR
+
+// #if !defined(TEST_VECTOR)
+// #define TEST_LIST
+// #endif // MACRO
+
 #define DEBUG_LEVEL
 // #define DEBUG_LEVEL_2
 
@@ -11,8 +17,8 @@
 namespace gameConst
 {
 
-constexpr size_t screen_width  = 320 * 6; // * 6 = 1920
-constexpr size_t screen_height = 180 * 6; // * 6 = 1080
+constexpr size_t screen_width  = 320 * 12; // * 6 = 1920
+constexpr size_t screen_height = 180 * 12; // * 6 = 1080
 // constexpr size_t screen_width  = 1080;
 // constexpr size_t screen_height = 1080;
 

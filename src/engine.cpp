@@ -185,11 +185,11 @@ private:
     bool   show_another_window = false;
     ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    SDL_Window*   window     = nullptr;
-    game* m_game = nullptr;
+    SDL_Window* window = nullptr;
+    game*       m_game = nullptr;
 
-    size_t        width      = gameConst::screen_width;  // * 6 = 1920
-    size_t        height     = gameConst::screen_height; // * 6 = 1080
+    size_t        width      = gameConst::screen_width;
+    size_t        height     = gameConst::screen_height;
     SDL_GLContext gl_context = nullptr;
 
     SDL_AudioDeviceID              audio_device;
@@ -208,7 +208,7 @@ engine_impl::~engine_impl()
     std::cout << "--- destor engine_impl" << std::endl;
 }
 
-std::string engine_impl::initialize(std::string_view config, game* temp_game) 
+std::string engine_impl::initialize(std::string_view config, game* temp_game)
 {
     m_game = temp_game;
 
@@ -247,7 +247,8 @@ std::string engine_impl::initialize(std::string_view config, game* temp_game)
                               SDL_WINDOWPOS_CENTERED,
                               width,
                               height,
-                              SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI |
+                                  SDL_WINDOW_BORDERLESS);
     if (window == nullptr)
     {
         const char* err_message = SDL_GetError();

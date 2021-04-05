@@ -29,7 +29,11 @@ void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
     }
 }
 
+#if defined(TEST_VECTOR)
+void GunSimple::update_gun(float delta, std::vector<Enemy*>& enemy_list)
+#else
 void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
+#endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
 
@@ -41,7 +45,12 @@ unsigned int GunSimple::count_bullets()
     return bullets.size();
 }
 
+#if defined(TEST_VECTOR)
+void GunSimple::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
+#else
 void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
+#endif // TEST_VECTOR
+
 {
     for (auto it = bullets.begin(); it != bullets.end();)
     {
@@ -72,12 +81,21 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
     }
 }
 
+#if defined(TEST_VECTOR)
+std::vector<Bullet*>* GunSimple::getList_bullets()
+#else
 std::list<Bullet*>* GunSimple::getList_bullets()
+#endif // TEST_VECTOR
 {
     return &bullets;
 }
 
+#if defined(TEST_VECTOR)
+bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
+#else
 bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
+#endif // TEST_VECTOR
+
 {
     my_engine::vec2 pos_bullet_A = bullet->getPosition_A();
     my_engine::vec2 pos_bullet_B = bullet->getPosition_B();
@@ -100,7 +118,7 @@ bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
             // std::cout << "position bullet B\t" << pos_bullet_B << std::endl;
             // std::cout << "position enemy A\t" << pos_enemy_A << std::endl;
             // std::cout << "position enemy B\t" << pos_enemy_B << std::endl;
-            
+
             return true;
         }
         else
