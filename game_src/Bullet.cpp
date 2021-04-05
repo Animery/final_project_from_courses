@@ -22,7 +22,7 @@ Bullet::~Bullet()
     #endif
 }
 
-void Bullet::update(float delta)
+void Bullet::update_bullet(float delta)
 {
     my_engine::matrix2x3 rotation_matrix =
         my_engine::matrix2x3::rotation(direction);

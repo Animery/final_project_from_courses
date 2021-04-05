@@ -14,7 +14,7 @@ public:
            float            temp_speed,
            float            temp_damage);
     ~Bullet();
-    void update(float delta);
+    void update_bullet(float delta);
 
     float getDamage();
 

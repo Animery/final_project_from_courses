@@ -37,7 +37,7 @@ void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
 {
     update_bullets(delta, enemy_list);
 
-    timer_to_shoot.update(delta);
+    timer_to_shoot.update_timer(delta);
 }
 
 unsigned int GunSimple::count_bullets()
@@ -54,7 +54,7 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
 {
     for (auto it = bullets.begin(); it != bullets.end();)
     {
-        it.operator*()->update(delta);
+        it.operator*()->update_bullet(delta);
 
         if (check_collision(it.operator*(), enemy_list))
         {

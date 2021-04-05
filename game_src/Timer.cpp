@@ -11,7 +11,7 @@ Timer::~Timer()
     std::cout << "--- destor Timer" << std::endl;
 }
 
-void Timer::update(const float delta)
+void Timer::update_timer(const float delta)
 {
     if (isRunning)
     {

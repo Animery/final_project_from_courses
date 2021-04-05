@@ -8,7 +8,7 @@ public:
     Timer();
     ~Timer();
 
-    void update(const float delta);
+    void update_timer(const float delta);
     void start(const float duration);
     void setCallback(std::function<void()> callback);
 

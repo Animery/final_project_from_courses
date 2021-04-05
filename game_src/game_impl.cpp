@@ -1,4 +1,6 @@
 #include "game_impl.hpp"
+#include "spawn_levels/wave_1.hpp"
+
 #include <ctime>
 // #include "Bullet.hpp"
 // #include <cmath>
@@ -13,18 +15,22 @@ game_impl::game_impl(my_engine::engine* _engine)
     float temp_pos_x;
     float temp_pos_y;
 
-    for (size_t i = 0; i < 100; i++)
-    {
-        temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-        temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-        add_enemy({ temp_pos_x, temp_pos_y });
-        // add_enemy({ 0.5, 0.5 });
-        // add_enemy({ -0.5, 0.5 });
-        // add_enemy({ 0.5, -0.5 });
-        // add_enemy({ -0.5, -0.5 });
-    }
+    //  SPAWN
 
-    // enemy_list.push_back(new Enemy);
+    spawn_monster = std::make_unique<spawn::wave_1>(this);
+    // for (size_t i = 0; i < 100; i++)
+    // {
+    //     temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+    //     temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+    //     add_enemy({ temp_pos_x, temp_pos_y });
+    //     // add_enemy({ 0.5, 0.5 });
+    //     // add_enemy({ -0.5, 0.5 });
+    //     // add_enemy({ 0.5, -0.5 });
+    //     // add_enemy({ -0.5, -0.5 });
+    // }
+
+    //  SPAWN
+
     std::cout << "sizeof Player" << sizeof(Player) << std::endl;
     std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
     std::cout << "size enemy_list" << enemy_list.size() << std::endl;
@@ -87,7 +93,6 @@ void game_impl::on_initialize()
         Image image = Image::loadFromFile("res/spider.png");
         texture_spider->setImage(image);
     }
-    
 
     // Texture init
 
@@ -180,6 +185,8 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
     const float delta = frame_delta.count() * 0.001f;
 
+    spawn_monster->update_wave(delta);
+
     if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
     {
         gun_current->shoot(player->getCurrent_tank_pos(),
@@ -239,7 +246,10 @@ void game_impl::on_render()
 
 void game_impl::add_enemy(my_engine::vec2 pos_enemy)
 {
-    enemy_list.push_back(new Enemy(pos_enemy));
+    if (enemy_list.size() < 10)
+    {
+        enemy_list.push_back(new Enemy(pos_enemy));
+    }
 }
 
 } // namespace my_game
