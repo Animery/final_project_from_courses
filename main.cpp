@@ -1,19 +1,19 @@
 // #include "game_src/game_impl.hpp"
 // #include "include/Image.hpp"
 // #include "include/Texture.hpp"
-#include "game_src/GameConst.hpp"
+// #include "game_src/GameConst.hpp"
 #include "include/engine.hpp"
 
-#include <algorithm>
-#include <array>
+// #include <algorithm>
+// #include <array>
 #include <cassert>
-#include <cmath>
-#include <cstdlib>
-#include <fstream>
+// #include <cmath>
+// #include <cstdlib>
+// #include <fstream>
 #include <iostream>
 #include <memory>
-#include <numbers>
-#include <string_view>
+// #include <numbers>
+// #include <string_view>
 #include <thread>
 
 using clock_timer = std::chrono::high_resolution_clock;
@@ -25,23 +25,20 @@ using time_point  = std::chrono::time_point<clock_timer, nano_sec>;
 int main(int /*argc*/, char* /*argv*/[])
 {
 
-    std::unique_ptr<my_engine::engine, void (*)(my_engine::engine*)> engine(
-        my_engine::create_engine(), my_engine::destroy_engine);
-
     std::unique_ptr<my_engine::game, void (*)(my_engine::game*)> game(
-        my_engine::create_game(engine.get()), my_engine::destroy_game);
+        my_engine::create_game(), my_engine::destroy_game);
 
     game->on_initialize();
 
-    // SoundBuffer
-    my_engine::SoundBuffer* s =
-        engine->create_sound_buffer("res/t2_no_problemo.wav");
-    my_engine::SoundBuffer* music =
-        engine->create_sound_buffer("res/8-bit_detective.wav");
-    assert(music != nullptr);
+    // // SoundBuffer
+    // my_engine::SoundBuffer* s =
+    //     my_engine::create_sound_buffer("res/t2_no_problemo.wav");
+    // my_engine::SoundBuffer* music =
+    //    my_engine::create_sound_buffer("res/8-bit_detective.wav");
+    // assert(music != nullptr);
 
-    music->play(my_engine::SoundBuffer::properties::looped);
-    // SoundBuffer
+    // music->play(my_engine::SoundBuffer::properties::looped);
+    // // SoundBuffer
 
     // Time
     clock_timer timer;
@@ -71,10 +68,10 @@ int main(int /*argc*/, char* /*argv*/[])
 
 
         game->on_render();
-        engine->swap_buffers();
+        my_engine::swap_buffers();
     }
 
-    engine->uninitialize();
+    my_engine::uninitialize();
 
     return EXIT_SUCCESS;
 }

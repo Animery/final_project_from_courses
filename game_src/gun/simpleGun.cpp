@@ -2,13 +2,15 @@
 
 namespace guns
 {
-    
-
 
 GunSimple::GunSimple()
     : readyGun(true)
 {
     timer_to_shoot.setCallback([&]() { readyGun = true; });
+    timer_to_clip.setCallback([&]() {
+        currentClip = maxClip;
+        readyGun    = true;
+    });
     std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
     std::cout << "+++ ctor GunSimple" << std::endl;
 }
@@ -29,9 +31,34 @@ void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
     {
         bullets.push_back(new Bullet(
             temp_position, temp_direction, speed_bullet, damage_bullet));
+        
+        --currentClip;
         readyGun = false;
-        timer_to_shoot.start(speed_shoot);
+
+        if (currentClip <= 0)
+        {
+            timer_to_clip.start(speed_reload);
+        }
+        else
+        {
+            timer_to_shoot.start(speed_shoot);
+        }
     }
+}
+
+std::string_view GunSimple::getNameGun()
+{
+    return name.data();
+}
+
+uint16_t GunSimple::getMaxClip() const
+{
+    return maxClip;
+}
+
+uint16_t GunSimple::getCurrentClip() const
+{
+    return currentClip;
 }
 
 #if defined(TEST_VECTOR)
@@ -43,6 +70,7 @@ void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
     update_bullets(delta, enemy_list);
 
     timer_to_shoot.update_timer(delta);
+    timer_to_clip.update_timer(delta);
 }
 
 unsigned int GunSimple::count_bullets()

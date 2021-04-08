@@ -10,7 +10,7 @@ namespace spawn
 spawn_enemy::~spawn_enemy()
 {
 #if defined(DEBUG_LEVEL)
-    std::cout << "destor spawn_enemy" << std::endl;
+    std::cout << "--- destor spawn_enemy" << std::endl;
 #endif // DEBUG_LEVEL
 }
 

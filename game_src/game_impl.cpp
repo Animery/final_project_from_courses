@@ -1,41 +1,28 @@
 #include "game_impl.hpp"
-#include "spawn_levels/wave_1.hpp"
-#include "gun/simpleGun.hpp"
-#include "gun/shotGun.hpp"
 
+#include "gun/shotGun.hpp"
+#include "gun/simpleGun.hpp"
+#include "spawn_levels/wave_1.hpp"
+
+#include <cassert>
 #include <ctime>
 // #include "Bullet.hpp"
 // #include <cmath>
 
+#include "../imgui_src/imgui.h"
+#include "../imgui_src/imgui_impl_opengl3.h"
+#include "../imgui_src/imgui_impl_sdl.h"
+
 namespace my_game
 {
 
-game_impl::game_impl(my_engine::engine* _engine)
+game_impl::game_impl()
 {
-    engine = _engine;
+
     srand(time(NULL));
-    // float temp_pos_x;
-    // float temp_pos_y;
 
-    //  SPAWN
-
-    spawn_monster = std::make_unique<spawn::wave_1>(this);
-    // for (size_t i = 0; i < 100; i++)
-    // {
-    //     temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-    //     temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-    //     add_enemy({ temp_pos_x, temp_pos_y });
-    //     // add_enemy({ 0.5, 0.5 });
-    //     // add_enemy({ -0.5, 0.5 });
-    //     // add_enemy({ 0.5, -0.5 });
-    //     // add_enemy({ -0.5, -0.5 });
-    // }
-
-    //  SPAWN
-
-    std::cout << "sizeof Player" << sizeof(Player) << std::endl;
-    std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
-    std::cout << "size enemy_list" << enemy_list.size() << std::endl;
+    // std::cout << "sizeof Player" << sizeof(Player) << std::endl;
+    // std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
     std::cout << "+++ ctor game_impl" << std::endl;
 }
 
@@ -58,7 +45,10 @@ bool game_impl::getIsRunning()
 
 void game_impl::on_initialize()
 {
-    engine->initialize("", this);
+    my_engine::window_mode mode{ gameConst::screen_width,
+                                 gameConst::screen_height,
+                                 false };
+    my_engine::initialize("My_Game", mode);
 
     // gfx_prog
     const std::string path("shader/");
@@ -69,6 +59,41 @@ void game_impl::on_initialize()
     gfx01->bind_attrib(2, "a_color");
     gfx01->link();
     // gfx_prog
+
+    // SoundBuffer
+
+    sounds.push_back(my_engine::create_sound_buffer("res/8-bit_detective.wav"));
+    sounds.push_back(my_engine::create_sound_buffer("res/t2_no_problemo.wav"));
+
+    for (const auto it : sounds)
+    {
+        assert(it != nullptr);
+    }
+
+    // assert(sounds[0] != nullptr);
+    // assert(sounds[1] != nullptr);
+
+    sounds[0]->play(my_engine::SoundBuffer::properties::looped);
+    // SoundBuffer
+
+    //  SPAWN
+
+    spawn_monster = std::make_unique<spawn::wave_1>(this);
+
+    // float temp_pos_x;
+    // float temp_pos_y;
+    // for (size_t i = 0; i < 4000; i++)
+    // {
+    //     temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+    //     temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+    //     add_enemy({ temp_pos_x, temp_pos_y });
+    //     // add_enemy({ 0.5, 0.5 });
+    //     // add_enemy({ -0.5, 0.5 });
+    //     // add_enemy({ 0.5, -0.5 });
+    //     // add_enemy({ -0.5, -0.5 });
+    // }
+
+    //  SPAWN
 
     // Texture init
     std::string tex_name = "s_texture";
@@ -113,8 +138,8 @@ void game_impl::on_initialize()
     // Render_obj
 
     // Gun
-    gun_current = std::make_unique<guns::shotGun>();
-    
+    // gun_current = std::make_unique<guns::shotGun>();
+    gun_current = std::make_unique<guns::GunSimple>();
     // Gun
 
     player    = std::make_unique<Player>();
@@ -127,7 +152,7 @@ void game_impl::on_initialize()
 
 void game_impl::on_event(my_engine::event& event)
 {
-    while (engine->read_event(event))
+    while (my_engine::read_event(event))
     {
         // std::cout << event << std::endl;
         switch (event.type)
@@ -188,22 +213,34 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
     const float delta = frame_delta.count() * 0.001f;
 
+    // UPDATE Monsters
     spawn_monster->update_wave(delta);
-
-    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
-    {
-        gun_current->shoot(player->getCurrent_tank_pos(),
-                           player->getCurrent_head_direction());
-    }
-
-    gun_current->update_gun(delta, enemy_list);
-
-    player->update(controls, delta);
 
     for (auto&& monster : enemy_list)
     {
         monster->update(delta, player->getCurrent_tank_pos());
     }
+    // UPDATE Monsters
+
+    // UPDATE Bullets
+    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
+    {
+        gun_current->shoot(player->getCurrent_tank_pos(),
+                           player->getCurrent_head_direction());
+    }
+    // UPDATE Bullets
+
+    // UPDATE Gun
+    gun_current->update_gun(delta, enemy_list);
+    // UPDATE Gun
+
+    // UPDATE Player
+    player->update(controls, delta);
+    // UPDATE Player
+
+    // UPDATE ImGui
+    update_imGui();
+    // UPDATE ImGui
 }
 
 void game_impl::on_render()
@@ -216,14 +253,9 @@ void game_impl::on_render()
 #endif // TEST_VECTOR
     for (auto&& bullet : *temp_bullets)
     {
-        engine->render(*bullet_obj, *texture_bullet, bullet->getMatrix());
+        my_engine::render(*bullet_obj, *texture_bullet, bullet->getMatrix());
     }
     // RENDER BULLETS
-
-    // RENDER PLAYER
-    engine->render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
-    engine->render(*tank_obj, *texture_head, player->getMatrix_head());
-    // RENDER PLAYER
 
     // RENDER ENEMY
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
@@ -235,16 +267,22 @@ void game_impl::on_render()
         }
         else
         {
-            engine->render(*enemy_1,
-                           *texture_spider,
-                           enemy.operator*()->getMatrix_corpse());
-            // engine->render(
-            //     *tank_obj, *texture_head,
-            //     enemy.operator*()->getMatrix_head());
+            my_engine::render(*enemy_1,
+                              *texture_spider,
+                              enemy.operator*()->getMatrix_corpse());
             ++enemy;
         }
     }
     // RENDER ENEMY
+
+    // RENDER PLAYER
+    my_engine::render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
+    my_engine::render(*tank_obj, *texture_head, player->getMatrix_head());
+    // RENDER PLAYER
+
+    // RENDER ImGui
+    my_engine::render_imgui();
+    // RENDER ImGui
 }
 
 void game_impl::add_enemy(my_engine::vec2 pos_enemy)
@@ -255,17 +293,77 @@ void game_impl::add_enemy(my_engine::vec2 pos_enemy)
     }
 }
 
+void game_impl::update_imGui()
+{
+    // ImGuiIO& io = ImGui::GetIO();
+    // (void)io;
+
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(my_engine::getWindow());
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin(
+            "fps",
+            nullptr,
+            ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoBackground); // Create a window called
+                                                // "Hello, world!" and append
+                                                // into it.
+        ImGui::Text(" %.3f ms/frame (%.1f FPS)",
+                    1000.0f / ImGui::GetIO().Framerate,
+                    ImGui::GetIO().Framerate);
+        ImGui::End();
+
+        ImGui::Begin("Player Status", nullptr, ImGuiWindowFlags_NoBackground
+                     /*ImGuiWindowFlags_NoTitleBar */);
+
+        ImGui::Text("Health  =  %.0f", player->getHealth());
+        ImGui::NewLine();
+        if (gun_current->getCurrentClip() > 0)
+        {
+        ImGui::Text("%s %u/%u",
+                    gun_current->getNameGun().data(),
+                    gun_current->getCurrentClip(),
+                    gun_current->getMaxClip());
+        }
+        else
+        {
+            ImGui::Text("%s %s",
+                    gun_current->getNameGun().data(),
+                    "reload");
+        }
+        
+        
+        // ImGui::SameLine();
+        // ImGui::NewLine();
+        // ImGui::Text("Player Status"); // Display some text (you can
+        // use a format strings too)
+        // ImGui::ColorEdit3(
+        //     "clear color",
+        //     (float*)&clear_color); // Edit 3 floats representing a color
+
+        // if (ImGui::Button(
+        //         "Button")) // Buttons return true when clicked (most widgets
+        //                    // return true when edited/activated)
+        //     counter++;
+
+        ImGui::End();
+    }
+}
+
 } // namespace my_game
 
 static bool already_exist_game = false;
 
-my_engine::game* my_engine::create_game(my_engine::engine* engine)
+my_engine::game* my_engine::create_game()
 {
     if (already_exist_game)
     {
         throw std::runtime_error("engine already exist");
     }
-    my_engine::game* result = new my_game::game_impl(engine);
+    my_engine::game* result = new my_game::game_impl();
     already_exist_game      = true;
     return result;
 }

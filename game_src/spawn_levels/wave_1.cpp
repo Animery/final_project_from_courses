@@ -18,14 +18,14 @@ wave_1::wave_1(my_game::game_impl* temp_game)
     });
 
 #if defined(DEBUG_LEVEL)
-    std::cout << "destor spawn_enemy" << std::endl;
+    std::cout << "--- ctor wave_1" << std::endl;
 #endif // DEBUG_LEVEL
 }
 
 wave_1::~wave_1()
 {
 #if defined(DEBUG_LEVEL)
-    std::cout << "destor spawn_enemy" << std::endl;
+    std::cout << "--- destor wave_1" << std::endl;
 #endif // DEBUG_LEVEL
 }
 

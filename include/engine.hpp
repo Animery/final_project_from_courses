@@ -3,6 +3,7 @@
 #include "Texture.hpp"
 #include "figure_struct.hpp"
 #include "matrix.hpp"
+
 // #include <iosfwd>
 #include <chrono>
 #include <string>
@@ -11,6 +12,7 @@
 #include <vector>
 
 typedef int GLint;
+class SDL_Window;
 
 namespace my_engine
 {
@@ -57,38 +59,52 @@ struct event
 
 std::ostream& operator<<(std::ostream& stream, const event e);
 
-class engine;
+struct window_mode
+{
+    size_t width         = 640;
+    size_t heigth        = 480;
+    bool   is_fullscreen = false;
+};
+
+// class engine;
 class RenderObj;
 class gfx_prog;
 class SoundBuffer;
-class game;
 
-/// return not null on success
-
-class engine
+class game
 {
+private:
 public:
-    virtual ~engine();
-    /// create main window
-    /// on success return empty string
-    virtual std::string initialize(std::string_view config, game* game) = 0;
-    virtual float       get_time_from_init()                = 0;
-
-    /// pool event from input queue
-    /// return true if more events in queue
-    virtual bool read_event(event& e)         = 0;
-    virtual bool is_key_down(const keys_type) = 0;
-
-    virtual void render(/*const*/ RenderObj&, /*const*/ Texture&) = 0;
-    virtual void render(RenderObj&, Texture&, const matrix2x3&)   = 0;
-    // virtual void render(RenderObj*, Texture*, const matrix2x3&)= 0;
-    virtual void swap_buffers() = 0;
-
-    virtual SoundBuffer* create_sound_buffer(std::string_view path) = 0;
-    virtual void         destroy_sound_buffer(SoundBuffer*)         = 0;
-
-    virtual void uninitialize() = 0;
+    virtual ~game();
+    virtual bool getIsRunning()                                   = 0;
+    virtual void on_initialize()                                  = 0;
+    virtual void on_event(my_engine::event&)                      = 0;
+    virtual void on_update(std::chrono::microseconds frame_delta) = 0;
+    // virtual void on_render(RenderObj&, Texture&) const         = 0;
+    virtual void on_render() = 0;
 };
+
+my_engine::game* create_game();
+void             destroy_game(my_engine::game* e);
+
+// global function engine
+std::string initialize(std::string_view   title,
+                       const window_mode& desired_window_mode);
+
+SDL_Window* getWindow();
+float       get_time_from_init();
+/// pool event from input queue
+/// return true if more events in queue
+bool read_event(event& e);
+
+// void update_imGui();
+void render_imgui();
+
+void render(RenderObj&, Texture&, const matrix2x3&);
+void swap_buffers();
+
+void uninitialize();
+// global function engine
 
 class gfx_prog
 {
@@ -103,6 +119,10 @@ public:
     virtual void setUniform(Texture& tex) const                        = 0;
     virtual void setUniform(std::string_view name, const matrix2x3& m) = 0;
 };
+
+gfx_prog* create_gfx_prog(const std::string& path,
+                          const std::string& name_shader);
+void      destroy_gfx_prog(gfx_prog* e);
 
 class RenderObj
 {
@@ -124,6 +144,9 @@ public:
     virtual void addIndices(const std::vector<unsigned>& data)         = 0;
 };
 
+RenderObj* create_RenderObj();
+void       destroy_RenderObj(RenderObj* e);
+
 class SoundBuffer
 {
 public:
@@ -137,30 +160,7 @@ public:
     virtual void play(const properties) = 0;
 };
 
-class game
-{
-private:
-public:
-    virtual ~game();
-    virtual bool getIsRunning()                                   = 0;
-    virtual void on_initialize()                                  = 0;
-    virtual void on_event(my_engine::event&)                      = 0;
-    virtual void on_update(std::chrono::microseconds frame_delta) = 0;
-    // virtual void on_render(RenderObj&, Texture&) const         = 0;
-    virtual void on_render()  = 0;
-};
-
-engine* create_engine();
-void    destroy_engine(engine* e);
-
-RenderObj* create_RenderObj();
-void       destroy_RenderObj(RenderObj* e);
-
-gfx_prog* create_gfx_prog(const std::string& path,
-                          const std::string& name_shader);
-void      destroy_gfx_prog(gfx_prog* e);
-
-my_engine::game* create_game(my_engine::engine* engine);
-void             destroy_game(my_engine::game* e);
+SoundBuffer* create_sound_buffer(std::string_view path);
+void         destroy_sound_buffer(SoundBuffer*);
 
 } // namespace my_engine

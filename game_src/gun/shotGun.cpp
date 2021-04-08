@@ -7,6 +7,10 @@ shotGun::shotGun()
     : readyGun(true)
 {
     timer_to_shoot.setCallback([&]() { readyGun = true; });
+    timer_to_clip.setCallback([&]() {
+        currentClip = maxClip;
+        readyGun    = true;
+    });
     std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
     std::cout << "+++ ctor shotGun" << std::endl;
 }
@@ -29,19 +33,45 @@ void shotGun::shoot(my_engine::vec2& temp_position, float temp_direction)
         {
             float           rand_factor = rand() % 1001 / 10000.f - 0.05f;
             my_engine::vec2 rand_pos{
-                temp_position.x + std::abs(temp_position.x * rand_factor ),
-                temp_position.y + std::abs(temp_position.y * rand_factor )
+                temp_position.x +
+                    std::abs(temp_position.x * (rand_factor / 1.5f)),
+                temp_position.y +
+                    std::abs(temp_position.y * (rand_factor / 1.5f))
             };
             bullets.push_back(
                 new Bullet(rand_pos,
-                           temp_direction + temp_direction * rand_factor / 1.5f,
-                           speed_bullet ,
+                           temp_direction + temp_direction * rand_factor / 1.f,
+                           speed_bullet,
                            damage_bullet + damage_bullet * rand_factor * 10));
         }
-
+        
+        --currentClip;
         readyGun = false;
-        timer_to_shoot.start(speed_shoot);
+
+        if (currentClip > 0)
+        {
+            timer_to_shoot.start(speed_shoot);
+        }
+        else
+        {
+            timer_to_clip.start(speed_reload);
+        }
     }
+}
+
+std::string_view shotGun::getNameGun()
+{
+    return name.data();
+}
+
+uint16_t shotGun::getMaxClip() const
+{
+    return maxClip;
+}
+
+uint16_t shotGun::getCurrentClip() const
+{
+    return currentClip;
 }
 
 #if defined(TEST_VECTOR)
@@ -53,6 +83,7 @@ void shotGun::update_gun(float delta, std::list<Enemy*>& enemy_list)
     update_bullets(delta, enemy_list);
 
     timer_to_shoot.update_timer(delta);
+    timer_to_clip.update_timer(delta);
 }
 
 unsigned int shotGun::count_bullets()

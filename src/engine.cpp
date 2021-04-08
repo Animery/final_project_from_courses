@@ -5,12 +5,17 @@
 #include "../include/SoundBuffer_impl.hpp"
 #include "../include/shader.hpp"
 
-// #include "../include/engine.hpp"
-// #include "../include/Texture.hpp"
+#include "../imgui_src/imgui.h"
+#include "../imgui_src/imgui_impl_opengl3.h"
+#include "../imgui_src/imgui_impl_sdl.h"
+
+#include "../include/glad/glad.h"
+#include <SDL2/SDL.h>
 
 #include <algorithm>
 #include <array>
 // #include <cassert>
+#include <atomic>
 #include <chrono>
 #include <cmath>
 #include <exception>
@@ -19,12 +24,6 @@
 #include <stdexcept>
 #include <string_view>
 #include <vector>
-
-#include "../imgui_src/imgui.h"
-#include "../imgui_src/imgui_impl_opengl3.h"
-#include "../imgui_src/imgui_impl_sdl.h"
-#include "../include/glad/glad.h"
-#include <SDL2/SDL.h>
 
 using clock_timer = std::chrono::high_resolution_clock;
 using nano_sec    = std::chrono::nanoseconds;
@@ -42,28 +41,6 @@ callback_opengl_debug(GLenum                       source,
                       GLsizei                      length,
                       const GLchar*                message,
                       [[maybe_unused]] const void* userParam);
-
-// static std::array<std::string_view, 17> event_names = {
-//     { /// input events
-//       "left_pressed",
-//       "left_released",
-//       "right_pressed",
-//       "right_released",
-//       "up_pressed",
-//       "up_released",
-//       "down_pressed",
-//       "down_released",
-//       "select_pressed",
-//       "select_released",
-//       "start_pressed",
-//       "start_released",
-//       "button1_pressed",
-//       "button1_released",
-//       "button2_pressed",
-//       "button2_released",
-//       /// virtual console events
-//       "turn_off" }
-// };
 
 std::ostream& operator<<(std::ostream& stream, const input_data& i)
 {
@@ -144,7 +121,6 @@ static bool check_input(const SDL_Event& e, const bind*& result)
         return b.key == e.key.keysym.sym;
     });
 
-    // if (it != end(keys))
     if (it != keys.end())
     {
         result = &(*it);
@@ -153,65 +129,183 @@ static bool check_input(const SDL_Event& e, const bind*& result)
     return false;
 }
 
-class engine_impl : public engine
+// Global variables! /////////////////////////////////////////////////////
+std::ostream&     log(std::cout);
+std::atomic<bool> already_exist = false;
+
+SDL_Window*   window     = nullptr;
+SDL_GLContext gl_context = nullptr;
+bool          core_or_es = true;
+
+SDL_AudioDeviceID audio_device;
+SDL_AudioSpec     audio_device_spec;
+
+std::vector<my_engine::SoundBuffer_impl*> sounds;
+// no more Globals ////////////////////////////////////////////////////////////
+
+void initImGui(const char* glsl_version)
 {
-public:
-    engine_impl();
-    ~engine_impl();
-    std::string initialize(std::string_view config, game* game) final;
-    float       get_time_from_init() final;
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable
+    // Keyboard Controls io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; //
+    // Enable Gamepad Controls
 
-    bool read_event(event& e) final;
-    bool is_key_down(const enum keys_type key) final;
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    // ImGui::StyleColorsClassic();
 
-    void render(RenderObj&, Texture&);
-    void render(RenderObj&, Texture&, const matrix2x3&);
-    // void render(RenderObj*, Texture*, const matrix2x3&);
-    void swap_buffers() final;
-
-    SoundBuffer* create_sound_buffer(std::string_view path) final;
-    void         destroy_sound_buffer(SoundBuffer*) final;
-
-    void uninitialize() final;
-
-private:
-    void        initImGui(const char* glsl_version);
-    void        initAudio();
-    void        renderImGui();
-    static void audio_callback(void*, uint8_t*, int);
-
-    // Our state
-    bool   show_demo_window    = true;
-    bool   show_another_window = false;
-    ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    SDL_Window* window = nullptr;
-    game*       m_game = nullptr;
-
-    size_t        width      = gameConst::screen_width;
-    size_t        height     = gameConst::screen_height;
-    SDL_GLContext gl_context = nullptr;
-
-    SDL_AudioDeviceID              audio_device;
-    SDL_AudioSpec                  audio_device_spec;
-    std::vector<SoundBuffer_impl*> sounds;
-
-    bool core_or_es = true;
-};
-
-engine_impl::engine_impl()
-{
-    std::cout << "+++ ctor engine_impl" << std::endl;
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    std::cout << "glsl_version: " << glsl_version << std::endl;
+    
+    // Load Fonts
+    // - If no fonts are loaded, dear imgui will use the default font. You can
+    // also load multiple fonts and use ImGui::PushFont()/PopFont() to select
+    // them.
+    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you
+    // need to select the font among multiple.
+    // - If the file cannot be loaded, the function will return NULL. Please
+    // handle those errors in your application (e.g. use an assertion, or
+    // display an error and quit).
+    // - The fonts will be rasterized at a given size (w/ oversampling) and
+    // stored into a texture when calling
+    // ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame
+    // below will call.
+    // - Read 'docs/FONTS.md' for more instructions and details.
+    // - Remember that in C/C++ if you want to include a backslash \ in a string
+    // literal you need to write a double backslash \\ !
+    // io.Fonts->AddFontDefault();
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Medium.ttf", 24.0f);
+    // io.Fonts->AddFontFromFileTTF("fonts/Cousine-Regular.ttf", 15.0f);
+    // io.Fonts->AddFontFromFileTTF("fonts/DroidSans.ttf", 16.0f);
+    // io.Fonts->AddFontFromFileTTF("fonts/ProggyTiny.ttf", 10.0f);
+   
+    // Init ImGui
 }
-engine_impl::~engine_impl()
+
+void audio_callback(void* engine_ptr, uint8_t* stream, int stream_size)
 {
-    std::cout << "--- destor engine_impl" << std::endl;
+    // no sound default
+    SDL_memset(stream, 0, stream_size);
+    // std::fill_n(stream, stream_size, '\0');
+
+    // engine_impl* e = static_cast<engine_impl*>(engine_ptr);
+
+    for (SoundBuffer_impl* snd : sounds)
+    {
+        if (snd->is_playing)
+        {
+            uint32_t rest         = snd->length - snd->current_index;
+            uint8_t* current_buff = &snd->buffer[snd->current_index];
+
+            if (rest <= static_cast<uint32_t>(stream_size))
+            {
+                // copy rest to buffer
+                SDL_MixAudioFormat(stream,
+                                   current_buff,
+                                   audio_device_spec.format,
+                                   rest,
+                                   SDL_MIX_MAXVOLUME);
+                snd->current_index += rest;
+            }
+            else
+            {
+                SDL_MixAudioFormat(stream,
+                                   current_buff,
+                                   audio_device_spec.format,
+                                   static_cast<uint32_t>(stream_size),
+                                   SDL_MIX_MAXVOLUME);
+                snd->current_index += static_cast<uint32_t>(stream_size);
+            }
+
+            if (snd->current_index == snd->length)
+            {
+                if (snd->is_looped)
+                {
+                    // start from begining
+                    snd->current_index = 0;
+                }
+                else
+                {
+                    snd->is_playing = false;
+                }
+            }
+        }
+    }
 }
 
-std::string engine_impl::initialize(std::string_view config, game* temp_game)
+void initAudio()
 {
-    m_game = temp_game;
+    // initialize audio
+    audio_device_spec.freq     = 48000;
+    audio_device_spec.format   = AUDIO_S16LSB;
+    audio_device_spec.channels = 2;
+    audio_device_spec.samples  = 1024; // must be power of 2
+    audio_device_spec.callback = audio_callback;
+    audio_device_spec.userdata = nullptr;
 
+    const int num_audio_drivers = SDL_GetNumAudioDrivers();
+
+    // for (int i = 0; i < num_audio_drivers; ++i)
+    // {
+    //     std::cout << "audio_driver #:" << i << " " << SDL_GetAudioDriver(i)
+    //               << '\n';
+    // }
+    std::cout << std::flush;
+
+    const char* default_audio_device_name = nullptr;
+
+    // SDL_FALSE - mean get only OUTPUT audio devices
+    const int num_audio_devices = SDL_GetNumAudioDevices(SDL_FALSE);
+    if (num_audio_devices > 0)
+    {
+        default_audio_device_name =
+            SDL_GetAudioDeviceName(/*num_audio_devices - 1*/ 0, SDL_FALSE);
+        for (int i = 0; i < num_audio_devices; ++i)
+        {
+            std::cout << "audio device #" << i << ": "
+                      << SDL_GetAudioDeviceName(i, SDL_FALSE) << '\n';
+        }
+    }
+    std::cout << std::flush;
+
+    audio_device = SDL_OpenAudioDevice(default_audio_device_name,
+                                       0,
+                                       &audio_device_spec,
+                                       nullptr,
+                                       SDL_AUDIO_ALLOW_ANY_CHANGE);
+
+    if (audio_device == 0)
+    {
+        std::cerr << "failed open audio device: " << SDL_GetError();
+        throw std::runtime_error("audio failed");
+    }
+    else
+    {
+        std::cout << "--------------------------------------------\n";
+        std::cout << "audio device selected: " << default_audio_device_name
+                  << '\n'
+                  << "freq: " << audio_device_spec.freq << '\n'
+                  << "format: "
+                  << get_sound_format_name(audio_device_spec.format) << '\n'
+                  << "channels: "
+                  << static_cast<uint32_t>(audio_device_spec.channels) << '\n'
+                  << "samples: " << audio_device_spec.samples << '\n'
+                  << std::flush;
+
+        // unpause device
+        SDL_PauseAudioDevice(audio_device, SDL_FALSE);
+    }
+}
+
+std::string initialize(std::string_view   title,
+                       const window_mode& desired_window_mode)
+{
     std::stringstream serr;
 
     SDL_version compiled;
@@ -242,13 +336,14 @@ std::string engine_impl::initialize(std::string_view config, game* temp_game)
         return serr.str();
     }
 
-    window = SDL_CreateWindow("OpenGL",
-                              SDL_WINDOWPOS_CENTERED,
-                              SDL_WINDOWPOS_CENTERED,
-                              width,
-                              height,
-                              SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI |
-                                  SDL_WINDOW_BORDERLESS);
+    window =
+        SDL_CreateWindow(title.data(),
+                         SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED,
+                         desired_window_mode.width,
+                         desired_window_mode.heigth,
+                         SDL_WINDOW_OPENGL | /* SDL_WINDOW_ALLOW_HIGHDPI | */
+                             SDL_WINDOW_BORDERLESS);
     if (window == nullptr)
     {
         const char* err_message = SDL_GetError();
@@ -361,187 +456,18 @@ std::string engine_impl::initialize(std::string_view config, game* temp_game)
     glClearColor(0.f, 0.5f, 0.5f, 0.0f);
     OM_GL_CHECK()
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, desired_window_mode.width, desired_window_mode.heigth);
     OM_GL_CHECK()
 
     return "";
 }
 
-void engine_impl::initImGui(const char* glsl_version)
+SDL_Window* getWindow() 
 {
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable
-    // Keyboard Controls io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; //
-    // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    // ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-    std::cout << "glsl_version: " << glsl_version << std::endl;
-
-    // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can
-    // also load multiple fonts and use ImGui::PushFont()/PopFont() to select
-    // them.
-    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you
-    // need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return NULL. Please
-    // handle those errors in your application (e.g. use an assertion, or
-    // display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and
-    // stored into a texture when calling
-    // ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame
-    // below will call.
-    // - Read 'docs/FONTS.md' for more instructions and details.
-    // - Remember that in C/C++ if you want to include a backslash \ in a string
-    // literal you need to write a double backslash \\ !
-    // io.Fonts->AddFontDefault();
-    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Medium.ttf", 24.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-    // ImFont* font =
-    // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f,
-    // NULL, io.Fonts->GetGlyphRangesJapanese()); IM_ASSERT(font != NULL);
-
-    // Init ImGui
+    return window;
 }
 
-void engine_impl::initAudio()
-{
-
-    // initialize audio
-    audio_device_spec.freq     = 48000;
-    audio_device_spec.format   = AUDIO_S16LSB;
-    audio_device_spec.channels = 2;
-    audio_device_spec.samples  = 1024; // must be power of 2
-    audio_device_spec.callback = engine_impl::audio_callback;
-    audio_device_spec.userdata = this;
-
-    const int num_audio_drivers = SDL_GetNumAudioDrivers();
-
-    // for (int i = 0; i < num_audio_drivers; ++i)
-    // {
-    //     std::cout << "audio_driver #:" << i << " " << SDL_GetAudioDriver(i)
-    //               << '\n';
-    // }
-    std::cout << std::flush;
-
-    const char* default_audio_device_name = nullptr;
-
-    // SDL_FALSE - mean get only OUTPUT audio devices
-    const int num_audio_devices = SDL_GetNumAudioDevices(SDL_FALSE);
-    if (num_audio_devices > 0)
-    {
-        default_audio_device_name =
-            SDL_GetAudioDeviceName(/*num_audio_devices - 1*/ 0, SDL_FALSE);
-        for (int i = 0; i < num_audio_devices; ++i)
-        {
-            std::cout << "audio device #" << i << ": "
-                      << SDL_GetAudioDeviceName(i, SDL_FALSE) << '\n';
-        }
-    }
-    std::cout << std::flush;
-
-    audio_device = SDL_OpenAudioDevice(default_audio_device_name,
-                                       0,
-                                       &audio_device_spec,
-                                       nullptr,
-                                       SDL_AUDIO_ALLOW_ANY_CHANGE);
-
-    if (audio_device == 0)
-    {
-        std::cerr << "failed open audio device: " << SDL_GetError();
-        throw std::runtime_error("audio failed");
-    }
-    else
-    {
-        std::cout << "--------------------------------------------\n";
-        std::cout << "audio device selected: " << default_audio_device_name
-                  << '\n'
-                  << "freq: " << audio_device_spec.freq << '\n'
-                  << "format: "
-                  << get_sound_format_name(audio_device_spec.format) << '\n'
-                  << "channels: "
-                  << static_cast<uint32_t>(audio_device_spec.channels) << '\n'
-                  << "samples: " << audio_device_spec.samples << '\n'
-                  << std::flush;
-
-        // unpause device
-        SDL_PauseAudioDevice(audio_device, SDL_FALSE);
-    }
-}
-
-void engine_impl::audio_callback(void*    engine_ptr,
-                                 uint8_t* stream,
-                                 int      stream_size)
-{
-    // no sound default
-    SDL_memset(stream, 0, stream_size);
-    // std::fill_n(stream, stream_size, '\0');
-
-    engine_impl* e = static_cast<engine_impl*>(engine_ptr);
-
-    for (SoundBuffer_impl* snd : e->sounds)
-    {
-        if (snd->is_playing)
-        {
-            uint32_t rest         = snd->length - snd->current_index;
-            uint8_t* current_buff = &snd->buffer[snd->current_index];
-
-            if (rest <= static_cast<uint32_t>(stream_size))
-            {
-                // copy rest to buffer
-                SDL_MixAudioFormat(stream,
-                                   current_buff,
-                                   e->audio_device_spec.format,
-                                   rest,
-                                   SDL_MIX_MAXVOLUME);
-                snd->current_index += rest;
-            }
-            else
-            {
-                SDL_MixAudioFormat(stream,
-                                   current_buff,
-                                   e->audio_device_spec.format,
-                                   static_cast<uint32_t>(stream_size),
-                                   SDL_MIX_MAXVOLUME);
-                snd->current_index += static_cast<uint32_t>(stream_size);
-            }
-
-            if (snd->current_index == snd->length)
-            {
-                if (snd->is_looped)
-                {
-                    // start from begining
-                    snd->current_index = 0;
-                }
-                else
-                {
-                    snd->is_playing = false;
-                }
-            }
-        }
-    }
-}
-
-float engine_impl::get_time_from_init()
-{
-    std::uint32_t ms_from_library_initialization = SDL_GetTicks();
-    float         seconds = ms_from_library_initialization * 0.001f;
-    return seconds;
-}
-
-// Some problem need fix
-bool engine_impl::read_event(my_engine::event& ev)
+bool read_event(event& ev)
 {
     // collect all events from SDL
     SDL_Event sdl_event;
@@ -581,29 +507,125 @@ bool engine_impl::read_event(my_engine::event& ev)
     return false;
 }
 
-bool engine_impl::is_key_down(const enum keys_type _key)
-{
-    const auto it = std::find_if(begin(keys), end(keys), [&](const bind& b) {
-        return b.my_key == _key;
-    });
+// void update_imGui(game* temp_game)
+// {
+//     ImGuiIO& io = ImGui::GetIO();
+//     // (void)io;
+//     // Start the Dear ImGui frame
+//     ImGui_ImplOpenGL3_NewFrame();
+//     ImGui_ImplSDL2_NewFrame(window);
+//     ImGui::NewFrame();
+//     // 1. Show the big demo window (Most of the sample code is in
+//     // ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear
+//     // ImGui!).
+    
+//     // static bool show_demo_window = true;
+//     // if (show_demo_window)
+//     //     ImGui::ShowDemoWindow(&show_demo_window);
 
-    if (it != end(keys))
-    {
-        const std::uint8_t* state         = SDL_GetKeyboardState(nullptr);
-        int                 sdl_scan_code = SDL_GetScancodeFromKey(it->key);
-        return state[sdl_scan_code];
-    }
-    return false;
+//     // 2. Show a simple window that we create ourselves. We use a Begin/End pair
+//     // to created a named window.
+//     {
+//         static float f       = 0.0f;
+//         static int   counter = 0;
+
+//         ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
+//                                        // and append into it.
+
+//         ImGui::Text("This is some useful text."); // Display some text (you can
+//                                                   // use a format strings too)
+
+//         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+//         ImGui::SliderAngle("float", &f, 0.0f, 1.0f);
+
+//         // Edit 1 float using a slider from 0.0f to 1.0f
+//         // ImGui::ColorEdit3(
+//         //     "clear color",
+//         //     (float*)&clear_color); // Edit 3 floats representing a color
+
+//         // if (ImGui::Button(
+//         //         "Button")) // Buttons return true when clicked (most widgets
+//         //                    // return true when edited/activated)
+//         //     counter++;
+
+//         // ImGui::SameLine();
+//         ImGui::Text("bullets = %d", counter);
+
+//         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+//                     1000.0f / ImGui::GetIO().Framerate,
+//                     ImGui::GetIO().Framerate);
+//         ImGui::End();
+//     }
+
+//     // {
+//     //     ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+//     //     // Get the current ImGui cursor position
+//     //     ImVec2 p = { (pos_player.x + 1) * (gameConst::screen_width / 2),
+//     //                  -(pos_player.y + 1) * (gameConst::screen_height / 2) };
+//     //                  // Draw a red circle
+//     // draw_list->AddCircleFilled(
+//     //     ImVec2(p.x, p.y), 30.0f, IM_COL32(255, 0, 0, 255), 16);
+//     // }
+
+//     // ImGui::Begin("Status_player",
+//     //              nullptr,
+//     //              ImGuiWindowFlags_NoTitleBar /* |
+//     //              ImGuiWindowFlags_NoBackground */);
+
+//     // ImGui::SetWindowPos(ImVec2{ 0, 0 });
+//     // ImGui::SetWindowSize(
+//     //     ImVec2{ 100, 50 });
+
+//     // ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+//     // // // Get the current ImGui cursor position
+//     // // ImVec2 p = { (pos_player.x + 1) * (gameConst::screen_width / 2),
+//     // //              (-pos_player.y * gameConst::aspect + 1) *
+//     // //                  (gameConst::screen_height / 2) };
+
+//     // // // Draw a red circle
+//     // // draw_list->AddCircle(
+//     // //     ImVec2(p.x, p.y), 40.0f, IM_COL32(255, 0, 0, 255), 16, 5.0f);
+//     // // draw_list->AddCircle(
+//     // //     ImVec2(p.x, p.y), 40.0f, IM_COL32(0, 255, 0, 200), 16, 5.0f);
+
+//     // // Advance the ImGui cursor to claim space in the window (otherwise the
+//     // // window will appears small and needs to be resized)
+//     // // ImGui::Dummy(ImVec2(200, 200));
+
+//     // ImGui::End();
+
+//     // // 3. Show another simple window.
+//     // if (show_another_window)
+//     // {
+//     //     ImGui::Begin(
+//     //         "Another Window",
+//     //         &show_another_window); // Pass a pointer to our bool variable
+//     //         (the
+//     //                                // window will have a closing button that
+//     //                                // will clear the bool when clicked)
+//     //     ImGui::Text("Hello from another window!");
+//     //     if (ImGui::Button("Close Me"))
+//     //         show_another_window = false;
+//     //     ImGui::End();
+//     // }
+// }
+
+void render_imgui()
+{
+    // ImGuiIO& io = ImGui::GetIO();
+    // Rendering
+    ImGui::Render();
+    // glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    // glClearColor(clear_color.x * clear_color.w,
+    //              clear_color.y * clear_color.w,
+    //              clear_color.z * clear_color.w,
+    //              clear_color.w);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void engine_impl::render(RenderObj& vao, Texture& tex)
-{
-    tex.bind();
-    vao.setUniform(tex); // 0 - magic
-    vao.draw();
-}
-
-void engine_impl::render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
+void render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
 {
     vao.useProg();
     tex.bind();
@@ -612,88 +634,8 @@ void engine_impl::render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
     vao.draw();
 }
 
-void engine_impl::renderImGui()
+void swap_buffers()
 {
-    ImGuiIO& io = ImGui::GetIO();
-    // (void)io;
-    // Start the Dear ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
-    ImGui::NewFrame();
-    // 1. Show the big demo window (Most of the sample code is in
-    // ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear
-    // ImGui!).
-
-    // if (show_demo_window)
-    // ImGui::ShowDemoWindow(&show_demo_window);
-
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair
-    // to created a named window.
-    {
-        static float f       = 0.0f;
-        static int   counter = 0;
-
-        ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
-                                       // and append into it.
-
-        ImGui::Text("This is some useful text."); // Display some text (you can
-                                                  // use a format strings too)
-        ImGui::Checkbox("Demo Window",
-                        &show_demo_window); // Edit bools storing our window
-                                            // open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat(
-            "float",
-            &f,
-            0.0f,
-            1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3(
-            "clear color",
-            (float*)&clear_color); // Edit 3 floats representing a color
-
-        if (ImGui::Button(
-                "Button")) // Buttons return true when clicked (most widgets
-                           // return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("bullets = %d", counter);
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-                    1000.0f / ImGui::GetIO().Framerate,
-                    ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
-
-    // 3. Show another simple window.
-    if (show_another_window)
-    {
-        ImGui::Begin(
-            "Another Window",
-            &show_another_window); // Pass a pointer to our bool variable (the
-                                   // window will have a closing button that
-                                   // will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
-        ImGui::End();
-    }
-
-    // Rendering
-    ImGui::Render();
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(clear_color.x * clear_color.w,
-                 clear_color.y * clear_color.w,
-                 clear_color.z * clear_color.w,
-                 clear_color.w);
-    // glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void engine_impl::swap_buffers()
-{
-
-    renderImGui();
 
     // time_point start = timer.now();
     SDL_GL_SwapWindow(window);
@@ -707,7 +649,7 @@ void engine_impl::swap_buffers()
     OM_GL_CHECK()
 }
 
-SoundBuffer* engine_impl::create_sound_buffer(std::string_view path)
+SoundBuffer* create_sound_buffer(std::string_view path)
 {
     SoundBuffer_impl* s =
         new SoundBuffer_impl(path, audio_device, audio_device_spec);
@@ -717,60 +659,35 @@ SoundBuffer* engine_impl::create_sound_buffer(std::string_view path)
     return s;
 }
 
-void engine_impl::destroy_sound_buffer(SoundBuffer* sound)
+void destroy_sound_buffer(SoundBuffer* sound)
 {
     delete sound;
 }
 
-void engine_impl::uninitialize()
+void uninitialize()
 {
-    for (auto&& it : sounds)
+    for (auto it = sounds.begin(); it != sounds.end();)
     {
-        destroy_sound_buffer(it);
+        delete it.operator*();
+        it = sounds.erase(it);
     }
 
+    ImGui::DestroyContext();
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-// Create/destroy engine
-static bool already_exist = false;
 
-engine* create_engine()
-{
-    if (already_exist)
-    {
-        throw std::runtime_error("engine already exist");
-    }
-    engine* result = new engine_impl();
-    already_exist  = true;
-    return result;
-}
-
-void destroy_engine(engine* e)
-{
-    if (already_exist == false)
-    {
-        throw std::runtime_error("engine not created");
-    }
-    if (nullptr == e)
-    {
-        throw std::runtime_error("e is nullptr");
-    }
-    delete e;
-}
 
 RenderObj* create_RenderObj()
 {
     RenderObj* result = new RenderObj_impl();
-    // std::cout << &result << std::endl;
     return result;
 }
 
 void destroy_RenderObj(RenderObj* e)
 {
-    // std::cout << &e << std::endl;
     if (nullptr == e)
     {
         std::cerr << " can't delete RenderObj" << std::endl;
@@ -795,11 +712,6 @@ void destroy_gfx_prog(gfx_prog* e)
     delete e;
 }
 
-engine::~engine()
-{
-    std::cout << "--- destor engine" << std::endl;
-}
-
 gfx_prog::~gfx_prog()
 {
     std::cout << "--- destor gfx_prog" << std::endl;
@@ -821,6 +733,7 @@ game::~game()
 }
 
 // ERRORS
+
 static const char* source_to_strv(GLenum source)
 {
     switch (source)

@@ -8,8 +8,8 @@ Enemy::Enemy(my_engine::vec2 pos)
     half_size        = 0.015f;
     current_tank_direction = rand() % 31415*2 / 10000.f - gameConst::half_pi -0.0001f;
     health         = 20;
-    speed          = 0.00031250f / 4.f;
-    speed_diagonal = 0.00022097f / 4.f;
+    speed          = 0.00031250f / 3.5f;
+    speed_diagonal = 0.00022097f / 3.5f;
     speed_rotation = 0.0015f / 3.f;
 
     current_tank_pos.y /= gameConst::aspect;

@@ -6,7 +6,7 @@
 // #define TEST_LIST
 // #endif // MACRO
 
-// #define DEBUG_LEVEL
+#define DEBUG_LEVEL
 // #define DEBUG_LEVEL_2
 
 #include "../include/matrix.hpp"
