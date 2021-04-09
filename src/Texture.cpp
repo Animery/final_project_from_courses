@@ -33,7 +33,7 @@ void Texture::bind() const
     // int texture_unit = static_cast<int>(mHandle);
     // std::cout << "texture_unit: \t" << texture_unit << std::endl;
     // glActiveTexture(GL_TEXTURE0 + texture_unit - 1);
-    glActiveTexture(GL_TEXTURE0);
+    // glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mHandle);
 }
 

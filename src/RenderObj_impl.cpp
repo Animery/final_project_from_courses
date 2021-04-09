@@ -30,7 +30,8 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
 
     if (!file)
     {
-        throw std::runtime_error("can't load object");
+        std::cerr << "can't load object" << std::endl;
+        // throw std::runtime_error("can't load object");
     }
 
     size_t      num_of_vertexes = 0;
@@ -39,7 +40,8 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
     file >> key;
     if (key != "num_of_vertexes")
     {
-        throw std::runtime_error("no key word: num_of_vertexes");
+        std::cerr << "no key word: num_of_vertexes" << std::endl;
+        // throw std::runtime_error("no key word: num_of_vertexes");
     }
 
     file >> num_of_vertexes;
@@ -62,7 +64,8 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
     }
     else
     {
-        throw std::runtime_error("no key word: position_vec2");
+        std::cerr << "no key word: position_vec2" << std::endl;
+        // throw std::runtime_error("no key word: position_vec2");
     }
 
     // Tex
@@ -83,6 +86,7 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
     }
     else
     {
+        std::cerr << "no key word: tex_vec2" << std::endl;
         throw std::runtime_error("no key word: tex_vec2");
     }
 
@@ -104,7 +108,8 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
     }
     else
     {
-        throw std::runtime_error("no key word: color_vec3");
+        std::cerr << "no key word: color_vec3" << std::endl;
+        // throw std::runtime_error("no key word: color_vec3");
     }
 
     // Indices
@@ -190,7 +195,7 @@ void RenderObj_impl::useProg() const
     }
 }
 
-void RenderObj_impl::setUniform(Texture& tex) const
+void RenderObj_impl::setUniform(const Texture& tex) const
 {
     if (prog == nullptr)
     {
@@ -202,7 +207,7 @@ void RenderObj_impl::setUniform(Texture& tex) const
     }
 }
 
-void RenderObj_impl::setUniform(std::string_view name, const matrix2x3& mat)
+void RenderObj_impl::setUniform(std::string_view name, const matrix2x3& mat) const
 {
     if (prog == nullptr)
     {
@@ -211,6 +216,18 @@ void RenderObj_impl::setUniform(std::string_view name, const matrix2x3& mat)
     else
     {
         prog->setUniform(name, mat);
+    }
+}
+
+void RenderObj_impl::setUniform(const std::vector<Texture*>& tex_arr) const
+{
+    if (prog == nullptr)
+    {
+        std::cout << "Prog == nullptr" << std::endl;
+    }
+    else
+    {
+        prog->setUniform(tex_arr);
     }
 }
 

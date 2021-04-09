@@ -265,7 +265,7 @@ void initAudio()
     if (num_audio_devices > 0)
     {
         default_audio_device_name =
-            SDL_GetAudioDeviceName(/*num_audio_devices - 1*/ 0, SDL_FALSE);
+            SDL_GetAudioDeviceName(/*num_audio_devices - 1*/ 1, SDL_FALSE);
         for (int i = 0; i < num_audio_devices; ++i)
         {
             std::cout << "audio device #" << i << ": "
@@ -625,11 +625,18 @@ void render_imgui()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void render(RenderObj& vao, Texture& tex, const matrix2x3& mat)
+void render(const RenderObj& vao, const Texture& tex, const matrix2x3& mat)
 {
     vao.useProg();
-    tex.bind();
     vao.setUniform(tex); // 0 - magic
+    vao.setUniform("u_matrix", mat);
+    vao.draw();
+}
+
+void render(const RenderObj& vao, const std::vector<Texture*>& tex_arr, const matrix2x3& mat) 
+{
+    vao.useProg();
+    vao.setUniform(tex_arr); // 0 - magic
     vao.setUniform("u_matrix", mat);
     vao.draw();
 }

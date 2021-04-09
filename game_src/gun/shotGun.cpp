@@ -1,4 +1,5 @@
 #include "shotGun.hpp"
+#include <algorithm>
 
 namespace guns
 {
@@ -44,7 +45,7 @@ void shotGun::shoot(my_engine::vec2& temp_position, float temp_direction)
                            speed_bullet,
                            damage_bullet + damage_bullet * rand_factor * 10));
         }
-        
+
         --currentClip;
         readyGun = false;
 
@@ -96,35 +97,44 @@ void shotGun::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
 void shotGun::update_bullets(float delta, std::list<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
-
 {
-    for (auto it = bullets.begin(); it != bullets.end();)
-    {
-        it.operator*()->update_bullet(delta);
+    // TODO Anton helper
+    bullets.erase(
+        std::remove_if(
+            bullets.begin(),
+            bullets.end(),
+            [&enemy_list, delta, this](Bullet* elem) {
+                elem->update_bullet(delta);
+                return check_collision(elem, enemy_list) ||
+                       elem->getPosition().x > (1 / gameConst::size) ||
+                       elem->getPosition().x < -(1 / gameConst::size) ||
+                       elem->getPosition().y >
+                           (1 / gameConst::aspect) / gameConst::size ||
+                       elem->getPosition().y <
+                           -(1 / gameConst::aspect) / gameConst::size;
+            }),
+        bullets.end());
 
-        if (check_collision(it.operator*(), enemy_list))
-        {
-            delete it.operator*();
-            it = bullets.erase(it);
-        }
-        else
-        {
-            if (it.operator*()->getPosition().x > (1 / gameConst::size) ||
-                it.operator*()->getPosition().x < -(1 / gameConst::size) ||
-                it.operator*()->getPosition().y >
-                    (1 / gameConst::aspect) / gameConst::size ||
-                it.operator*()->getPosition().y <
-                    -(1 / gameConst::aspect) / gameConst::size)
-            {
-                delete it.operator*();
-                it = bullets.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
-        }
-    }
+    // for (auto it = bullets.begin(); it != bullets.end();)
+    // {
+    //     it.operator*()->update_bullet(delta);
+
+    //     if (check_collision(it.operator*(), enemy_list) ||
+    //         it.operator*()->getPosition().x > (1 / gameConst::size) ||
+    //         it.operator*()->getPosition().x < -(1 / gameConst::size) ||
+    //         it.operator*()->getPosition().y >
+    //             (1 / gameConst::aspect) / gameConst::size ||
+    //         it.operator*()->getPosition().y <
+    //             -(1 / gameConst::aspect) / gameConst::size)
+    //     {
+    //         delete it.operator*();
+    //         it = bullets.erase(it);
+    //     }
+    //     else
+    //     {
+    //         ++it;
+    //     }
+    // }
 }
 
 #if defined(TEST_VECTOR)
@@ -153,7 +163,9 @@ bool shotGun::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
         if (my_engine::vec2::check_AABB(
                 pos_bullet_A, pos_bullet_B, pos_enemy_A, pos_enemy_B))
         {
+            // TODO
             enemy.operator*()->setHealth(bullet->getDamage());
+            // (*enemy)->setHealth(bullet->getDamage());
 
 #ifdef DEBUG_LEVEL
             std::cout << "hit" << std::endl;

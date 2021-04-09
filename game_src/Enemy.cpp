@@ -10,7 +10,7 @@ Enemy::Enemy(my_engine::vec2 pos)
     health         = 20;
     speed          = 0.00031250f / 3.5f;
     speed_diagonal = 0.00022097f / 3.5f;
-    speed_rotation = 0.0015f / 3.f;
+    speed_rotation = 0.0015f / 2.5f;
 
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL

@@ -21,6 +21,6 @@ public:
     void unBind() const;
     void setImage(const Image& image);
 
-    std::string getName() { return name_uniform; }
+    std::string getName() const { return name_uniform; }
     GLuint      getTexID() { return mHandle; }
 };

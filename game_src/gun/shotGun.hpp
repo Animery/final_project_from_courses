@@ -28,8 +28,8 @@ public:
 
 protected:
 #if defined(TEST_VECTOR)
-    bool check_collision(Bullet*              bullet,
-                         std::vector<Enemy*>& enemy_list) override;
+     bool check_collision(Bullet*              bullet,
+                                std::vector<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::vector<Enemy*>& enemy_list) override;
 #else
     bool check_collision(Bullet*            bullet,
@@ -46,14 +46,13 @@ private:
     std::list<Bullet*> bullets;
 #endif // TEST_VECTOR
 
-    
     Timer timer_to_shoot;
     // 1 in X milliseconds
     unsigned int speed_shoot   = 500;
     float        speed_bullet  = 0.002f;
     float        damage_bullet = 10.f;
 
-    Timer timer_to_clip;
+    Timer          timer_to_clip;
     uint16_t       currentClip  = 7;
     const uint16_t maxClip      = 7;
     float          speed_reload = 2000;

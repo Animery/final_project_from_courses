@@ -100,7 +100,8 @@ bool read_event(event& e);
 // void update_imGui();
 void render_imgui();
 
-void render(RenderObj&, Texture&, const matrix2x3&);
+void render(const RenderObj&, const Texture&, const matrix2x3&);
+void render(const RenderObj&, const std::vector<Texture*>&, const matrix2x3&);
 void swap_buffers();
 
 void uninitialize();
@@ -115,9 +116,11 @@ public:
     virtual void use() const                                        = 0;
     // virtual GLuint getProg_id(){return prog_id;}
     // Check the validate status
-    virtual void check_validate()                                      = 0;
-    virtual void setUniform(Texture& tex) const                        = 0;
-    virtual void setUniform(std::string_view name, const matrix2x3& m) = 0;
+    virtual void check_validate()                               = 0;
+    virtual void setUniform(const Texture& tex) const           = 0;
+    virtual void setUniform(const std::vector<Texture*>&) const = 0;
+    virtual void setUniform(std::string_view name,
+                            const matrix2x3& m) const           = 0;
 };
 
 gfx_prog* create_gfx_prog(const std::string& path,
@@ -132,9 +135,11 @@ public:
     virtual void bind() const                                     = 0;
     virtual void setProg(gfx_prog* prog_)                         = 0;
     // virtual void linkProg()                                           = 0;
-    virtual void useProg() const                                         = 0;
-    virtual void setUniform(Texture& tex) const                          = 0;
-    virtual void setUniform(std::string_view name, const matrix2x3& mat) = 0;
+    virtual void useProg() const                                = 0;
+    virtual void setUniform(const Texture& tex) const           = 0;
+    virtual void setUniform(const std::vector<Texture*>&) const = 0;
+    virtual void setUniform(std::string_view name,
+                            const matrix2x3& mat) const         = 0;
     // virtual void bind_attrib(GLuint index, std::string_view attrib)   = 0;
     virtual void draw(unsigned int type = 0x0004) const = 0;
 

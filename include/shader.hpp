@@ -9,6 +9,10 @@
 #include <string>
 #include <string_view>
 
+#define CHECK
+
+#if defined(CHECK)
+
 #define OM_GL_CHECK()                                                          \
     {                                                                          \
         const GLenum err = glGetError();                                       \
@@ -38,6 +42,9 @@
             assert(false);                                                     \
         }                                                                      \
     }
+#else
+#define OM_GL_CHECK()
+#endif //
 
 namespace my_engine
 {
@@ -64,8 +71,9 @@ public:
     // Check the validate status
     void check_validate();
 
-    void setUniform(Texture& tex) const;
-    void setUniform(std::string_view name, const matrix2x3& m);
+    void setUniform(const Texture& tex) const;
+    void setUniform(const std::vector<Texture*>& tex_arr) const;
+    void setUniform(std::string_view name, const matrix2x3& m) const;
 };
 
 } // namespace my_engine

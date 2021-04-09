@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <ctime>
+#include <algorithm>
 // #include "Bullet.hpp"
 // #include <cmath>
 
@@ -34,7 +35,13 @@ game_impl::~game_impl()
         delete it;
     }
 
-    delete gfx01;
+    for (auto tex : vec_texture)
+    {
+        delete tex;
+    }
+
+    delete gfx_obj;
+    delete gfx_map;
     std::cout << "--- destor game_impl" << std::endl;
 }
 
@@ -51,13 +58,19 @@ void game_impl::on_initialize()
     my_engine::initialize("My_Game", mode);
 
     // gfx_prog
-    const std::string path("shader/");
-    const std::string name_shader("corpse");
-    gfx01 = my_engine::create_gfx_prog(path, name_shader);
-    gfx01->bind_attrib(0, "a_position");
-    gfx01->bind_attrib(1, "a_tex_coord");
-    gfx01->bind_attrib(2, "a_color");
-    gfx01->link();
+    std::string path("shader/");
+    std::string name_shader("corpse");
+    gfx_obj = my_engine::create_gfx_prog(path, name_shader);
+    gfx_obj->bind_attrib(0, "a_position");
+    gfx_obj->bind_attrib(1, "a_tex_coord");
+    gfx_obj->bind_attrib(2, "a_color");
+    gfx_obj->link();
+    //////////////////////////////
+    name_shader = "map";
+    gfx_map     = my_engine::create_gfx_prog(path, name_shader);
+    gfx_map->bind_attrib(0, "a_position");
+    gfx_map->bind_attrib(1, "a_tex_coord");
+    gfx_map->link();
     // gfx_prog
 
     // SoundBuffer
@@ -76,28 +89,43 @@ void game_impl::on_initialize()
     sounds[0]->play(my_engine::SoundBuffer::properties::looped);
     // SoundBuffer
 
-    //  SPAWN
+    //  SPAWN Enemy
 
     spawn_monster = std::make_unique<spawn::wave_1>(this);
 
     // float temp_pos_x;
     // float temp_pos_y;
-    // for (size_t i = 0; i < 4000; i++)
+    // for (size_t i = 0; i < 1000; i++)
     // {
-    //     temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-    //     temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-    //     add_enemy({ temp_pos_x, temp_pos_y });
-    //     // add_enemy({ 0.5, 0.5 });
-    //     // add_enemy({ -0.5, 0.5 });
-    //     // add_enemy({ 0.5, -0.5 });
-    //     // add_enemy({ -0.5, -0.5 });
+    //     // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+    //     // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+    //     // add_enemy({ temp_pos_x, temp_pos_y });
+    //     add_enemy({ 0.5, 0.5 });
+    //     add_enemy({ -0.5, 0.5 });
+    //     add_enemy({ 0.5, -0.5 });
+    //     add_enemy({ -0.5, -0.5 });
     // }
 
-    //  SPAWN
+    //  SPAWN Enemy
 
     // Texture init
+
+    // test vec_texture
+    for (size_t i = 0; i < 1; i++)
+    {
+        std::string tex_name = "s_map";
+        Texture*    temp_tex = new Texture(tex_name);
+        vec_texture.push_back(temp_tex);
+        {
+            Image image = Image::loadFromFile("res/map.png");
+            temp_tex[i].setImage(image);
+        }
+    }
+    // test vec_texture
+
     std::string tex_name = "s_texture";
-    texture_head         = std::make_unique<Texture>(tex_name);
+
+    texture_head = std::make_unique<Texture>(tex_name);
     {
         Image image = Image::loadFromFile("res/head.png");
         texture_head->setImage(image);
@@ -125,16 +153,20 @@ void game_impl::on_initialize()
 
     // Render_obj
     tank_obj = my_engine::create_RenderObj();
-    tank_obj->setProg(gfx01);
+    tank_obj->setProg(gfx_obj);
     tank_obj->load_mesh_from_file("res/tank.txt");
 
     bullet_obj = my_engine::create_RenderObj();
-    bullet_obj->setProg(gfx01);
+    bullet_obj->setProg(gfx_obj);
     bullet_obj->load_mesh_from_file("res/bullet.txt");
 
     enemy_1 = my_engine::create_RenderObj();
-    enemy_1->setProg(gfx01);
+    enemy_1->setProg(gfx_obj);
     enemy_1->load_mesh_from_file("res/enemy_1.txt");
+
+    map_obj = my_engine::create_RenderObj();
+    map_obj->setProg(gfx_map);
+    map_obj->load_mesh_from_file("res/map.txt");
     // Render_obj
 
     // Gun
@@ -144,10 +176,6 @@ void game_impl::on_initialize()
 
     player    = std::make_unique<Player>();
     isRunning = true;
-
-    // Enemy
-
-    // Enemy
 }
 
 void game_impl::on_event(my_engine::event& event)
@@ -245,6 +273,10 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
 void game_impl::on_render()
 {
+    // RENDER MAP
+    my_engine::render(*map_obj, vec_texture, gameConst::aspect_mat);
+    // RENDER MAP
+
     // RENDER BULLETS
 #if defined(TEST_VECTOR)
     std::vector<Bullet*>* temp_bullets = gun_current->getList_bullets();
@@ -262,14 +294,14 @@ void game_impl::on_render()
     {
         if (enemy.operator*()->getHealth() <= 0)
         {
-            delete enemy.operator*();
+            delete (*enemy);
             enemy = enemy_list.erase(enemy);
         }
         else
         {
             my_engine::render(*enemy_1,
                               *texture_spider,
-                              enemy.operator*()->getMatrix_corpse());
+                              (*enemy)->getMatrix_corpse());
             ++enemy;
         }
     }
@@ -323,19 +355,16 @@ void game_impl::update_imGui()
         ImGui::NewLine();
         if (gun_current->getCurrentClip() > 0)
         {
-        ImGui::Text("%s %u/%u",
-                    gun_current->getNameGun().data(),
-                    gun_current->getCurrentClip(),
-                    gun_current->getMaxClip());
+            ImGui::Text("%s %u/%u",
+                        gun_current->getNameGun().data(),
+                        gun_current->getCurrentClip(),
+                        gun_current->getMaxClip());
         }
         else
         {
-            ImGui::Text("%s %s",
-                    gun_current->getNameGun().data(),
-                    "reload");
+            ImGui::Text("%s %s", gun_current->getNameGun().data(), "reload");
         }
-        
-        
+
         // ImGui::SameLine();
         // ImGui::NewLine();
         // ImGui::Text("Player Status"); // Display some text (you can

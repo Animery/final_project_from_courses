@@ -58,7 +58,7 @@ GLuint gfx_prog_impl::create_shader(std::string_view path, GLuint type)
 //     OM_GL_CHECK()
 // }
 
-void gfx_prog_impl::setUniform(Texture& tex) const
+void gfx_prog_impl::setUniform(const Texture& tex) const
 {
     assert(&tex != nullptr);
 
@@ -71,7 +71,7 @@ void gfx_prog_impl::setUniform(Texture& tex) const
         throw std::runtime_error("can't get uniform location");
     }
     unsigned int texture_unit = 0;
-    // glActiveTexture(GL_TEXTURE0 + texture_unit); 
+    glActiveTexture(GL_TEXTURE0 + texture_unit);
     OM_GL_CHECK()
 
     tex.bind();
@@ -79,12 +79,34 @@ void gfx_prog_impl::setUniform(Texture& tex) const
     // http://www.khronos.org/opengles/sdk/docs/man/xhtml/glUniform.xml
     glUniform1i(location, static_cast<int>(0 + texture_unit));
     OM_GL_CHECK()
-
-    // glUniform1i(location, 0);
-    // OM_GL_CHECK()
 }
 
-void gfx_prog_impl::setUniform(std::string_view name, const matrix2x3& m)
+void gfx_prog_impl::setUniform(const std::vector<Texture*>& tex_arr) const
+{
+    for (auto&& it : tex_arr)
+    {
+        assert(it != nullptr);
+    }
+    const GLint location =
+        glGetUniformLocation(prog_id, tex_arr[0]->getName().c_str());
+    if (location == -1)
+    {
+        std::cerr << "can't get uniform location from shader\n";
+        throw std::runtime_error("can't get uniform location");
+    }
+    const size_t size = tex_arr.size();
+    for (size_t i = 0; i < size; i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        OM_GL_CHECK()
+
+        tex_arr[i]->bind();
+        glUniform1i(location, static_cast<int>(0 + i));
+        OM_GL_CHECK()
+    }
+}
+
+void gfx_prog_impl::setUniform(std::string_view name, const matrix2x3& m) const
 {
     const GLint location = glGetUniformLocation(prog_id, name.data());
     OM_GL_CHECK();

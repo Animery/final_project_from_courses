@@ -20,8 +20,9 @@ public:
     void setProg(gfx_prog* prog_) final;
     // void linkProg() final;
     void useProg() const final;
-    void setUniform(Texture& tex) const;
-    void setUniform(std::string_view name, const matrix2x3& mat);
+    void setUniform(const Texture& tex) const;
+    void setUniform(const std::vector<Texture*>& tex_arr) const;
+    void setUniform(std::string_view name, const matrix2x3& mat) const ;
     // void bind_attrib(GLuint index, std::string_view attrib)final ;
 
     void addVertexBufferObject(const std::vector<float>& data);
