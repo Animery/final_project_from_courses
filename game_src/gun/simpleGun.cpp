@@ -112,43 +112,44 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
     //         }
     //     }
     // }
+
     // TODO Anton helper
-    bullets.erase(
-        std::remove_if(
-            bullets.begin(),
-            bullets.end(),
-            [&enemy_list, delta, this](Bullet* elem) {
-                elem->update_bullet(delta);
-                return check_collision(elem, enemy_list) ||
-                       elem->getPosition().x > (1 / gameConst::size) ||
-                       elem->getPosition().x < -(1 / gameConst::size) ||
-                       elem->getPosition().y >
-                           (1 / gameConst::aspect) / gameConst::size ||
-                       elem->getPosition().y <
-                           -(1 / gameConst::aspect) / gameConst::size;
-            }),
-        bullets.end());
+    // bullets.erase(
+    //     std::remove_if(
+    //         bullets.begin(),
+    //         bullets.end(),
+    //         [&enemy_list, delta, this](Bullet* elem) {
+    //             elem->update_bullet(delta);
+    //             return check_collision(elem, enemy_list) ||
+    //                    elem->getPosition().x > (1 / gameConst::size) ||
+    //                    elem->getPosition().x < -(1 / gameConst::size) ||
+    //                    elem->getPosition().y >
+    //                        (1 / gameConst::aspect) / gameConst::size ||
+    //                    elem->getPosition().y <
+    //                        -(1 / gameConst::aspect) / gameConst::size;
+    //         }),
+    //     bullets.end());
 
-    // for (auto it = bullets.begin(); it != bullets.end();)
-    // {
-    //     it.operator*()->update_bullet(delta);
+    for (auto it = bullets.begin(); it != bullets.end();)
+    {
+        it.operator*()->update_bullet(delta);
 
-    //     if (check_collision(it.operator*(), enemy_list) ||
-    //         it.operator*()->getPosition().x > (1 / gameConst::size) ||
-    //         it.operator*()->getPosition().x < -(1 / gameConst::size) ||
-    //         it.operator*()->getPosition().y >
-    //             (1 / gameConst::aspect) / gameConst::size ||
-    //         it.operator*()->getPosition().y <
-    //             -(1 / gameConst::aspect) / gameConst::size)
-    //     {
-    //         delete it.operator*();
-    //         it = bullets.erase(it);
-    //     }
-    //     else
-    //     {
-    //         ++it;
-    //     }
-    // }
+        if (check_collision(it.operator*(), enemy_list) ||
+            it.operator*()->getPosition().x > (1 / gameConst::size) ||
+            it.operator*()->getPosition().x < -(1 / gameConst::size) ||
+            it.operator*()->getPosition().y >
+                (1 / gameConst::aspect) / gameConst::size ||
+            it.operator*()->getPosition().y <
+                -(1 / gameConst::aspect) / gameConst::size)
+        {
+            delete it.operator*();
+            it = bullets.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 #if defined(TEST_VECTOR)

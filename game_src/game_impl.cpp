@@ -171,7 +171,7 @@ void game_impl::on_initialize()
 
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
-    gun_current = std::make_unique<guns::GunSimple>();
+    gun_current = std::make_unique<guns::shotGun>();
     // Gun
 
     player    = std::make_unique<Player>();
@@ -274,7 +274,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 void game_impl::on_render()
 {
     // RENDER MAP
-    my_engine::render(*map_obj, vec_texture, gameConst::aspect_mat);
+    // my_engine::render(*map_obj, vec_texture, gameConst::aspect_mat);
     // RENDER MAP
 
     // RENDER BULLETS
