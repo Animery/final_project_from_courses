@@ -38,7 +38,7 @@ private:
 #if defined(TEST_VECTOR)
     std::vector<Enemy*> enemy_list;
 #else
-    std::list<Enemy*> enemy_list;
+    std::deque<Enemy*> enemy_list;
 #endif // TEST_VECTOR
 
     std::vector<Texture*>    vec_texture;
@@ -55,7 +55,7 @@ private:
     std::array<bool, 8> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
-    size_t                              max_enemy = 100;
+    size_t                              max_enemy = 10000;
 
     std::vector<my_engine::SoundBuffer*> sounds;
 

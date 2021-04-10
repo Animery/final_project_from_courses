@@ -64,7 +64,7 @@ uint16_t GunSimple::getCurrentClip() const
 #if defined(TEST_VECTOR)
 void GunSimple::update_gun(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_gun(float delta, std::list<Enemy*>& enemy_list)
+void GunSimple::update_gun(float delta, std::deque<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
@@ -81,7 +81,7 @@ unsigned int GunSimple::count_bullets()
 #if defined(TEST_VECTOR)
 void GunSimple::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
+void GunSimple::update_bullets(float delta, std::deque<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 
 {
@@ -155,7 +155,7 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
 #if defined(TEST_VECTOR)
 std::vector<Bullet*>* GunSimple::getList_bullets()
 #else
-std::list<Bullet*>* GunSimple::getList_bullets()
+std::deque<Bullet*>* GunSimple::getList_bullets()
 #endif // TEST_VECTOR
 {
     return &bullets;
@@ -164,7 +164,7 @@ std::list<Bullet*>* GunSimple::getList_bullets()
 #if defined(TEST_VECTOR)
 bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
 #else
-bool GunSimple::check_collision(Bullet* bullet, std::list<Enemy*>& enemy_list)
+bool GunSimple::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 
 {

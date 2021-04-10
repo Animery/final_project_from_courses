@@ -5,6 +5,7 @@
 #include "Bullet.hpp"
 
 #include <list>
+#include <deque>
 
 namespace guns
 {
@@ -22,8 +23,8 @@ public:
     virtual void update_gun(float delta, std::vector<Enemy*>& enemy_list) = 0;
     virtual std::vector<Bullet*>* getList_bullets()                       = 0;
 #else
-    virtual void update_gun(float delta, std::list<Enemy*>& enemy_list) = 0;
-    virtual std::list<Bullet*>* getList_bullets()                       = 0;
+    virtual void update_gun(float delta, std::deque<Enemy*>& enemy_list) = 0;
+    virtual std::deque<Bullet*>* getList_bullets()                       = 0;
 #endif // TEST_VECTOR
 
     virtual unsigned int count_bullets() = 0;
@@ -36,8 +37,8 @@ protected:
                                 std::vector<Enemy*>& enemy_list)  = 0;
 #else
     virtual bool check_collision(Bullet*            bullet,
-                                 std::list<Enemy*>& enemy_list)             = 0;
-    virtual void update_bullets(float delta, std::list<Enemy*>& enemy_list) = 0;
+                                 std::deque<Enemy*>& enemy_list)             = 0;
+    virtual void update_bullets(float delta, std::deque<Enemy*>& enemy_list) = 0;
 #endif // TEST_VECTOR
 
 private:

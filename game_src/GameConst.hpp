@@ -1,10 +1,6 @@
 #pragma once
 
-#define TEST_VECTOR
-
-// #if !defined(TEST_VECTOR)
-// #define TEST_LIST
-// #endif // MACRO
+// #define TEST_VECTOR
 
 #define DEBUG_LEVEL
 // #define DEBUG_LEVEL_2

@@ -95,16 +95,16 @@ void game_impl::on_initialize()
 
     // float temp_pos_x;
     // float temp_pos_y;
-    // for (size_t i = 0; i < 1000; i++)
-    // {
-    //     // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-    //     // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-    //     // add_enemy({ temp_pos_x, temp_pos_y });
-    //     add_enemy({ 0.5, 0.5 });
-    //     add_enemy({ -0.5, 0.5 });
-    //     add_enemy({ 0.5, -0.5 });
-    //     add_enemy({ -0.5, -0.5 });
-    // }
+    for (size_t i = 0; i < 2500; i++)
+    {
+        // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+        // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+        // add_enemy({ temp_pos_x, temp_pos_y });
+        add_enemy({ 0.5, 0.5 });
+        add_enemy({ -0.5, 0.5 });
+        add_enemy({ 0.5, -0.5 });
+        add_enemy({ -0.5, -0.5 });
+    }
 
     //  SPAWN Enemy
 
@@ -281,7 +281,7 @@ void game_impl::on_render()
 #if defined(TEST_VECTOR)
     std::vector<Bullet*>* temp_bullets = gun_current->getList_bullets();
 #else
-    std::list<Bullet*>* temp_bullets = gun_current->getList_bullets();
+    std::deque<Bullet*>* temp_bullets = gun_current->getList_bullets();
 #endif // TEST_VECTOR
     for (auto&& bullet : *temp_bullets)
     {

@@ -52,13 +52,13 @@ int main(int /*argc*/, char* /*argv*/[])
         micro_sec frame_delta =
             std::chrono::duration_cast<micro_sec>(end_last_frame - start);
 
-        if (frame_delta.count() / 1000.0f < 16.667f) // 1000 % 60 = 16.6 FPS
-        {
-            std::this_thread::yield(); // too fast, give other apps CPU time
-            micro_sec duration(50);
-            std::this_thread::sleep_for(duration); // sleep 50 microsecconds
-            continue; // wait till more time
-        }
+        // if (frame_delta.count() / 1000.0f < 16.667f) // 1000 % 60 = 16.6 FPS
+        // {
+        //     std::this_thread::yield(); // too fast, give other apps CPU time
+        //     micro_sec duration(50);
+        //     std::this_thread::sleep_for(duration); // sleep 50 microsecconds
+        //     continue; // wait till more time
+        // }
 
         start = timer.now();
 
