@@ -91,11 +91,11 @@ void GunSimple::update_bullets(float delta, std::list<Enemy*>& enemy_list)
         it.operator*()->update_bullet(delta);
 
         if (check_collision(it.operator*(), enemy_list) ||
-            it.operator*()->getPosition().x > (1 / gameConst::size) ||
-            it.operator*()->getPosition().x < -(1 / gameConst::size) ||
-            it.operator*()->getPosition().y >
+            (*it)->getPosition().x > (1 / gameConst::size) ||
+            (*it)->getPosition().x < -(1 / gameConst::size) ||
+            (*it)->getPosition().y >
                 (1 / gameConst::aspect) / gameConst::size ||
-            it.operator*()->getPosition().y <
+            (*it)->getPosition().y <
                 -(1 / gameConst::aspect) / gameConst::size)
         {
             delete it.operator*();
