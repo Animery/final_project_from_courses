@@ -41,7 +41,7 @@ private:
     std::deque<Enemy*> enemy_list;
 #endif // TEST_VECTOR
 
-    std::vector<Texture*>    vec_texture;
+    std::vector<Texture*>    map_texture;
     std::unique_ptr<Texture> texture_corpse;
     std::unique_ptr<Texture> texture_head;
     std::unique_ptr<Texture> texture_bullet;

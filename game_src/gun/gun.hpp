@@ -4,8 +4,8 @@
 #include "../Timer.hpp"
 #include "Bullet.hpp"
 
-#include <list>
 #include <deque>
+#include <list>
 
 namespace guns
 {
@@ -27,7 +27,8 @@ public:
     virtual std::deque<Bullet*>* getList_bullets()                       = 0;
 #endif // TEST_VECTOR
 
-    virtual unsigned int count_bullets() = 0;
+    virtual unsigned int count_bullets()  = 0;
+    virtual void         render_bullets() = 0;
 
 protected:
 #if defined(TEST_VECTOR)
@@ -36,9 +37,10 @@ protected:
     virtual void update_bullets(float                delta,
                                 std::vector<Enemy*>& enemy_list)  = 0;
 #else
-    virtual bool check_collision(Bullet*            bullet,
-                                 std::deque<Enemy*>& enemy_list)             = 0;
-    virtual void update_bullets(float delta, std::deque<Enemy*>& enemy_list) = 0;
+    virtual bool check_collision(Bullet*             bullet,
+                                 std::deque<Enemy*>& enemy_list) = 0;
+    virtual void update_bullets(float               delta,
+                                std::deque<Enemy*>& enemy_list)  = 0;
 #endif // TEST_VECTOR
 
 private:

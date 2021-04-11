@@ -1,27 +1,24 @@
 #pragma once
 
+#include "../include/engine.hpp"
 #include "GameConst.hpp"
-// #include "../include/engine.hpp"
 // #include "../include/matrix.hpp"
 // #include <iostream>
 // #include <numbers>
 #include <memory>
 
-
-
 class Player
 {
 public:
-    // Player(my_engine::gfx_prog* gfx_prog);
-    Player();
+    Player(my_engine::RenderObj*, Texture*, Texture*);
     ~Player();
     void update(std::array<bool, 8>& controls, float delta);
 
     // my_engine::RenderObj* getCorpse();
     // my_engine::RenderObj* getHead();
 
-    my_engine::matrix2x3& getMatrix_corpse();
-    my_engine::matrix2x3& getMatrix_head();
+    // my_engine::matrix2x3& getMatrix_corpse();
+    // my_engine::matrix2x3& getMatrix_head();
 
     float getCurrent_head_direction();
     void  setCurrent_head_direction(const float a);
@@ -34,7 +31,13 @@ public:
     float getHealth();
     void  setHealth(float damage);
 
+    void render_player();
+
 protected:
+    my_engine::RenderObj* tank_obj       = nullptr;
+    Texture*              texture_corpse = nullptr;
+    Texture*              texture_head   = nullptr;
+
     my_engine::matrix2x3 matrix_corpse;
     my_engine::matrix2x3 matrix_head;
 

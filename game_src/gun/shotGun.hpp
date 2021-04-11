@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../include/engine.hpp"
 #include "gun.hpp"
 
 namespace guns
@@ -9,7 +10,7 @@ class shotGun : public Gun
 {
 
 public:
-    shotGun();
+    shotGun(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
     ~shotGun();
 
 #if defined(TEST_VECTOR)
@@ -25,20 +26,24 @@ public:
     uint16_t         getMaxClip() const override;
     uint16_t         getCurrentClip() const override;
     unsigned int     count_bullets() override;
+    void             render_bullets() override;
 
 protected:
 #if defined(TEST_VECTOR)
-     bool check_collision(Bullet*              bullet,
-                                std::vector<Enemy*>& enemy_list) override;
+    bool check_collision(Bullet*              bullet,
+                         std::vector<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::vector<Enemy*>& enemy_list) override;
 #else
-    bool check_collision(Bullet*            bullet,
+    bool check_collision(Bullet*             bullet,
                          std::deque<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::deque<Enemy*>& enemy_list) override;
 #endif // TEST_VECTOR
 
 private:
     std::string name = "ShotGun";
+
+    Texture*              texture_bullet;
+    my_engine::RenderObj* bullet_obj;
 
 #if defined(TEST_VECTOR)
     std::vector<Bullet*> bullets;

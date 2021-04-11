@@ -631,6 +631,7 @@ void render(const RenderObj& vao, const Texture& tex, const matrix2x3& mat)
     vao.setUniform(tex); // 0 - magic
     vao.setUniform("u_matrix", mat);
     vao.draw();
+    tex.unBind();
 }
 
 void render(const RenderObj& vao, const std::vector<Texture*>& tex_arr, const matrix2x3& mat) 
@@ -639,6 +640,11 @@ void render(const RenderObj& vao, const std::vector<Texture*>& tex_arr, const ma
     vao.setUniform(tex_arr); // 0 - magic
     vao.setUniform("u_matrix", mat);
     vao.draw();
+    for (const auto &tex : tex_arr)
+    {
+        tex->unBind();
+    }
+    
 }
 
 void swap_buffers()

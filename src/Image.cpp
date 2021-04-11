@@ -1,11 +1,36 @@
 #include "../include/Image.hpp"
 #include "../include/picopng.hpp"
 
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "../include/stb_image.h"
+
 Image::~Image()
 {
 
     std::cout << "--- destor Image" << std::endl;
 }
+
+// Image Image::loadFromFile1(const std::string& path)
+// {
+
+//     stbi_set_flip_vertically_on_load(true);
+//     int            width      = 0;
+//     int            height     = 0;
+//     int            components = 0;
+//     unsigned char* decoded_img =
+//         stbi_load(path.data(), &width, &height, &components, 4);
+
+//     // if there's an error, display it
+//     if (decoded_img == nullptr)
+//     {
+//         std::cerr << "error: can't load file: " << path << std::endl;
+//         throw std::runtime_error("can't load texture");
+//     }
+
+//     std::cout << "image size: "
+//               << "\twidth: " << width << "\theight: " << height << std::endl;
+//     return Image(width, height, decoded_img);
+// }
 
 Image Image::loadFromFile(const std::string& path)
 {
@@ -45,8 +70,8 @@ Image Image::loadFromFile(const std::string& path)
         std::cout << "could not load image: " << std::endl;
     }
 
-    std::cout << "image size: " << image.size() << "\nw: " << w << "\nh: " << h
-              << std::endl;
+    std::cout << "image size: " << image.size() << " byte"
+              << "\nw: " << w << "\nh: " << h << std::endl;
     return Image(w, h, image);
 }
 

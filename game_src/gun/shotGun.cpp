@@ -1,12 +1,19 @@
 #include "shotGun.hpp"
+// #include "../include/engine.hpp"
 #include <algorithm>
 
 namespace guns
 {
 
-shotGun::shotGun()
-    : readyGun(true)
+shotGun::shotGun(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
+// : readyGun(true)
+// , texture_bullet(temp_tex_bul)
+// , bullet_obj(temp_bul_obj)
 {
+    readyGun       = true;
+    texture_bullet = temp_tex_bul;
+    bullet_obj     = temp_bul_obj;
+
     timer_to_shoot.setCallback([&]() { readyGun = true; });
     timer_to_clip.setCallback([&]() {
         currentClip = maxClip;
@@ -90,6 +97,14 @@ void shotGun::update_gun(float delta, std::deque<Enemy*>& enemy_list)
 unsigned int shotGun::count_bullets()
 {
     return bullets.size();
+}
+
+void shotGun::render_bullets()
+{
+    for (auto&& bullet : bullets)
+    {
+        my_engine::render(*bullet_obj, *texture_bullet, bullet->getMatrix());
+    }
 }
 
 #if defined(TEST_VECTOR)

@@ -2,6 +2,7 @@
 
 // #include "../include/engine.hpp"
 #include "gun.hpp"
+#include "../include/engine.hpp"
 
 namespace guns
 {
@@ -10,7 +11,7 @@ class GunSimple : public Gun
 {
 
 public:
-    GunSimple();
+    GunSimple(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
     ~GunSimple();
 
 #if defined(TEST_VECTOR)
@@ -25,7 +26,8 @@ public:
     std::string_view getNameGun() override;
     uint16_t         getMaxClip() const override;
     uint16_t         getCurrentClip() const override;
-    unsigned int count_bullets() override;
+    unsigned int     count_bullets() override;
+    void             render_bullets() override;
 
 protected:
 #if defined(TEST_VECTOR)
@@ -33,13 +35,17 @@ protected:
                          std::vector<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::vector<Enemy*>& enemy_list) override;
 #else
-    bool check_collision(Bullet*            bullet,
+    bool check_collision(Bullet*             bullet,
                          std::deque<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::deque<Enemy*>& enemy_list) override;
 #endif // TEST_VECTOR
 
 private:
     std::string name = "Rifle";
+
+    Texture*              texture_bullet ;
+    my_engine::RenderObj* bullet_obj     ;
+
 #if defined(TEST_VECTOR)
     std::vector<Bullet*> bullets;
 #else
@@ -52,12 +58,12 @@ private:
     float        speed_bullet  = 0.001f;
     float        damage_bullet = 10.f;
 
-    Timer timer_to_clip;
-    uint16_t       currentClip = 30;
-    const uint16_t maxClip = 30;
-    float speed_reload = 2000;
+    Timer          timer_to_clip;
+    uint16_t       currentClip  = 30;
+    const uint16_t maxClip      = 30;
+    float          speed_reload = 2000;
 
-    bool         readyGun;
+    bool readyGun;
 
     // Bullet* bullet = nullptr;
 };

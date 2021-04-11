@@ -1,11 +1,18 @@
 #include "simpleGun.hpp"
+// #include "../include/engine.hpp"
 
 namespace guns
 {
 
-GunSimple::GunSimple()
-    : readyGun(true)
+GunSimple::GunSimple(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
+    // : readyGun(true)
+    // , texture_bullet(temp_tex_bul)
+    // , bullet_obj(temp_bul_obj)
 {
+    readyGun       = true;
+    texture_bullet = temp_tex_bul;
+    bullet_obj     = temp_bul_obj;
+
     timer_to_shoot.setCallback([&]() { readyGun = true; });
     timer_to_clip.setCallback([&]() {
         currentClip = maxClip;
@@ -76,6 +83,15 @@ void GunSimple::update_gun(float delta, std::deque<Enemy*>& enemy_list)
 unsigned int GunSimple::count_bullets()
 {
     return bullets.size();
+}
+
+
+void GunSimple::render_bullets() 
+{
+    for (auto&& bullet : bullets)
+    {
+        my_engine::render(*bullet_obj, *texture_bullet, bullet->getMatrix());
+    }
 }
 
 #if defined(TEST_VECTOR)

@@ -4,9 +4,9 @@
 #include "gun/simpleGun.hpp"
 #include "spawn_levels/wave_1.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <ctime>
-#include <algorithm>
 // #include "Bullet.hpp"
 // #include <cmath>
 
@@ -19,8 +19,6 @@ namespace my_game
 
 game_impl::game_impl()
 {
-
-    srand(time(NULL));
 
     // std::cout << "sizeof Player" << sizeof(Player) << std::endl;
     // std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
@@ -35,7 +33,7 @@ game_impl::~game_impl()
         delete it;
     }
 
-    for (auto tex : vec_texture)
+    for (auto tex : map_texture)
     {
         delete tex;
     }
@@ -73,84 +71,6 @@ void game_impl::on_initialize()
     gfx_map->link();
     // gfx_prog
 
-    // SoundBuffer
-
-    sounds.push_back(my_engine::create_sound_buffer("res/8-bit_detective.wav"));
-    sounds.push_back(my_engine::create_sound_buffer("res/t2_no_problemo.wav"));
-
-    for (const auto it : sounds)
-    {
-        assert(it != nullptr);
-    }
-
-    // assert(sounds[0] != nullptr);
-    // assert(sounds[1] != nullptr);
-
-    sounds[0]->play(my_engine::SoundBuffer::properties::looped);
-    // SoundBuffer
-
-    //  SPAWN Enemy
-
-    spawn_monster = std::make_unique<spawn::wave_1>(this);
-
-    // float temp_pos_x;
-    // float temp_pos_y;
-    for (size_t i = 0; i < 2500; i++)
-    {
-        // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-        // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-        // add_enemy({ temp_pos_x, temp_pos_y });
-        add_enemy({ 0.5, 0.5 });
-        add_enemy({ -0.5, 0.5 });
-        add_enemy({ 0.5, -0.5 });
-        add_enemy({ -0.5, -0.5 });
-    }
-
-    //  SPAWN Enemy
-
-    // Texture init
-
-    // test vec_texture
-    for (size_t i = 0; i < 1; i++)
-    {
-        std::string tex_name = "s_map";
-        Texture*    temp_tex = new Texture(tex_name);
-        vec_texture.push_back(temp_tex);
-        {
-            Image image = Image::loadFromFile("res/map.png");
-            temp_tex[i].setImage(image);
-        }
-    }
-    // test vec_texture
-
-    std::string tex_name = "s_texture";
-
-    texture_head = std::make_unique<Texture>(tex_name);
-    {
-        Image image = Image::loadFromFile("res/head.png");
-        texture_head->setImage(image);
-    }
-
-    texture_corpse = std::make_unique<Texture>(tex_name);
-    {
-        Image image = Image::loadFromFile("res/corpse.png");
-        texture_corpse->setImage(image);
-    }
-
-    texture_bullet = std::make_unique<Texture>(tex_name);
-    {
-        Image image = Image::loadFromFile("res/bullet.png");
-        texture_bullet->setImage(image);
-    }
-
-    texture_spider = std::make_unique<Texture>(tex_name);
-    {
-        Image image = Image::loadFromFile("res/spider.png");
-        texture_spider->setImage(image);
-    }
-
-    // Texture init
-
     // Render_obj
     tank_obj = my_engine::create_RenderObj();
     tank_obj->setProg(gfx_obj);
@@ -169,12 +89,113 @@ void game_impl::on_initialize()
     map_obj->load_mesh_from_file("res/map.txt");
     // Render_obj
 
+    // SoundBuffer
+
+    sounds.push_back(my_engine::create_sound_buffer("res/8-bit_detective.wav"));
+    sounds.push_back(my_engine::create_sound_buffer("res/t2_no_problemo.wav"));
+
+    for (const auto it : sounds)
+    {
+        assert(it != nullptr);
+    }
+
+    // assert(sounds[0] != nullptr);
+    // assert(sounds[1] != nullptr);
+
+    sounds[0]->play(my_engine::SoundBuffer::properties::looped);
+    // SoundBuffer
+
+    // Texture init
+
+    // test vec_texture
+    {
+        std::array<std::string, 5> tex_name{
+            "texMap", "texSand", "texSpice", "texStone", "texRock"
+        };
+        std::array<std::string, 5> tex_path{ "res/map.png",
+                                             "res/sand.png",
+                                             "res/spice.png",
+                                             "res/stone.png",
+                                             "res/rock.png" };
+
+        Texture*                   temp_tex_map =
+            new Texture(tex_name[0], GL_CLAMP_TO_BORDER, GL_LINEAR);
+        map_texture.push_back(temp_tex_map);
+        {
+            // Image image = Image::loadFromFile(tex_path[0]);
+            // temp_tex_map->setImage(image);
+            map_texture[0]->loadImage(tex_path[0]);
+        }
+
+        for (size_t i = 1; i < 5; i++)
+        {
+            Texture* temp_tex =
+                new Texture(tex_name[i], GL_REPEAT, GL_NEAREST);
+            map_texture.push_back(temp_tex);
+            {
+                // Image image = Image::loadFromFile(tex_path[i]);
+                // temp_tex->setImage(image);
+                map_texture[i]->loadImage(tex_path[i]);
+            }
+        }
+    }
+    // test vec_texture
+
+    std::string tex_name = "s_texture";
+
+    texture_head = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    {
+        Image image = Image::loadFromFile("res/head.png");
+        texture_head->setImage(image);
+    }
+
+    texture_corpse = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    {
+        Image image = Image::loadFromFile("res/corpse.png");
+        texture_corpse->setImage(image);
+    }
+
+    texture_bullet = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    {
+        Image image = Image::loadFromFile("res/bullet.png");
+        texture_bullet->setImage(image);
+    }
+
+    texture_spider = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    {
+        Image image = Image::loadFromFile("res/spider.png");
+        texture_spider->setImage(image);
+    }
+
+    // Texture init
+
+    //  SPAWN Enemy
+    srand(time(NULL));
+    spawn_monster = std::make_unique<spawn::wave_1>(this);
+
+    // float temp_pos_x;
+    // float temp_pos_y;
+    for (size_t i = 0; i < 1000; i++)
+    {
+        // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
+        // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
+        // add_enemy({ temp_pos_x, temp_pos_y });
+        add_enemy({ 0.5, 0.5 });
+        add_enemy({ -0.5, 0.5 });
+        add_enemy({ 0.5, -0.5 });
+        add_enemy({ -0.5, -0.5 });
+    }
+
+    //  SPAWN Enemy
+
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
-    gun_current = std::make_unique<guns::shotGun>();
+    gun_current =
+        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj);
     // Gun
 
-    player    = std::make_unique<Player>();
+    player = std::make_unique<Player>(
+        tank_obj, texture_head.get(), texture_corpse.get());
     isRunning = true;
 }
 
@@ -274,42 +295,31 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 void game_impl::on_render()
 {
     // RENDER MAP
-    // my_engine::render(*map_obj, vec_texture, gameConst::aspect_mat);
+    my_engine::render(*map_obj, map_texture, gameConst::aspect_mat);
     // RENDER MAP
 
     // RENDER BULLETS
-#if defined(TEST_VECTOR)
-    std::vector<Bullet*>* temp_bullets = gun_current->getList_bullets();
-#else
-    std::deque<Bullet*>* temp_bullets = gun_current->getList_bullets();
-#endif // TEST_VECTOR
-    for (auto&& bullet : *temp_bullets)
-    {
-        my_engine::render(*bullet_obj, *texture_bullet, bullet->getMatrix());
-    }
+    gun_current->render_bullets();
     // RENDER BULLETS
 
     // RENDER ENEMY
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
     {
-        if (enemy.operator*()->getHealth() <= 0)
+        if ((*enemy)->getHealth() <= 0)
         {
             delete (*enemy);
             enemy = enemy_list.erase(enemy);
         }
         else
         {
-            my_engine::render(*enemy_1,
-                              *texture_spider,
-                              (*enemy)->getMatrix_corpse());
+            (*enemy)->render_enemy();
             ++enemy;
         }
     }
     // RENDER ENEMY
 
     // RENDER PLAYER
-    my_engine::render(*tank_obj, *texture_corpse, player->getMatrix_corpse());
-    my_engine::render(*tank_obj, *texture_head, player->getMatrix_head());
+    player->render_player();
     // RENDER PLAYER
 
     // RENDER ImGui
@@ -321,7 +331,8 @@ void game_impl::add_enemy(my_engine::vec2 pos_enemy)
 {
     if (enemy_list.size() < max_enemy)
     {
-        enemy_list.push_back(new Enemy(pos_enemy));
+        enemy_list.push_back(
+            new Enemy(pos_enemy, enemy_1, texture_spider.get()));
     }
 }
 

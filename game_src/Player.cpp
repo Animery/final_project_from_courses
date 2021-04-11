@@ -1,11 +1,17 @@
 #include "Player.hpp"
-#include "../include/RenderObj_impl.hpp"
+// #include "../include/RenderObj_impl.hpp"
+// #include "../include/engine.hpp"
 
 #include <cmath>
 #include <iostream>
 
-Player::Player()
+Player::Player(my_engine::RenderObj* temp_obj,
+               Texture*              temp_tex_head,
+               Texture*              temp_tex_corpse)
 {
+    tank_obj       = temp_obj;
+    texture_corpse = temp_tex_corpse;
+    texture_head   = temp_tex_head;
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Player" << std::endl;
@@ -118,27 +124,6 @@ void Player::update(std::array<bool, 8>& controls, float delta)
         current_tank_direction = 0.0f;
     }
 
-    // if (controls[static_cast<unsigned>(my_engine::keys_type::button1)])
-    // {
-    //     speed          = speed * 1.005f;
-    //     speed_diagonal = speed_diagonal * 1.005f;
-
-    //     std::cout << "speed:\t" << speed << "\nspeed_diagonal:\t"
-    //               << speed_diagonal << std::endl;
-    // }
-
-    // if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
-    // {
-    //     speed          = speed / 1.005f;
-    //     speed_diagonal = speed_diagonal / 1.005f;
-
-    //     std::cout << "speed:\t" << speed << "\nspeed_diagonal:\t"
-    //               << speed_diagonal << std::endl;
-    // }
-
-    // std::cout << current_tank_pos.x << "\t" << current_tank_pos.y <<
-    // std::endl;
-
     my_engine::matrix2x3 move = my_engine::matrix2x3::move(current_tank_pos);
     my_engine::matrix2x3 rot =
         my_engine::matrix2x3::rotation(current_tank_direction);
@@ -151,15 +136,15 @@ void Player::update(std::array<bool, 8>& controls, float delta)
     matrix_head = rot_head * move * gameConst::aspect_mat * gameConst::size_mat;
 }
 
-my_engine::matrix2x3& Player::getMatrix_corpse()
-{
-    return matrix_corpse;
-}
+// my_engine::matrix2x3& Player::getMatrix_corpse()
+// {
+//     return matrix_corpse;
+// }
 
-my_engine::matrix2x3& Player::getMatrix_head()
-{
-    return matrix_head;
-}
+// my_engine::matrix2x3& Player::getMatrix_head()
+// {
+//     return matrix_head;
+// }
 
 float Player::getCurrent_head_direction()
 {
@@ -206,6 +191,12 @@ void Player::setHealth(float damage)
     health -= damage;
 }
 
+void Player::render_player()
+{
+    my_engine::render(*tank_obj, *texture_corpse, matrix_corpse);
+    my_engine::render(*tank_obj, *texture_head, matrix_head);
+}
+
 void Player::update_Head_dirrection()
 {
     my_engine::vec2 temp_pos_tank = current_tank_pos;
@@ -226,7 +217,8 @@ void Player::update_Head_dirrection()
     // std::cout << "####################" << std::endl;
 
     current_head_direction = -a;
-    // std::cout << "current_head_direction : " << current_head_direction << std::endl;
+    // std::cout << "current_head_direction : " << current_head_direction <<
+    // std::endl;
 }
 
 // void Player::loadRenderObj() {}

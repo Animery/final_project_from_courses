@@ -2,11 +2,16 @@
 
 #include <cmath>
 
-Enemy::Enemy(my_engine::vec2 pos)
+Enemy::Enemy(my_engine::vec2       pos,
+             my_engine::RenderObj* temp_obj,
+             Texture*              temp_tex)
 {
+    obj_corpse       = temp_obj;
+    tex_corpse       = temp_tex;
     current_tank_pos = pos;
     half_size        = 0.015f;
-    current_tank_direction = rand() % 31415*2 / 10000.f - gameConst::half_pi -0.0001f;
+    current_tank_direction =
+        rand() % 31415 * 2 / 10000.f - gameConst::half_pi - 0.0001f;
     health         = 20;
     speed          = 0.00031250f / 3.5f;
     speed_diagonal = 0.00022097f / 3.5f;
@@ -30,28 +35,29 @@ Enemy::~Enemy()
 //     return matrix_corpse;
 // }
 
-// my_engine::matrix2x3& Enemy::getMatrix_head()
-// {
-//     return matrix_head;
-// }
+my_engine::vec2 Enemy::getPosition_A()
+{
+    my_engine::vec2 result = { current_tank_pos.x - half_size,
+                               current_tank_pos.y - half_size };
+    return result;
+}
 
-// my_engine::vec2 Enemy::getPosition_A()
-// {
-//     my_engine::vec2 result = { current_tank_pos.x - half_size,
-//                                current_tank_pos.y - half_size };
-//     return result;
-// }
+my_engine::vec2 Enemy::getPosition_B()
+{
+    my_engine::vec2 result = { current_tank_pos.x + half_size,
+                               current_tank_pos.y + half_size };
+    return result;
+}
 
-// my_engine::vec2 Enemy::getPosition_B()
-// {
-//     my_engine::vec2 result = { current_tank_pos.x + half_size,
-//                                current_tank_pos.y + half_size };
-//     return result;
-// }
+float Enemy::getHealth()
+{
+    return health;
+}
 
-// float Enemy::getHealth() {}
-
-// void Enemy::setHealth() {}
+void Enemy::setHealth(float damage)
+{
+    health -= damage;
+}
 
 void Enemy::update(const float delta, const my_engine::vec2& player_pos)
 {
@@ -67,12 +73,18 @@ void Enemy::update(const float delta, const my_engine::vec2& player_pos)
 
     matrix_corpse = rot * move * gameConst::aspect_mat * gameConst::size_mat;
 
-    my_engine::matrix2x3 rot_head =
-        my_engine::matrix2x3::rotation(current_head_direction);
+    // my_engine::matrix2x3 rot_head =
+    //     my_engine::matrix2x3::rotation(current_head_direction);
 
-    matrix_head = rot_head * move * gameConst::aspect_mat * gameConst::size_mat;
+    // matrix_head = rot_head * move * gameConst::aspect_mat *
+    // gameConst::size_mat;
 
     // update_direction(delta, player_pos);
+}
+
+void Enemy::render_enemy()
+{
+    my_engine::render(*obj_corpse, *tex_corpse, matrix_corpse);
 }
 
 void Enemy::update_direction(const float            delta,

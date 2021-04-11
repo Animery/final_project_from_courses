@@ -87,23 +87,26 @@ void gfx_prog_impl::setUniform(const std::vector<Texture*>& tex_arr) const
     {
         assert(it != nullptr);
     }
-    const GLint location =
-        glGetUniformLocation(prog_id, tex_arr[0]->getName().c_str());
-    if (location == -1)
-    {
-        std::cerr << "can't get uniform location from shader\n";
-        throw std::runtime_error("can't get uniform location");
-    }
-    const size_t size = tex_arr.size();
-    for (size_t i = 0; i < size; i++)
+    const int size = tex_arr.size();
+
+    for (int i = 0; i < size; i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
-        OM_GL_CHECK()
-
         tex_arr[i]->bind();
-        glUniform1i(location, static_cast<int>(0 + i));
+        OM_GL_CHECK()
+        GLint location_ =
+            glGetUniformLocation(prog_id, tex_arr[i]->getName().c_str());
+        OM_GL_CHECK()
+        if (location_ == -1)
+        {
+            std::cerr << "can't get uniform location from shader\n";
+            throw std::runtime_error("can't get uniform location");
+        }
+
+        glUniform1i(location_, static_cast<int32_t>(i));
         OM_GL_CHECK()
     }
+    // glActiveTexture(GL_TEXTURE0);
 }
 
 void gfx_prog_impl::setUniform(std::string_view name, const matrix2x3& m) const
