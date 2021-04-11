@@ -5,9 +5,9 @@ namespace guns
 {
 
 GunSimple::GunSimple(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
-    // : readyGun(true)
-    // , texture_bullet(temp_tex_bul)
-    // , bullet_obj(temp_bul_obj)
+// : readyGun(true)
+// , texture_bullet(temp_tex_bul)
+// , bullet_obj(temp_bul_obj)
 {
     readyGun       = true;
     texture_bullet = temp_tex_bul;
@@ -26,7 +26,7 @@ GunSimple::~GunSimple()
 {
     for (auto it = bullets.begin(); it != bullets.end();)
     {
-        delete it.operator*();
+        // delete it.operator*();
         it = bullets.erase(it);
     }
     std::cout << "--- destor GunSimple" << std::endl;
@@ -36,9 +36,10 @@ void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
 {
     if (readyGun)
     {
-        bullets.push_back(new Bullet(
+        // bullets.push_back(new Bullet(
+        //     temp_position, temp_direction, speed_bullet, damage_bullet));
+        bullets.push_back(std::make_unique<Bullet>(
             temp_position, temp_direction, speed_bullet, damage_bullet));
-        
         --currentClip;
         readyGun = false;
 
@@ -85,8 +86,7 @@ unsigned int GunSimple::count_bullets()
     return bullets.size();
 }
 
-
-void GunSimple::render_bullets() 
+void GunSimple::render_bullets()
 {
     for (auto&& bullet : bullets)
     {
@@ -101,37 +101,26 @@ void GunSimple::update_bullets(float delta, std::deque<Enemy*>& enemy_list)
 #endif // TEST_VECTOR
 
 {
-    
-    for (auto it = bullets.begin(); it != bullets.end();)
-    {
-        it.operator*()->update_bullet(delta);
-
-        if (check_collision(it.operator*(), enemy_list) ||
-            (*it)->getPosition().x > (1 / gameConst::size) ||
-            (*it)->getPosition().x < -(1 / gameConst::size) ||
-            (*it)->getPosition().y >
-                (1 / gameConst::aspect) / gameConst::size ||
-            (*it)->getPosition().y <
-                -(1 / gameConst::aspect) / gameConst::size)
-        {
-            delete it.operator*();
-            it = bullets.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    bullets.erase(
+        std::remove_if(
+            bullets.begin(),
+            bullets.end(),
+            [&enemy_list, delta, this](std::unique_ptr<Bullet>& elem) {
+                (*elem).update_bullet(delta);
+                return check_collision(elem.get(), enemy_list) ||
+                       out_screen(elem.get());
+            }),
+        bullets.end());
 }
 
-#if defined(TEST_VECTOR)
-std::vector<Bullet*>* GunSimple::getList_bullets()
-#else
-std::deque<Bullet*>* GunSimple::getList_bullets()
-#endif // TEST_VECTOR
-{
-    return &bullets;
-}
+// #if defined(TEST_VECTOR)
+// std::vector<Bullet*>* GunSimple::getList_bullets()
+// #else
+// std::deque<Bullet*>* GunSimple::getList_bullets()
+// #endif // TEST_VECTOR
+// {
+//     return &bullets;
+// }
 
 #if defined(TEST_VECTOR)
 bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
@@ -145,16 +134,16 @@ bool GunSimple::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
 
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
     {
-        my_engine::vec2 pos_enemy_A = enemy.operator*()->getPosition_A();
-        my_engine::vec2 pos_enemy_B = enemy.operator*()->getPosition_B();
+        my_engine::vec2 pos_enemy_A = (*enemy)->getPosition_A();
+        my_engine::vec2 pos_enemy_B = (*enemy)->getPosition_B();
         if (my_engine::vec2::check_AABB(
                 pos_bullet_A, pos_bullet_B, pos_enemy_A, pos_enemy_B))
         {
-            enemy.operator*()->setHealth(bullet->getDamage());
+            (*enemy)->setHealth(bullet->getDamage());
 
 #ifdef DEBUG_LEVEL
             std::cout << "hit" << std::endl;
-            std::cout << "health enemy:\t" << enemy.operator*()->getHealth()
+            std::cout << "health enemy:\t" << (*enemy)->getHealth()
                       << std::endl;
 #endif
             // std::cout << "position bullet A\t" << pos_bullet_A << std::endl;
@@ -170,5 +159,14 @@ bool GunSimple::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
         }
     }
     return false;
+}
+
+bool GunSimple::out_screen(const Bullet* bullet)
+{
+    return bullet->getPosition().x > (1 / gameConst::size) ||
+           bullet->getPosition().x < -(1 / gameConst::size) ||
+           bullet->getPosition().y >
+               (1 / gameConst::aspect) / gameConst::size ||
+           bullet->getPosition().y < -(1 / gameConst::aspect) / gameConst::size;
 }
 } // namespace guns

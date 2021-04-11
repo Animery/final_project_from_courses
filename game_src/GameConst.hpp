@@ -3,7 +3,7 @@
 
 // #define TEST_VECTOR
 
-// #define DEBUG_LEVEL
+#define DEBUG_LEVEL
 // #define DEBUG_LEVEL_2
 
 #include "../include/matrix.hpp"

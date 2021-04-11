@@ -10,16 +10,16 @@ Bullet::Bullet(my_engine::vec2& temp_position,
     , speed(temp_speed)
     , damage(temp_damage)
 {
-    #ifdef DEBUG_LEVEL
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Bullet" << std::endl;
-    #endif
+#endif
 }
 
 Bullet::~Bullet()
 {
-    #ifdef DEBUG_LEVEL
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor Bullet" << std::endl;
-    #endif
+#endif
 }
 
 void Bullet::update_bullet(float delta)
@@ -36,28 +36,28 @@ void Bullet::update_bullet(float delta)
         rotation_matrix * move * gameConst::aspect_mat * gameConst::size_mat;
 }
 
-float Bullet::getDamage() 
+float Bullet::getDamage() const
 {
     return damage;
 }
 
-my_engine::matrix2x3& Bullet::getMatrix()
+const my_engine::matrix2x3& Bullet::getMatrix() const
 {
     return matrix;
 }
 
-my_engine::vec2& Bullet::getPosition()
+const my_engine::vec2& Bullet::getPosition() const
 {
     return position;
 }
 
-my_engine::vec2 Bullet::getPosition_A()
+const my_engine::vec2 Bullet::getPosition_A() const
 {
     my_engine::vec2 result = { position.x - half_size, position.y - half_size };
     return result;
 }
 
-my_engine::vec2 Bullet::getPosition_B()
+const my_engine::vec2 Bullet::getPosition_B() const
 {
     my_engine::vec2 result = { position.x + half_size, position.y + half_size };
     return result;

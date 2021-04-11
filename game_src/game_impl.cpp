@@ -112,7 +112,7 @@ void game_impl::on_initialize()
         std::array<std::string, 5> tex_name{
             "texMap", "texSand", "texSpice", "texStone", "texRock"
         };
-        std::array<std::string, 5> tex_path{ "res/map.png",
+        std::array<std::string, 5> tex_path{ "res/map_test.png",
                                              "res/sand.png",
                                              "res/spice.png",
                                              "res/stone.png",
@@ -175,7 +175,7 @@ void game_impl::on_initialize()
 
     // float temp_pos_x;
     // float temp_pos_y;
-    for (size_t i = 0; i < 1000; i++)
+    for (size_t i = 0; i < 10; i++)
     {
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;

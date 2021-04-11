@@ -1,8 +1,8 @@
 #pragma once
 
 // #include "../include/engine.hpp"
-#include "gun.hpp"
 #include "../include/engine.hpp"
+#include "gun.hpp"
 
 namespace guns
 {
@@ -19,7 +19,7 @@ public:
     std::vector<Bullet*>* getList_bullets();
 #else
     void update_gun(float delta, std::deque<Enemy*>& enemy_list) override;
-    std::deque<Bullet*>* getList_bullets();
+    // std::deque<Bullet*>* getList_bullets();
 #endif // TEST_VECTOR
 
     void shoot(my_engine::vec2& temp_position, float temp_direction) override;
@@ -37,19 +37,21 @@ protected:
 #else
     bool check_collision(Bullet*             bullet,
                          std::deque<Enemy*>& enemy_list) override;
+    bool out_screen(const Bullet* bullet) override;
     void update_bullets(float delta, std::deque<Enemy*>& enemy_list) override;
 #endif // TEST_VECTOR
 
 private:
     std::string name = "Rifle";
 
-    Texture*              texture_bullet ;
-    my_engine::RenderObj* bullet_obj     ;
+    Texture*              texture_bullet;
+    my_engine::RenderObj* bullet_obj;
 
 #if defined(TEST_VECTOR)
     std::vector<Bullet*> bullets;
 #else
-    std::deque<Bullet*> bullets;
+    // std::deque<Bullet*> bullets;
+    std::deque<std::unique_ptr<Bullet>> bullets;
 #endif // TEST_VECTOR
 
     Timer timer_to_shoot;

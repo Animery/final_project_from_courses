@@ -16,12 +16,12 @@ public:
     ~Bullet();
     void update_bullet(float delta);
 
-    float getDamage();
+    float getDamage() const;
 
-    my_engine::matrix2x3& getMatrix();
-    my_engine::vec2&      getPosition();
-    my_engine::vec2       getPosition_A();
-    my_engine::vec2       getPosition_B();
+    const my_engine::matrix2x3& getMatrix() const;
+    const my_engine::vec2&      getPosition() const;
+    const my_engine::vec2       getPosition_A() const;
+    const my_engine::vec2       getPosition_B() const;
 
 private:
     my_engine::vec2      position;
