@@ -24,29 +24,10 @@ void main()
 
     vec4  mapV  = texture2D(texMap, v_tex_coord);
     float sandV = clamp(1.0 - (mapV.r + mapV.g + mapV.b), 0.0, 1.0);
-
-
-    // if (mapV.r > 0.0)
-    // {
-    //     gl_FragColor = stone * (1.0 - mapV.r) + stone * mapV.r;
-    // }
-    // else
-    // {
-    //     gl_FragColor = rock;
-    // }
+    
 
     gl_FragColor =
         (sand * sandV + spice * mapV.r + stone * mapV.g + rock * mapV.b) /
         (sandV + mapV.r + mapV.g + mapV.b);
 
-    // vec4 base  = texture2D(s_base, v_tex_coord);
-    // vec4 minor = texture2D(s_minor, v_tex_coord);
-
-    // vec4 mapV   = texture2D(s_map, v_tex_coord);
-    // float baseV = clamp(1.0 - (mapV.r + mapV.g + mapV.b), 0.0, 1.0);
-
-    // gl_FragColor = (base * baseV +
-    // minor * mapV.r) / (baseV + mapV.r + mapV.g + mapV.b);
-
-    // gl_FragColor = texture2D(s_map, v_tex_coord) /** v_color*/;
 }
