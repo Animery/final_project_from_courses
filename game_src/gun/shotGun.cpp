@@ -153,8 +153,7 @@ bool shotGun::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
         {
             // TODO
             (*enemy)->setHealth(bullet->getDamage());
-            // (*enemy)->setHealth(bullet->getDamage());
-
+            
 #ifdef DEBUG_LEVEL
             std::cout << "hit" << std::endl;
             std::cout << "health enemy:\t" << (*enemy)->getHealth()

@@ -146,11 +146,6 @@ bool GunSimple::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
             std::cout << "health enemy:\t" << (*enemy)->getHealth()
                       << std::endl;
 #endif
-            // std::cout << "position bullet A\t" << pos_bullet_A << std::endl;
-            // std::cout << "position bullet B\t" << pos_bullet_B << std::endl;
-            // std::cout << "position enemy A\t" << pos_enemy_A << std::endl;
-            // std::cout << "position enemy B\t" << pos_enemy_B << std::endl;
-
             return true;
         }
         else
