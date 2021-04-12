@@ -18,7 +18,7 @@ public:
     void update_gun(float delta, std::vector<Enemy*>& enemy_list) override;
     std::vector<Bullet*>* getList_bullets();
 #else
-    void update_gun(float delta, std::deque<Enemy*>& enemy_list) override;
+    void update_gun(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
     // std::deque<Bullet*>* getList_bullets();
 #endif // TEST_VECTOR
 
@@ -36,9 +36,9 @@ protected:
     void update_bullets(float delta, std::vector<Enemy*>& enemy_list) override;
 #else
     bool check_collision(Bullet*             bullet,
-                         std::deque<Enemy*>& enemy_list) override;
+                        std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
     bool out_screen(const Bullet* bullet) override;
-    void update_bullets(float delta, std::deque<Enemy*>& enemy_list) override;
+    void update_bullets(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
 #endif // TEST_VECTOR
 
 private:
@@ -55,6 +55,7 @@ private:
 #endif // TEST_VECTOR
 
     Timer timer_to_shoot;
+    bool readyGun;
     // 1 in X milliseconds
     unsigned int speed_shoot   = 100;
     float        speed_bullet  = 0.001f;
@@ -65,7 +66,6 @@ private:
     const uint16_t maxClip      = 30;
     float          speed_reload = 2000;
 
-    bool readyGun;
 
     // Bullet* bullet = nullptr;
 };

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "../include/engine.hpp"
+
+
 #include "GameConst.hpp"
-// #include "../include/matrix.hpp"
-// #include <iostream>
-// #include <numbers>
 #include <memory>
+
+
 
 class Player
 {
@@ -46,7 +47,7 @@ protected:
     float           current_tank_direction = 0.0f;
     float           current_head_direction = 0.0f;
 
-    float health         = 100;
+    float health         = 1000;
     float speed          = 0.0003125f;
     float speed_diagonal = 0.00022097f;
 

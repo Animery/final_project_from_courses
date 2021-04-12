@@ -8,7 +8,6 @@
 
 #include "../include/matrix.hpp"
 
-#include <iostream>
 #include <numbers>
 
 namespace gameConst

@@ -1,5 +1,7 @@
 #include "game_impl.hpp"
 
+#include "enemy/bigSpider.hpp"
+#include "enemy/spider.hpp"
 #include "gun/shotGun.hpp"
 #include "gun/simpleGun.hpp"
 #include "spawn_levels/wave_1.hpp"
@@ -7,8 +9,6 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
-// #include "Bullet.hpp"
-// #include <cmath>
 
 #include "../imgui_src/imgui.h"
 #include "../imgui_src/imgui_impl_opengl3.h"
@@ -28,10 +28,10 @@ game_impl::game_impl()
 game_impl::~game_impl()
 {
     // delete engine;
-    for (auto it : enemy_list)
-    {
-        delete it;
-    }
+    // for (auto it : enemy_list)
+    // {
+    //     delete it;
+    // }
 
     for (auto tex : map_texture)
     {
@@ -40,6 +40,12 @@ game_impl::~game_impl()
 
     delete gfx_obj;
     delete gfx_map;
+    delete tank_obj;
+    delete bullet_obj;
+    delete spider;
+    delete big_spider;
+    delete map_obj;
+
     std::cout << "--- destor game_impl" << std::endl;
 }
 
@@ -80,9 +86,13 @@ void game_impl::on_initialize()
     bullet_obj->setProg(gfx_obj);
     bullet_obj->load_mesh_from_file("res/bullet.txt");
 
-    enemy_1 = my_engine::create_RenderObj();
-    enemy_1->setProg(gfx_obj);
-    enemy_1->load_mesh_from_file("res/enemy_1.txt");
+    spider = my_engine::create_RenderObj();
+    spider->setProg(gfx_obj);
+    spider->load_mesh_from_file("res/spider.txt");
+
+    big_spider = my_engine::create_RenderObj();
+    big_spider->setProg(gfx_obj);
+    big_spider->load_mesh_from_file("res/big_spider.txt");
 
     map_obj = my_engine::create_RenderObj();
     map_obj->setProg(gfx_map);
@@ -118,7 +128,7 @@ void game_impl::on_initialize()
                                              "res/stone.png",
                                              "res/rock.png" };
 
-        Texture*                   temp_tex_map =
+        Texture* temp_tex_map =
             new Texture(tex_name[0], GL_CLAMP_TO_BORDER, GL_LINEAR);
         map_texture.push_back(temp_tex_map);
         {
@@ -129,8 +139,7 @@ void game_impl::on_initialize()
 
         for (size_t i = 1; i < 5; i++)
         {
-            Texture* temp_tex =
-                new Texture(tex_name[i], GL_REPEAT, GL_NEAREST);
+            Texture* temp_tex = new Texture(tex_name[i], GL_REPEAT, GL_NEAREST);
             map_texture.push_back(temp_tex);
             {
                 // Image image = Image::loadFromFile(tex_path[i]);
@@ -167,8 +176,14 @@ void game_impl::on_initialize()
         texture_spider->setImage(image);
     }
 
-    // Texture init
+    texture_big_spider =
+        std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    {
+        Image image = Image::loadFromFile("res/big_spider2.png");
+        texture_big_spider->setImage(image);
+    }
 
+    // Texture init
 
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
@@ -181,7 +196,7 @@ void game_impl::on_initialize()
 
     //  SPAWN Enemy
     srand(time(NULL));
-    spawn_monster = std::make_unique<spawn::wave_1>(this,player.get());
+    spawn_monster = std::make_unique<spawn::wave_1>(this, player.get());
 
     // float temp_pos_x;
     // float temp_pos_y;
@@ -268,7 +283,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
     for (auto&& monster : enemy_list)
     {
-        monster->update(delta, player->getCurrent_tank_pos());
+        monster->update(delta, player->getCurrent_tank_pos(), enemy_list);
     }
     // UPDATE Monsters
 
@@ -308,7 +323,7 @@ void game_impl::on_render()
     {
         if ((*enemy)->getHealth() <= 0)
         {
-            delete (*enemy);
+            // delete (*enemy);
             enemy = enemy_list.erase(enemy);
         }
         else
@@ -332,8 +347,22 @@ void game_impl::add_enemy(my_engine::vec2 pos_enemy)
 {
     if (enemy_list.size() < max_enemy)
     {
-        enemy_list.push_back(
-            new Enemy(pos_enemy, enemy_1, texture_spider.get()));
+        if (count_spider < 5)
+        {
+            enemy_list.push_back(std::make_unique<enemy::spider>(
+                pos_enemy, spider, texture_spider.get()));
+            ++count_spider;
+        }
+        else
+        {
+            enemy_list.push_back(
+                std::make_unique<enemy::bigSpider>(pos_enemy,
+                                                   big_spider,
+                                                   texture_big_spider.get(),
+                                                   texture_bullet.get(),
+                                                   bullet_obj));
+            count_spider = 0;
+        }
     }
 }
 

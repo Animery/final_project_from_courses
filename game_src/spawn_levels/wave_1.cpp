@@ -16,7 +16,7 @@ wave_1::wave_1(my_game::game_impl* t_game, Player* t_player)
         float           temp_pos_x;
         float           temp_pos_y;
         my_engine::vec2 pos_player;
-        float           max_min = 1.f;
+        float           max_min = 0.5f;
         do
         {
             temp_pos_x = (rand() % 3001 / 1000.0f) - 1.5f;

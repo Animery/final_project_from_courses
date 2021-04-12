@@ -1,6 +1,4 @@
 #include "Player.hpp"
-// #include "../include/RenderObj_impl.hpp"
-// #include "../include/engine.hpp"
 
 #include <cmath>
 #include <iostream>

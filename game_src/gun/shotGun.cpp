@@ -85,7 +85,7 @@ uint16_t shotGun::getCurrentClip() const
 #if defined(TEST_VECTOR)
 void shotGun::update_gun(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void shotGun::update_gun(float delta, std::deque<Enemy*>& enemy_list)
+void shotGun::update_gun(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
@@ -110,7 +110,7 @@ void shotGun::render_bullets()
 #if defined(TEST_VECTOR)
 void shotGun::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void shotGun::update_bullets(float delta, std::deque<Enemy*>& enemy_list)
+void shotGun::update_bullets(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
     bullets.erase(
@@ -137,7 +137,7 @@ void shotGun::update_bullets(float delta, std::deque<Enemy*>& enemy_list)
 #if defined(TEST_VECTOR)
 bool shotGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
 #else
-bool shotGun::check_collision(Bullet* bullet, std::deque<Enemy*>& enemy_list)
+bool shotGun::check_collision(Bullet* bullet, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 
 {

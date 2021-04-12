@@ -1,15 +1,11 @@
 #pragma once
 
-#include "../include/engine.hpp"
-
-#include "Enemy.hpp"
 #include "Player.hpp"
+#include "enemy/iEnemy.hpp"
 #include "gun/gun.hpp"
 #include "spawn_levels/spawn_enemy.hpp"
-// #include "Bullet.hpp"
 
 #include <memory>
-// #include <chrono>
 
 namespace my_game
 {
@@ -38,7 +34,7 @@ private:
 #if defined(TEST_VECTOR)
     std::vector<Enemy*> enemy_list;
 #else
-    std::deque<Enemy*> enemy_list;
+    std::deque<std::unique_ptr<enemy::iEnemy>> enemy_list;
 #endif // TEST_VECTOR
 
     std::vector<Texture*>    map_texture;
@@ -46,16 +42,19 @@ private:
     std::unique_ptr<Texture> texture_head;
     std::unique_ptr<Texture> texture_bullet;
     std::unique_ptr<Texture> texture_spider;
+    std::unique_ptr<Texture> texture_big_spider;
 
     my_engine::RenderObj* tank_obj   = nullptr;
     my_engine::RenderObj* bullet_obj = nullptr;
-    my_engine::RenderObj* enemy_1    = nullptr;
+    my_engine::RenderObj* spider     = nullptr;
+    my_engine::RenderObj* big_spider = nullptr;
     my_engine::RenderObj* map_obj    = nullptr;
 
     std::array<bool, 8> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
-    size_t                              max_enemy = 1000;
+    size_t                              max_enemy    = 1000;
+    uint16_t                            count_spider = 0;
 
     std::vector<my_engine::SoundBuffer*> sounds;
 

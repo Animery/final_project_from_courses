@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Texture.hpp"
-#include "figure_struct.hpp"
+// #include "figure_struct.hpp"
 #include "matrix.hpp"
 
 // #include <iosfwd>

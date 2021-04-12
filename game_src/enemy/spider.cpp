@@ -1,8 +1,14 @@
-#include "Enemy.hpp"
+
+#include "spider.hpp"
+#include "../../include/engine.hpp"
 
 #include <cmath>
 
-Enemy::Enemy(my_engine::vec2       pos,
+namespace enemy
+{
+    
+
+spider::spider(my_engine::vec2       pos,
              my_engine::RenderObj* temp_obj,
              Texture*              temp_tex)
 {
@@ -19,47 +25,44 @@ Enemy::Enemy(my_engine::vec2       pos,
 
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
-    std::cout << "+++ ctor Enemy" << std::endl;
+    std::cout << "+++ ctor spider" << std::endl;
 #endif
 }
 
-Enemy::~Enemy()
+spider::~spider()
 {
 #ifdef DEBUG_LEVEL
-    std::cout << "--- destor Enemy" << std::endl;
+    std::cout << "--- destor spider" << std::endl;
 #endif
 }
 
-// my_engine::matrix2x3& Enemy::getMatrix_corpse()
-// {
-//     return matrix_corpse;
-// }
-
-my_engine::vec2 Enemy::getPosition_A()
+my_engine::vec2 spider::getPosition_A()
 {
     my_engine::vec2 result = { current_tank_pos.x - half_size,
                                current_tank_pos.y - half_size };
     return result;
 }
 
-my_engine::vec2 Enemy::getPosition_B()
+my_engine::vec2 spider::getPosition_B()
 {
     my_engine::vec2 result = { current_tank_pos.x + half_size,
                                current_tank_pos.y + half_size };
     return result;
 }
 
-float Enemy::getHealth()
+float spider::getHealth()
 {
     return health;
 }
 
-void Enemy::setHealth(float damage)
+void spider::setHealth(float damage)
 {
     health -= damage;
 }
 
-void Enemy::update(const float delta, const my_engine::vec2& player_pos)
+void spider::update(const float                          delta,
+                                   const my_engine::vec2&               player_pos,
+                                   std::deque<std::unique_ptr<iEnemy>>& enemy_list)
 {
     update_direction(delta, player_pos);
 
@@ -82,12 +85,12 @@ void Enemy::update(const float delta, const my_engine::vec2& player_pos)
     // update_direction(delta, player_pos);
 }
 
-void Enemy::render_enemy()
+void spider::render_enemy()
 {
     my_engine::render(*obj_corpse, *tex_corpse, matrix_corpse);
 }
 
-void Enemy::update_direction(const float            delta,
+void spider::update_direction(const float            delta,
                              const my_engine::vec2& player_pos)
 {
     my_engine::vec2 temp_pos_tank = current_tank_pos;
@@ -143,3 +146,4 @@ void Enemy::update_direction(const float            delta,
     // std::cout << "delta_rotation : " << delta_rotation << std::endl;
     // std::cout << "####################" << std::endl;
 }
+} // namespace enemy

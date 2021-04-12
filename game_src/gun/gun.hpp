@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Enemy.hpp"
+#include "../enemy/iEnemy.hpp"
 #include "../Timer.hpp"
 #include "Bullet.hpp"
 
@@ -21,10 +21,10 @@ public:
     virtual uint16_t         getMaxClip() const          = 0;
     virtual uint16_t         getCurrentClip() const      = 0;
 #if defined(TEST_VECTOR)
-    virtual void update_gun(float delta, std::vector<Enemy*>& enemy_list) = 0;
+    virtual void update_gun(float delta, std::vector<enemy::iEnemy*>& enemy_list) = 0;
     virtual std::vector<Bullet*>* getList_bullets()                       = 0;
 #else
-    virtual void update_gun(float delta, std::deque<Enemy*>& enemy_list) = 0;
+    virtual void update_gun(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) = 0;
     // virtual std::deque<Bullet*>* getList_bullets()                       = 0;
 #endif // TEST_VECTOR
 
@@ -39,10 +39,10 @@ protected:
                                 std::vector<Enemy*>& enemy_list)  = 0;
 #else
     virtual bool check_collision(Bullet*             bullet,
-                                 std::deque<Enemy*>& enemy_list) = 0;
+                                 std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) = 0;
     virtual bool out_screen(const Bullet* bullet)                      = 0;
     virtual void update_bullets(float               delta,
-                                std::deque<Enemy*>& enemy_list)  = 0;
+                                std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)  = 0;
 #endif // TEST_VECTOR
 
 private:
