@@ -169,13 +169,23 @@ void game_impl::on_initialize()
 
     // Texture init
 
+
+    // Gun
+    // gun_current = std::make_unique<guns::shotGun>();
+    gun_current =
+        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj);
+    // Gun
+
+    player = std::make_unique<Player>(
+        tank_obj, texture_head.get(), texture_corpse.get());
+
     //  SPAWN Enemy
     srand(time(NULL));
-    spawn_monster = std::make_unique<spawn::wave_1>(this);
+    spawn_monster = std::make_unique<spawn::wave_1>(this,player.get());
 
     // float temp_pos_x;
     // float temp_pos_y;
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
@@ -187,15 +197,6 @@ void game_impl::on_initialize()
     }
 
     //  SPAWN Enemy
-
-    // Gun
-    // gun_current = std::make_unique<guns::shotGun>();
-    gun_current =
-        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj);
-    // Gun
-
-    player = std::make_unique<Player>(
-        tank_obj, texture_head.get(), texture_corpse.get());
     isRunning = true;
 }
 

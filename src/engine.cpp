@@ -162,7 +162,7 @@ void initImGui(const char* glsl_version)
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
     std::cout << "glsl_version: " << glsl_version << std::endl;
-    
+
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can
     // also load multiple fonts and use ImGui::PushFont()/PopFont() to select
@@ -184,7 +184,7 @@ void initImGui(const char* glsl_version)
     // io.Fonts->AddFontFromFileTTF("fonts/Cousine-Regular.ttf", 15.0f);
     // io.Fonts->AddFontFromFileTTF("fonts/DroidSans.ttf", 16.0f);
     // io.Fonts->AddFontFromFileTTF("fonts/ProggyTiny.ttf", 10.0f);
-   
+
     // Init ImGui
 }
 
@@ -262,6 +262,7 @@ void initAudio()
 
     // SDL_FALSE - mean get only OUTPUT audio devices
     const int num_audio_devices = SDL_GetNumAudioDevices(SDL_FALSE);
+    std::cout << "count audio device: " << num_audio_devices << std::endl;
     if (num_audio_devices > 0)
     {
         default_audio_device_name =
@@ -462,7 +463,7 @@ std::string initialize(std::string_view   title,
     return "";
 }
 
-SDL_Window* getWindow() 
+SDL_Window* getWindow()
 {
     return window;
 }
@@ -516,24 +517,29 @@ bool read_event(event& ev)
 //     ImGui_ImplSDL2_NewFrame(window);
 //     ImGui::NewFrame();
 //     // 1. Show the big demo window (Most of the sample code is in
-//     // ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear
+//     // ImGui::ShowDemoWindow()! You can browse its code to learn more about
+//     Dear
 //     // ImGui!).
-    
+
 //     // static bool show_demo_window = true;
 //     // if (show_demo_window)
 //     //     ImGui::ShowDemoWindow(&show_demo_window);
 
-//     // 2. Show a simple window that we create ourselves. We use a Begin/End pair
+//     // 2. Show a simple window that we create ourselves. We use a Begin/End
+//     pair
 //     // to created a named window.
 //     {
 //         static float f       = 0.0f;
 //         static int   counter = 0;
 
-//         ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
+//         ImGui::Begin("Hello, world!"); // Create a window called "Hello,
+//         world!"
 //                                        // and append into it.
 
-//         ImGui::Text("This is some useful text."); // Display some text (you can
-//                                                   // use a format strings too)
+//         ImGui::Text("This is some useful text."); // Display some text (you
+//         can
+//                                                   // use a format strings
+//                                                   too)
 
 //         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 //         ImGui::SliderAngle("float", &f, 0.0f, 1.0f);
@@ -544,7 +550,8 @@ bool read_event(event& ev)
 //         //     (float*)&clear_color); // Edit 3 floats representing a color
 
 //         // if (ImGui::Button(
-//         //         "Button")) // Buttons return true when clicked (most widgets
+//         //         "Button")) // Buttons return true when clicked (most
+//         widgets
 //         //                    // return true when edited/activated)
 //         //     counter++;
 
@@ -562,7 +569,8 @@ bool read_event(event& ev)
 
 //     //     // Get the current ImGui cursor position
 //     //     ImVec2 p = { (pos_player.x + 1) * (gameConst::screen_width / 2),
-//     //                  -(pos_player.y + 1) * (gameConst::screen_height / 2) };
+//     //                  -(pos_player.y + 1) * (gameConst::screen_height / 2)
+//     };
 //     //                  // Draw a red circle
 //     // draw_list->AddCircleFilled(
 //     //     ImVec2(p.x, p.y), 30.0f, IM_COL32(255, 0, 0, 255), 16);
@@ -590,7 +598,8 @@ bool read_event(event& ev)
 //     // // draw_list->AddCircle(
 //     // //     ImVec2(p.x, p.y), 40.0f, IM_COL32(0, 255, 0, 200), 16, 5.0f);
 
-//     // // Advance the ImGui cursor to claim space in the window (otherwise the
+//     // // Advance the ImGui cursor to claim space in the window (otherwise
+//     the
 //     // // window will appears small and needs to be resized)
 //     // // ImGui::Dummy(ImVec2(200, 200));
 
@@ -603,7 +612,8 @@ bool read_event(event& ev)
 //     //         "Another Window",
 //     //         &show_another_window); // Pass a pointer to our bool variable
 //     //         (the
-//     //                                // window will have a closing button that
+//     //                                // window will have a closing button
+//     that
 //     //                                // will clear the bool when clicked)
 //     //     ImGui::Text("Hello from another window!");
 //     //     if (ImGui::Button("Close Me"))
@@ -634,17 +644,18 @@ void render(const RenderObj& vao, const Texture& tex, const matrix2x3& mat)
     tex.unBind();
 }
 
-void render(const RenderObj& vao, const std::vector<Texture*>& tex_arr, const matrix2x3& mat) 
+void render(const RenderObj&             vao,
+            const std::vector<Texture*>& tex_arr,
+            const matrix2x3&             mat)
 {
     vao.useProg();
     vao.setUniform(tex_arr); // 0 - magic
     vao.setUniform("u_matrix", mat);
     vao.draw();
-    for (const auto &tex : tex_arr)
+    for (const auto& tex : tex_arr)
     {
         tex->unBind();
     }
-    
 }
 
 void swap_buffers()
@@ -690,8 +701,6 @@ void uninitialize()
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
-
-
 
 RenderObj* create_RenderObj()
 {

@@ -7,13 +7,27 @@
 namespace spawn
 {
 
-wave_1::wave_1(my_game::game_impl* temp_game)
+wave_1::wave_1(my_game::game_impl* t_game, Player* t_player)
 {
-    game = temp_game;
-    m_timer.setCallback([&]() {
-        float temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-        float temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-        game->add_enemy({ temp_pos_x, temp_pos_y });
+    wave_game   = t_game;
+    wave_player = t_player;
+
+    m_timer.setCallback([this]() {
+        float           temp_pos_x;
+        float           temp_pos_y;
+        my_engine::vec2 pos_player;
+        float           max_min = 1.f;
+        do
+        {
+            temp_pos_x = (rand() % 3001 / 1000.0f) - 1.5f;
+            temp_pos_y = (rand() % 3001 / 1000.0f) - 1.5f;
+            pos_player = wave_player->getCurrent_tank_pos();
+        } while (!((temp_pos_x < pos_player.x - max_min ||
+                    temp_pos_x > pos_player.x + max_min) &&
+                   (temp_pos_y < pos_player.y - max_min ||
+                    temp_pos_y > pos_player.y + max_min)));
+
+        wave_game->add_enemy({ temp_pos_x, temp_pos_y });
         readyTimer = true;
     });
 
@@ -40,8 +54,6 @@ void wave_1::update_wave(const float delta)
     {
         m_timer.update_timer(delta);
     }
-    
-   
 }
 
 void wave_1::start()

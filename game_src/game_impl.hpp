@@ -55,7 +55,7 @@ private:
     std::array<bool, 8> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
-    size_t                              max_enemy = 100;
+    size_t                              max_enemy = 1000;
 
     std::vector<my_engine::SoundBuffer*> sounds;
 
