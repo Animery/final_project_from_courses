@@ -1,5 +1,6 @@
 #pragma once
-#include "../GameConst.hpp"
+// #include "../GameConst.hpp"
+#include "../Player.hpp"
 #include <deque>
 #include <memory>
 
@@ -10,8 +11,12 @@ class iEnemy
 {
 public:
     virtual ~iEnemy();
+    // virtual void            update(const float delta,
+    //                                const my_engine::vec2& player_pos,
+    //                                std::deque<std::unique_ptr<iEnemy>>&
+    //                                enemy_list) = 0;
     virtual void            update(const float                          delta,
-                                   const my_engine::vec2&               player_pos,
+                                   Player*                              t_player,
                                    std::deque<std::unique_ptr<iEnemy>>& enemy_list) = 0;
     virtual void            render_enemy()          = 0;
     virtual my_engine::vec2 getPosition_A()         = 0;

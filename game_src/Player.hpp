@@ -2,16 +2,13 @@
 
 #include "../include/engine.hpp"
 
-
 #include "GameConst.hpp"
 #include <memory>
-
-
 
 class Player
 {
 public:
-    Player(my_engine::RenderObj*, Texture*, Texture*);
+    Player(my_engine::RenderObj*, Texture*, Texture*, my_engine::SoundBuffer*);
     ~Player();
     void update(std::array<bool, 8>& controls, float delta);
 
@@ -25,7 +22,7 @@ public:
     void  setCurrent_head_direction(const float a);
     void  setMouse_pos(const my_engine::vec2& a);
 
-    my_engine::vec2& getCurrent_tank_pos();
+    my_engine::vec2& getCurrent_current_pos();
     my_engine::vec2  getPosition_A();
     my_engine::vec2  getPosition_B();
 
@@ -43,13 +40,15 @@ protected:
     my_engine::matrix2x3 matrix_head;
 
     my_engine::vec2 current_tank_pos       = { -1.0f, -0.00000000000000001f };
-    float           half_size              = 0.05;
+    float           half_size              = 0.025;
     float           current_tank_direction = 0.0f;
     float           current_head_direction = 0.0f;
 
     float health         = 1000;
     float speed          = 0.0003125f;
     float speed_diagonal = 0.00022097f;
+
+    my_engine::SoundBuffer* sound_dmg;
 
 private:
     void            update_Head_dirrection();

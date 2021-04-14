@@ -7,6 +7,7 @@
 #define GL_LINEAR 0x2601
 #define GL_REPEAT 0x2901
 #define GL_NEAREST 0x2600
+
 typedef unsigned int GLuint;
 class Image;
 

@@ -155,6 +155,8 @@ void       destroy_RenderObj(RenderObj* e);
 class SoundBuffer
 {
 public:
+    /*once,
+    looped*/
     enum class properties
     {
         once,
@@ -163,6 +165,7 @@ public:
 
     virtual ~SoundBuffer();
     virtual void play(const properties) = 0;
+    virtual bool check_playing() = 0;
 };
 
 SoundBuffer* create_sound_buffer(std::string_view path);

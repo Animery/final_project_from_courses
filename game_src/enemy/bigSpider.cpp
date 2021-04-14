@@ -22,6 +22,8 @@ bigSpider::bigSpider(my_engine::vec2       pos,
         timer_use = false;
     });
 
+    melee_timer.setCallback([this]() { melee_ready = true; });
+
     current_tank_pos = pos;
     half_size        = 0.025f;
     current_tank_direction =
@@ -69,10 +71,10 @@ void bigSpider::setHealth(float damage)
 }
 
 void bigSpider::update(const float                          delta,
-                       const my_engine::vec2&               player_pos,
+                       Player*                              t_player,
                        std::deque<std::unique_ptr<iEnemy>>& enemy_list)
 {
-    update_direction(delta, player_pos);
+    update_direction(delta, t_player->getCurrent_current_pos());
 
     if (timer_use)
     {
@@ -84,7 +86,7 @@ void bigSpider::update(const float                          delta,
         timer_use = true;
     }
 
-    update_bullets(delta, enemy_list);
+    update_bullets(delta, enemy_list, t_player);
     my_engine::matrix2x3 rot =
         my_engine::matrix2x3::rotation(current_tank_direction);
 
@@ -95,13 +97,20 @@ void bigSpider::update(const float                          delta,
 
     matrix_corpse = rot * move * gameConst::aspect_mat * gameConst::size_mat;
 
-    // my_engine::matrix2x3 rot_head =
-    //     my_engine::matrix2x3::rotation(current_head_direction);
-
-    // matrix_head = rot_head * move * gameConst::aspect_mat *
-    // gameConst::size_mat;
-
-    // update_direction(delta, player_pos);
+    if (melee_ready)
+    {
+        if (check_collison_player(t_player->getPosition_A(),
+                                  t_player->getPosition_B()))
+        {
+            t_player->setHealth(melee_dmg);
+            melee_ready = false;
+            melee_timer.start(melee_speed);
+        }
+    }
+    else
+    {
+        melee_timer.update_timer(delta);
+    }
 }
 
 void bigSpider::render_enemy()
@@ -166,17 +175,23 @@ void bigSpider::update_direction(const float            delta,
 
 void bigSpider::shoot()
 {
-    my_engine::vec2 pos_to_shoot = { current_tank_pos.x + half_size * 1.5f * matrix_corpse.col1.x,
-                                     current_tank_pos.y - half_size * 1.5f * matrix_corpse.col1.y };
+    my_engine::vec2 pos_to_shoot = {
+        current_tank_pos.x + half_size * 1.5f * matrix_corpse.col1.x,
+        current_tank_pos.y - half_size * 1.5f * matrix_corpse.col1.y
+    };
     bullets.push_back(std::make_unique<Bullet>(
         pos_to_shoot, current_tank_direction, speed_bullet, damage_bullet));
 }
 
 bool bigSpider::check_collision(Bullet*                              bullet,
-                                std::deque<std::unique_ptr<iEnemy>>& enemy_list)
+                                std::deque<std::unique_ptr<iEnemy>>& enemy_list,
+                                Player*                              t_player)
 {
     my_engine::vec2 pos_bullet_A = bullet->getPosition_A();
     my_engine::vec2 pos_bullet_B = bullet->getPosition_B();
+
+    my_engine::vec2 pos_player_A = t_player->getPosition_A();
+    my_engine::vec2 pos_player_B = t_player->getPosition_B();
 
     for (auto enemy = enemy_list.begin(); enemy != enemy_list.end();)
     {
@@ -199,7 +214,23 @@ bool bigSpider::check_collision(Bullet*                              bullet,
             enemy++;
         }
     }
+    if (my_engine::vec2::check_AABB(
+            pos_bullet_A, pos_bullet_B, pos_player_A, pos_player_B))
+    {
+        t_player->setHealth(bullet->getDamage());
+        return true;
+    }
     return false;
+}
+
+bool bigSpider::check_collison_player(const my_engine::vec2& pos_player_A,
+                                      const my_engine::vec2& pos_player_B)
+{
+    my_engine::vec2 pos_monster_A = getPosition_A();
+    my_engine::vec2 pos_monster_B = getPosition_B();
+
+    return my_engine::vec2::check_AABB(
+        pos_monster_A, pos_monster_B, pos_player_A, pos_player_B);
 }
 
 bool bigSpider::out_screen(const Bullet* bullet)
@@ -212,17 +243,19 @@ bool bigSpider::out_screen(const Bullet* bullet)
 }
 
 void bigSpider::update_bullets(float                                delta,
-                               std::deque<std::unique_ptr<iEnemy>>& enemy_list)
+                               std::deque<std::unique_ptr<iEnemy>>& enemy_list,
+                               Player*                              t_player)
 {
-    bullets.erase(
-        std::remove_if(
-            bullets.begin(),
-            bullets.end(),
-            [&enemy_list, delta, this](std::unique_ptr<Bullet>& elem) {
-                (*elem).update_bullet(delta);
-                return check_collision(elem.get(), enemy_list) ||
-                       out_screen(elem.get());
-            }),
-        bullets.end());
+    bullets.erase(std::remove_if(bullets.begin(),
+                                 bullets.end(),
+                                 [&enemy_list, delta, this, t_player](
+                                     std::unique_ptr<Bullet>& elem) {
+                                     (*elem).update_bullet(delta);
+                                     return check_collision(elem.get(),
+                                                            enemy_list,
+                                                            t_player) ||
+                                            out_screen(elem.get());
+                                 }),
+                  bullets.end());
 }
 } // namespace enemy

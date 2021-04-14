@@ -21,7 +21,7 @@ wave_1::wave_1(my_game::game_impl* t_game, Player* t_player)
         {
             temp_pos_x = (rand() % 3001 / 1000.0f) - 1.5f;
             temp_pos_y = (rand() % 3001 / 1000.0f) - 1.5f;
-            pos_player = wave_player->getCurrent_tank_pos();
+            pos_player = wave_player->getCurrent_current_pos();
         } while (!((temp_pos_x < pos_player.x - max_min ||
                     temp_pos_x > pos_player.x + max_min) &&
                    (temp_pos_y < pos_player.y - max_min ||

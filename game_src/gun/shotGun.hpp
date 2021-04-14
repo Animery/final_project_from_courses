@@ -61,9 +61,9 @@ private:
     float        damage_bullet = 10.f;
 
     Timer          timer_to_clip;
-    uint16_t       currentClip  = 8;
-    const uint16_t maxClip      = 8;
-    float          speed_reload = 2000;
+    uint16_t       currentClip  = 10;
+    const uint16_t maxClip      = 10;
+    float          speed_reload = 1500;
 
     bool readyGun;
 

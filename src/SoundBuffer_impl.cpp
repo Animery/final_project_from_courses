@@ -153,5 +153,10 @@ void SoundBuffer_impl::play(const properties prop)
     // unlock callback for continue mixing of audio
     SDL_UnlockAudioDevice(device);
 }
+
+bool SoundBuffer_impl::check_playing() 
+{
+    return is_playing;
+}
 } // namespace my_engine
 

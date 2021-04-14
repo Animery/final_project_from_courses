@@ -103,14 +103,12 @@ void game_impl::on_initialize()
 
     sounds.push_back(my_engine::create_sound_buffer("res/8-bit_detective.wav"));
     sounds.push_back(my_engine::create_sound_buffer("res/t2_no_problemo.wav"));
+    sounds.push_back(my_engine::create_sound_buffer("res/impact_dmg_tank.wav"));
 
     for (const auto it : sounds)
     {
         assert(it != nullptr);
     }
-
-    // assert(sounds[0] != nullptr);
-    // assert(sounds[1] != nullptr);
 
     sounds[0]->play(my_engine::SoundBuffer::properties::looped);
     // SoundBuffer
@@ -192,7 +190,7 @@ void game_impl::on_initialize()
     // Gun
 
     player = std::make_unique<Player>(
-        tank_obj, texture_head.get(), texture_corpse.get());
+        tank_obj, texture_head.get(), texture_corpse.get(), sounds[2]);
 
     //  SPAWN Enemy
     srand(time(NULL));
@@ -283,14 +281,14 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 
     for (auto&& monster : enemy_list)
     {
-        monster->update(delta, player->getCurrent_tank_pos(), enemy_list);
+        monster->update(delta, player.get(), enemy_list);
     }
     // UPDATE Monsters
 
     // UPDATE Bullets
     if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
     {
-        gun_current->shoot(player->getCurrent_tank_pos(),
+        gun_current->shoot(player->getCurrent_current_pos(),
                            player->getCurrent_head_direction());
     }
     // UPDATE Bullets

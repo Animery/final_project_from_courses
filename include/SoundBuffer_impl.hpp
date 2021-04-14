@@ -3,8 +3,8 @@
 #include "engine.hpp"
 
 #include <SDL2/SDL_audio.h>
-#include <memory>
 #include <map>
+#include <memory>
 
 static std::string_view get_sound_format_name(uint16_t format_value)
 {
@@ -46,11 +46,12 @@ public:
     ~SoundBuffer_impl() final;
 
     void play(const properties) final;
+    bool check_playing() final;
 
-// private:
+    // private:
     std::unique_ptr<uint8_t[]> tmp_buf;
-    uint8_t*                   buffer = nullptr;
-    uint32_t                   length = 0;
+    uint8_t*                   buffer        = nullptr;
+    uint32_t                   length        = 0;
     uint32_t                   current_index = 0;
     SDL_AudioDeviceID          device;
     bool                       is_playing = false;

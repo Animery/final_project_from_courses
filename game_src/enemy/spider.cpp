@@ -6,14 +6,16 @@
 
 namespace enemy
 {
-    
 
 spider::spider(my_engine::vec2       pos,
-             my_engine::RenderObj* temp_obj,
-             Texture*              temp_tex)
+               my_engine::RenderObj* temp_obj,
+               Texture*              temp_tex)
 {
-    obj_corpse       = temp_obj;
-    tex_corpse       = temp_tex;
+    obj_corpse = temp_obj;
+    tex_corpse = temp_tex;
+
+    melee_timer.setCallback([this]() { melee_ready = true; });
+
     current_tank_pos = pos;
     half_size        = 0.015f;
     current_tank_direction =
@@ -61,10 +63,11 @@ void spider::setHealth(float damage)
 }
 
 void spider::update(const float                          delta,
-                                   const my_engine::vec2&               player_pos,
-                                   std::deque<std::unique_ptr<iEnemy>>& enemy_list)
+                    Player*                              t_player,
+                    std::deque<std::unique_ptr<iEnemy>>& enemy_list)
 {
-    update_direction(delta, player_pos);
+    std::ignore = enemy_list;
+    update_direction(delta, t_player->getCurrent_current_pos());
 
     my_engine::matrix2x3 rot =
         my_engine::matrix2x3::rotation(current_tank_direction);
@@ -73,16 +76,22 @@ void spider::update(const float                          delta,
     current_tank_pos.y += -(delta * speed * rot.col1.y);
 
     my_engine::matrix2x3 move = my_engine::matrix2x3::move(current_tank_pos);
-
     matrix_corpse = rot * move * gameConst::aspect_mat * gameConst::size_mat;
 
-    // my_engine::matrix2x3 rot_head =
-    //     my_engine::matrix2x3::rotation(current_head_direction);
-
-    // matrix_head = rot_head * move * gameConst::aspect_mat *
-    // gameConst::size_mat;
-
-    // update_direction(delta, player_pos);
+    if (melee_ready)
+    {
+        if (check_collison_player(t_player->getPosition_A(),
+                                 t_player->getPosition_B()))
+        {
+            t_player->setHealth(melee_dmg);
+            melee_ready = false;
+            melee_timer.start(melee_speed);
+        }
+    }
+    else
+    {
+        melee_timer.update_timer(delta);
+    }
 }
 
 void spider::render_enemy()
@@ -91,7 +100,7 @@ void spider::render_enemy()
 }
 
 void spider::update_direction(const float            delta,
-                             const my_engine::vec2& player_pos)
+                              const my_engine::vec2& player_pos)
 {
     my_engine::vec2 temp_pos_tank = current_tank_pos;
     my_engine::vec2 temp          = player_pos - temp_pos_tank;
@@ -145,5 +154,15 @@ void spider::update_direction(const float            delta,
     //           << std::endl;
     // std::cout << "delta_rotation : " << delta_rotation << std::endl;
     // std::cout << "####################" << std::endl;
+}
+
+bool spider::check_collison_player(const my_engine::vec2& pos_player_A,
+                                  const my_engine::vec2& pos_player_B)
+{
+    my_engine::vec2 pos_monster_A = getPosition_A();
+    my_engine::vec2 pos_monster_B = getPosition_B();
+
+    return my_engine::vec2::check_AABB(
+        pos_monster_A, pos_monster_B, pos_player_A, pos_player_B);
 }
 } // namespace enemy

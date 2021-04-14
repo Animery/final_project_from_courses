@@ -3,13 +3,17 @@
 #include <cmath>
 #include <iostream>
 
-Player::Player(my_engine::RenderObj* temp_obj,
-               Texture*              temp_tex_head,
-               Texture*              temp_tex_corpse)
+Player::Player(my_engine::RenderObj*   temp_obj,
+               Texture*                temp_tex_head,
+               Texture*                temp_tex_corpse,
+               my_engine::SoundBuffer* t_sound_dmg)
 {
     tank_obj       = temp_obj;
     texture_corpse = temp_tex_corpse;
     texture_head   = temp_tex_head;
+
+    sound_dmg = t_sound_dmg;
+
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Player" << std::endl;
@@ -160,7 +164,7 @@ void Player::setMouse_pos(const my_engine::vec2& a)
                       -(a.y / ((gameConst::screen_height / 2)) - 1) };
 }
 
-my_engine::vec2& Player::getCurrent_tank_pos()
+my_engine::vec2& Player::getCurrent_current_pos()
 {
     return current_tank_pos;
 }
@@ -187,6 +191,11 @@ float Player::getHealth()
 void Player::setHealth(float damage)
 {
     health -= damage;
+
+    if (!sound_dmg->check_playing())
+    {
+        sound_dmg->play(my_engine::SoundBuffer::properties::once);
+    }
 }
 
 void Player::render_player()
