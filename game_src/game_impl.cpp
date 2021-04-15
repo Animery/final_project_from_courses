@@ -202,7 +202,7 @@ void game_impl::on_initialize()
 
     // float temp_pos_x;
     // float temp_pos_y;
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 1000; i++)
     {
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
@@ -282,39 +282,45 @@ void game_impl::on_event(my_engine::event& event)
 
 void game_impl::on_update(std::chrono::microseconds frame_delta)
 {
-    // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
-    const float delta = frame_delta.count() * 0.001f;
-
-    // UPDATE Monsters
-    spawn_monster->update_wave(delta);
-
-    for (auto&& monster : enemy_list)
+    if (player->getHealth() > 0)
     {
-        monster->update(delta, player.get(), enemy_list);
+        /* code */
+
+        // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
+        const float delta = frame_delta.count() * 0.001f;
+
+        // UPDATE Monsters
+        spawn_monster->update_wave(delta);
+
+        for (auto&& monster : enemy_list)
+        {
+            monster->update(delta, player.get(), enemy_list);
+        }
+        // UPDATE Monsters
+
+        // UPDATE Bullets
+        if (/* controls[static_cast<unsigned>(my_engine::keys_type::button2)] ||
+             */
+            controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
+        {
+            gun_current->shoot(player->getCurrent_current_pos(),
+                               player->getCurrent_head_direction());
+        }
+        // UPDATE Bullets
+
+        // UPDATE Gun
+        for (const auto& gun : guns)
+        {
+            gun->update_gun(delta, enemy_list);
+        }
+
+        // gun_current->update_gun(delta, enemy_list);
+        // UPDATE Gun
+
+        // UPDATE Player
+        player->update(controls, delta);
+        // UPDATE Player
     }
-    // UPDATE Monsters
-
-    // UPDATE Bullets
-    if (/* controls[static_cast<unsigned>(my_engine::keys_type::button2)] || */
-        controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
-    {
-        gun_current->shoot(player->getCurrent_current_pos(),
-                           player->getCurrent_head_direction());
-    }
-    // UPDATE Bullets
-
-    // UPDATE Gun
-    for (const auto& gun : guns)
-    {
-        gun->update_gun(delta, enemy_list);
-    }
-
-    // gun_current->update_gun(delta, enemy_list);
-    // UPDATE Gun
-
-    // UPDATE Player
-    player->update(controls, delta);
-    // UPDATE Player
 
     // UPDATE ImGui
     update_imGui();
@@ -427,6 +433,7 @@ void game_impl::update_imGui()
 
         ImVec4 coloredHP{ alfa_red, alfa_green, 0.f, 1.f };
         ImGui::TextColored(coloredHP, "Health  =  %.0f", player->getHealth());
+        // ImGui::ProgressBar();
 
         ImGui::NewLine();
         if (gun_current->getCurrentClip() > 0)
@@ -454,8 +461,30 @@ void game_impl::update_imGui()
         ImGui::SetWindowPos(ImVec2{ 810, 0 });
         ImGui::SetWindowSize(ImVec2{ 300, 100 });
 
-        ImGui::TextColored(ImVec4{ 0.f, 0.f, 0.f, 1.f }," %i SCORE", gameInfo::score::getInstance().value());
+        ImGui::TextColored(ImVec4{ 0.f, 0.f, 0.f, 1.f },
+                           " %i SCORE",
+                           gameInfo::score::getInstance().value());
         ImGui::End();
+        if (player->getHealth() <= 0)
+        {
+            ImGui::Begin("gameover",
+                     nullptr,
+                     ImGuiWindowFlags_NoTitleBar/* |
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove */);
+
+            ImGui::SetWindowPos(ImVec2{ 0, 0 });
+            ImGui::SetWindowSize(
+                ImVec2{ gameConst::screen_width, gameConst::screen_height });
+
+            ImGui::SetWindowFontScale(5.f);
+
+            ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
+                               " %i SCORE",
+                               gameInfo::score::getInstance().value());
+            ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
+                               "Game Over");
+            ImGui::End();
+        }
     }
 }
 

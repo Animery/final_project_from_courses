@@ -55,14 +55,16 @@ private:
     my_engine::RenderObj* big_spider = nullptr;
     my_engine::RenderObj* map_obj    = nullptr;
 
-    std::array<bool, 10> controls{ false };
-
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
     size_t                              max_enemy = 1000;
+    std::array<bool, 10> controls{ false };
+
+
     // uint16_t                            count_spider = 0;
 
     std::vector<my_engine::SoundBuffer*> sounds;
 
+    bool game = true;
     bool isRunning;
 };
 
