@@ -1,6 +1,5 @@
 #pragma once
 
-
 // #define TEST_VECTOR
 
 #define DEBUG_LEVEL
@@ -27,5 +26,9 @@ const my_engine::matrix2x3 size_mat  = my_engine::matrix2x3::scale(size);
 constexpr float            pi        = std::numbers::pi_v<float>;
 constexpr float            half_pi   = std::numbers::pi_v<float> / 2;
 constexpr float            double_pi = std::numbers::pi_v<float> * 2;
+
+// static size_t score = 0;
+
+
 
 } // namespace gameConst

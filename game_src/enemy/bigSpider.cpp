@@ -1,5 +1,6 @@
 #include "bigSpider.hpp"
 #include "../../include/engine.hpp"
+#include "../score.hpp"
 
 #include <cmath>
 
@@ -41,6 +42,7 @@ bigSpider::bigSpider(my_engine::vec2       pos,
 
 bigSpider::~bigSpider()
 {
+    gameState::score::getInstance().value(2);
 #ifdef DEBUG_LEVEL
     std::cout << "--- destor bigSpider" << std::endl;
 #endif

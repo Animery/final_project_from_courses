@@ -1,6 +1,7 @@
 
 #include "spider.hpp"
 #include "../../include/engine.hpp"
+#include "../score.hpp"
 
 #include <cmath>
 
@@ -33,6 +34,7 @@ spider::spider(my_engine::vec2       pos,
 
 spider::~spider()
 {
+    gameState::score::getInstance().value(2);
 #ifdef DEBUG_LEVEL
     std::cout << "--- destor spider" << std::endl;
 #endif

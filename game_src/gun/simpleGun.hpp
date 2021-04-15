@@ -57,13 +57,13 @@ private:
     Timer timer_to_shoot;
     bool readyGun;
     // 1 in X milliseconds
-    unsigned int speed_shoot   = 100;
+    unsigned int speed_shoot   = 80;
     float        speed_bullet  = 0.001f;
-    float        damage_bullet = 10.f;
+    float        damage_bullet = 15.f;
 
     Timer          timer_to_clip;
-    uint16_t       currentClip  = 30;
-    const uint16_t maxClip      = 30;
+    uint16_t       currentClip  = 50;
+    const uint16_t maxClip      = 50;
     float          speed_reload = 2000;
 
 

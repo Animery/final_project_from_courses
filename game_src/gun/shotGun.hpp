@@ -56,7 +56,7 @@ private:
 
     Timer timer_to_shoot;
     // 1 in X milliseconds
-    unsigned int speed_shoot   = 10;
+    unsigned int speed_shoot   = 300;
     float        speed_bullet  = 0.002f;
     float        damage_bullet = 10.f;
 

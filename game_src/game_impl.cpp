@@ -4,6 +4,7 @@
 #include "enemy/spider.hpp"
 #include "gun/shotGun.hpp"
 #include "gun/simpleGun.hpp"
+#include "score.hpp"
 #include "spawn_levels/wave_1.hpp"
 
 #include <algorithm>
@@ -303,11 +304,11 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // UPDATE Bullets
 
     // UPDATE Gun
-    for (const auto &gun : guns)
+    for (const auto& gun : guns)
     {
         gun->update_gun(delta, enemy_list);
     }
-    
+
     // gun_current->update_gun(delta, enemy_list);
     // UPDATE Gun
 
@@ -327,7 +328,7 @@ void game_impl::on_render()
     // RENDER MAP
 
     // RENDER BULLETS
-    for (const auto &gun : guns)
+    for (const auto& gun : guns)
     {
         gun->render_bullets();
     }
@@ -389,21 +390,28 @@ void game_impl::update_imGui()
     ImGui::NewFrame();
 
     {
-        ImGui::Begin(
-            "fps",
-            nullptr,
-            ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoBackground); // Create a window called
-                                                // "Hello, world!" and append
-                                                // into it.
+        ImGui::Begin("fps",
+                     nullptr,
+                     ImGuiWindowFlags_NoTitleBar |
+                         ImGuiWindowFlags_NoBackground |
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+        ImGui::SetWindowPos(ImVec2{ 1530, 0 });
+        ImGui::SetWindowSize(ImVec2{ 390, 100 });
+
         ImGui::Text(" %.3f ms/frame (%.1f FPS)",
                     1000.0f / ImGui::GetIO().Framerate,
                     ImGui::GetIO().Framerate);
         ImGui::End();
 
-        ImGui::Begin("Player Status", nullptr, ImGuiWindowFlags_NoBackground
+        ImGui::Begin("Player Status",
+                     nullptr,
+                     ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize |
+                         ImGuiWindowFlags_NoMove
                      /*ImGuiWindowFlags_NoTitleBar */);
 
+        ImGui::SetWindowPos(ImVec2{ 0, 0 });
+        ImGui::SetWindowSize(ImVec2{ 210, 200 });
         // ImGui::Text("Health  =  %.0f", player->getHealth());
 
         float alfa_red = 1 - player->getHealth() / 1000.f;
@@ -430,35 +438,32 @@ void game_impl::update_imGui()
         }
         else
         {
-            // ImGui::Text("%s %s", gun_current->getNameGun().data(), "reload");
             ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
                                "%s %s",
                                gun_current->getNameGun().data(),
                                "reload");
         }
+        ImGui::End();
 
-        // ImGui::SameLine();
-        // ImGui::NewLine();
-        // ImGui::Text("Player Status"); // Display some text (you can
-        // use a format strings too)
-        // ImGui::ColorEdit3(
-        //     "clear color",
-        //     (float*)&clear_color); // Edit 3 floats representing a color
+        ImGui::Begin("Score",
+                     nullptr,
+                     ImGuiWindowFlags_NoTitleBar |
+                         ImGuiWindowFlags_NoBackground /* |
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove */);
 
-        // if (ImGui::Button(
-        //         "Button")) // Buttons return true when clicked (most widgets
-        //                    // return true when edited/activated)
-        //     counter++;
+        ImGui::SetWindowPos(ImVec2{ 810, 0 });
+        ImGui::SetWindowSize(ImVec2{ 300, 100 });
 
+        ImGui::TextColored(ImVec4{ 0.f, 0.f, 0.f, 1.f }," %i SCORE", gameState::score::getInstance().value());
         ImGui::End();
     }
 }
 
-void game_impl::swap_gun() 
+void game_impl::swap_gun()
 {
     gun_current_ID++;
-    gun_current_ID = gun_current_ID% guns.size();
-    gun_current = guns[gun_current_ID].get();
+    gun_current_ID = gun_current_ID % guns.size();
+    gun_current    = guns[gun_current_ID].get();
 }
 
 } // namespace my_game

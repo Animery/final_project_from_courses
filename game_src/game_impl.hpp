@@ -28,11 +28,11 @@ private:
     void update_imGui();
     void swap_gun();
 
-    std::unique_ptr<Player>    player;
-    guns::Gun* gun_current;
-    uint8_t gun_current_ID = 0;
+    std::unique_ptr<Player> player;
 
     std::vector<std::unique_ptr<guns::Gun>> guns;
+    guns::Gun*                              gun_current;
+    uint8_t                                 gun_current_ID = 0;
 
     my_engine::gfx_prog* gfx_obj;
     my_engine::gfx_prog* gfx_map;
