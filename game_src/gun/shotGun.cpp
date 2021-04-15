@@ -85,7 +85,8 @@ uint16_t shotGun::getCurrentClip() const
 #if defined(TEST_VECTOR)
 void shotGun::update_gun(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void shotGun::update_gun(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
+void shotGun::update_gun(float                                       delta,
+                         std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
@@ -110,7 +111,8 @@ void shotGun::render_bullets()
 #if defined(TEST_VECTOR)
 void shotGun::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void shotGun::update_bullets(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
+void shotGun::update_bullets(
+    float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
     bullets.erase(
@@ -137,7 +139,8 @@ void shotGun::update_bullets(float delta, std::deque<std::unique_ptr<enemy::iEne
 #if defined(TEST_VECTOR)
 bool shotGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
 #else
-bool shotGun::check_collision(Bullet* bullet, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
+bool shotGun::check_collision(
+    Bullet* bullet, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 
 {
@@ -153,12 +156,15 @@ bool shotGun::check_collision(Bullet* bullet, std::deque<std::unique_ptr<enemy::
         {
             // TODO
             (*enemy)->setHealth(bullet->getDamage());
-            
 #ifdef DEBUG_LEVEL
             std::cout << "hit" << std::endl;
             std::cout << "health enemy:\t" << (*enemy)->getHealth()
                       << std::endl;
 #endif
+            if ((*enemy)->getHealth() < 0)
+            {
+                enemy_list.erase(enemy);
+            }
 
             return true;
         }

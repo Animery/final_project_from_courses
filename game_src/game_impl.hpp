@@ -26,9 +26,13 @@ public:
 
 private:
     void update_imGui();
+    void swap_gun();
 
     std::unique_ptr<Player>    player;
-    std::unique_ptr<guns::Gun> gun_current;
+    guns::Gun* gun_current;
+    uint8_t gun_current_ID = 0;
+
+    std::vector<std::unique_ptr<guns::Gun>> guns;
 
     my_engine::gfx_prog* gfx_obj;
     my_engine::gfx_prog* gfx_map;
@@ -54,7 +58,7 @@ private:
     std::array<bool, 10> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
-    size_t                              max_enemy    = 1000;
+    size_t                              max_enemy = 1000;
     // uint16_t                            count_spider = 0;
 
     std::vector<my_engine::SoundBuffer*> sounds;

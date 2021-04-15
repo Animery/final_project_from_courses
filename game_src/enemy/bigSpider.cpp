@@ -207,6 +207,11 @@ bool bigSpider::check_collision(Bullet*                              bullet,
             std::cout << "health enemy:\t" << (*enemy)->getHealth()
                       << std::endl;
 #endif
+            // TODO fix
+            // if ((*enemy)->getHealth() < 0)
+            // {
+            //     enemy_list.erase(enemy);
+            // }
             return true;
         }
         else

@@ -24,7 +24,7 @@ private:
 
     Timer         m_timer;
     uint8_t       current_timer        = 0;
-    uint8_t       count_timer          = 10;
+    uint8_t       count_timer          = 1;
     // const uint8_t count_for_big_spider = 10;
     float         timer_length         = 300;
 

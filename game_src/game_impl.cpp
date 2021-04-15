@@ -185,8 +185,11 @@ void game_impl::on_initialize()
 
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
-    gun_current =
-        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj);
+    guns.push_back(
+        std::make_unique<guns::GunSimple>(texture_bullet.get(), bullet_obj));
+    guns.push_back(
+        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj));
+    gun_current = guns[gun_current_ID].get();
     // Gun
 
     player = std::make_unique<Player>(
@@ -198,7 +201,7 @@ void game_impl::on_initialize()
 
     // float temp_pos_x;
     // float temp_pos_y;
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 10; i++)
     {
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
@@ -235,7 +238,7 @@ void game_impl::on_event(my_engine::event& event)
 
                 controls[static_cast<unsigned>(key_data.key)] =
                     key_data.is_down;
-               
+
                 if (key_data.is_down)
                 {
                     if (key_data.key == my_engine::keys_type::select)
@@ -257,6 +260,10 @@ void game_impl::on_event(my_engine::event& event)
                         std::cout << static_cast<unsigned>(key_data.key)
                                   << std::endl;
                         // s->play(my_engine::SoundBuffer::properties::looped);
+                    }
+                    else if (key_data.key == my_engine::keys_type::button2)
+                    {
+                        swap_gun();
                     }
                 }
                 break;
@@ -287,7 +294,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // UPDATE Monsters
 
     // UPDATE Bullets
-    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)] ||
+    if (/* controls[static_cast<unsigned>(my_engine::keys_type::button2)] || */
         controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
     {
         gun_current->shoot(player->getCurrent_current_pos(),
@@ -296,7 +303,12 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // UPDATE Bullets
 
     // UPDATE Gun
-    gun_current->update_gun(delta, enemy_list);
+    for (const auto &gun : guns)
+    {
+        gun->update_gun(delta, enemy_list);
+    }
+    
+    // gun_current->update_gun(delta, enemy_list);
     // UPDATE Gun
 
     // UPDATE Player
@@ -315,7 +327,11 @@ void game_impl::on_render()
     // RENDER MAP
 
     // RENDER BULLETS
-    gun_current->render_bullets();
+    for (const auto &gun : guns)
+    {
+        gun->render_bullets();
+    }
+    // gun_current->render_bullets();
     // RENDER BULLETS
 
     // RENDER ENEMY
@@ -388,7 +404,22 @@ void game_impl::update_imGui()
         ImGui::Begin("Player Status", nullptr, ImGuiWindowFlags_NoBackground
                      /*ImGuiWindowFlags_NoTitleBar */);
 
-        ImGui::Text("Health  =  %.0f", player->getHealth());
+        // ImGui::Text("Health  =  %.0f", player->getHealth());
+
+        float alfa_red = 1 - player->getHealth() / 1000.f;
+        if (alfa_red > 1)
+        {
+            alfa_red = 1.f;
+        }
+        float alfa_green = player->getHealth() / 1000.f;
+        if (alfa_green < 0)
+        {
+            alfa_green = 0.f;
+        }
+
+        ImVec4 coloredHP{ alfa_red, alfa_green, 0.f, 1.f };
+        ImGui::TextColored(coloredHP, "Health  =  %.0f", player->getHealth());
+
         ImGui::NewLine();
         if (gun_current->getCurrentClip() > 0)
         {
@@ -399,7 +430,11 @@ void game_impl::update_imGui()
         }
         else
         {
-            ImGui::Text("%s %s", gun_current->getNameGun().data(), "reload");
+            // ImGui::Text("%s %s", gun_current->getNameGun().data(), "reload");
+            ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
+                               "%s %s",
+                               gun_current->getNameGun().data(),
+                               "reload");
         }
 
         // ImGui::SameLine();
@@ -417,6 +452,13 @@ void game_impl::update_imGui()
 
         ImGui::End();
     }
+}
+
+void game_impl::swap_gun() 
+{
+    gun_current_ID++;
+    gun_current_ID = gun_current_ID% guns.size();
+    gun_current = guns[gun_current_ID].get();
 }
 
 } // namespace my_game
