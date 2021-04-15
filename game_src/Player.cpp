@@ -27,7 +27,7 @@ Player::~Player()
 #endif
 }
 
-void Player::update(std::array<bool, 8>& controls, float delta)
+void Player::update(std::array<bool, 10>& controls, float delta)
 {
     update_Head_dirrection();
 
@@ -137,16 +137,6 @@ void Player::update(std::array<bool, 8>& controls, float delta)
 
     matrix_head = rot_head * move * gameConst::aspect_mat * gameConst::size_mat;
 }
-
-// my_engine::matrix2x3& Player::getMatrix_corpse()
-// {
-//     return matrix_corpse;
-// }
-
-// my_engine::matrix2x3& Player::getMatrix_head()
-// {
-//     return matrix_head;
-// }
 
 float Player::getCurrent_head_direction()
 {

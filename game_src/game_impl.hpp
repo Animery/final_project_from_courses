@@ -51,7 +51,7 @@ private:
     my_engine::RenderObj* big_spider = nullptr;
     my_engine::RenderObj* map_obj    = nullptr;
 
-    std::array<bool, 8> controls{ false };
+    std::array<bool, 10> controls{ false };
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
     size_t                              max_enemy    = 1000;

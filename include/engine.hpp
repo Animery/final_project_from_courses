@@ -22,7 +22,8 @@ enum class event_type
 {
     input_key,
     hardware,
-    mouse
+    mouse_motion
+    // mouse_button
 };
 
 enum class keys_type
@@ -31,10 +32,12 @@ enum class keys_type
     right,
     up,
     down,
+    button1,
+    button2,
     select,
     start,
-    button1,
-    button2
+    mouse_L,
+    mouse_R
 };
 
 struct input_data

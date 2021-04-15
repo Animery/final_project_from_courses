@@ -235,7 +235,7 @@ void game_impl::on_event(my_engine::event& event)
 
                 controls[static_cast<unsigned>(key_data.key)] =
                     key_data.is_down;
-
+               
                 if (key_data.is_down)
                 {
                     if (key_data.key == my_engine::keys_type::select)
@@ -252,14 +252,16 @@ void game_impl::on_event(my_engine::event& event)
                                   << rot_head << std::endl;
                         // s->play(my_engine::SoundBuffer::properties::once);
                     }
-                    else if (key_data.key == my_engine::keys_type::button2)
+                    else if (key_data.key == my_engine::keys_type::start)
                     {
+                        std::cout << static_cast<unsigned>(key_data.key)
+                                  << std::endl;
                         // s->play(my_engine::SoundBuffer::properties::looped);
                     }
                 }
                 break;
             }
-            case my_engine::event_type::mouse:
+            case my_engine::event_type::mouse_motion:
             {
                 player->setMouse_pos(my_engine::vec2{ event.x, event.y });
                 break;
@@ -285,7 +287,8 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
     // UPDATE Monsters
 
     // UPDATE Bullets
-    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)])
+    if (controls[static_cast<unsigned>(my_engine::keys_type::button2)] ||
+        controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
     {
         gun_current->shoot(player->getCurrent_current_pos(),
                            player->getCurrent_head_direction());
@@ -340,22 +343,22 @@ void game_impl::on_render()
     // RENDER ImGui
 }
 
-void game_impl::add_big_spider(my_engine::vec2 pos_enemy) 
+void game_impl::add_big_spider(my_engine::vec2 pos_enemy)
 {
     enemy_list.push_back(
-                std::make_unique<enemy::bigSpider>(pos_enemy,
-                                                   big_spider,
-                                                   texture_big_spider.get(),
-                                                   texture_bullet.get(),
-                                                   bullet_obj));
+        std::make_unique<enemy::bigSpider>(pos_enemy,
+                                           big_spider,
+                                           texture_big_spider.get(),
+                                           texture_bullet.get(),
+                                           bullet_obj));
 }
 
 void game_impl::add_spider(my_engine::vec2 pos_enemy)
 {
     if (enemy_list.size() < max_enemy)
     {
-            enemy_list.push_back(std::make_unique<enemy::spider>(
-                pos_enemy, spider, texture_spider.get()));
+        enemy_list.push_back(std::make_unique<enemy::spider>(
+            pos_enemy, spider, texture_spider.get()));
     }
 }
 

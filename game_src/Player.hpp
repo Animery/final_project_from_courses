@@ -10,7 +10,7 @@ class Player
 public:
     Player(my_engine::RenderObj*, Texture*, Texture*, my_engine::SoundBuffer*);
     ~Player();
-    void update(std::array<bool, 8>& controls, float delta);
+    void update(std::array<bool, 10>& controls, float delta);
 
     // my_engine::RenderObj* getCorpse();
     // my_engine::RenderObj* getHead();

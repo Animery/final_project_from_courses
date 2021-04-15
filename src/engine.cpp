@@ -75,6 +75,8 @@ std::ostream& operator<<(std::ostream& stream, const event& e)
         case my_engine::event_type::hardware:
             stream << std::get<my_engine::hardware_data>(e.info);
             break;
+        case my_engine::event_type::mouse_motion:
+            break;
     }
     return stream;
 }
@@ -102,7 +104,7 @@ struct bind
     my_engine::keys_type my_key;
 };
 
-const std::array<bind, 8> keys{
+const std::array<bind, 10> keys{
     { bind{ "up", SDLK_w, keys_type::up },
       bind{ "left", SDLK_a, keys_type::left },
       bind{ "down", SDLK_s, keys_type::down },
@@ -110,22 +112,41 @@ const std::array<bind, 8> keys{
       bind{ "button1", SDLK_LCTRL, keys_type::button1 },
       bind{ "button2", SDLK_SPACE, keys_type::button2 },
       bind{ "select", SDLK_ESCAPE, keys_type::select },
-      bind{ "start", SDLK_RETURN, keys_type::start } }
+      bind{ "start", SDLK_RETURN, keys_type::start },
+      bind{ "mouse_left", SDL_BUTTON_LEFT, keys_type::mouse_L },
+      bind{ "mouse_right", SDL_BUTTON_RIGHT, keys_type::mouse_R } }
 };
 
 static bool check_input(const SDL_Event& e, const bind*& result)
 {
     using namespace std;
 
-    const auto it = find_if(begin(keys), end(keys), [&e](const bind& b) {
-        return b.key == e.key.keysym.sym;
-    });
-
-    if (it != keys.end())
+    if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
     {
-        result = &(*it);
-        return true;
+        const auto it =
+            find_if(begin(keys), end(keys) - 2, [&e](const bind& b) {
+                return b.key == e.key.keysym.sym;
+            });
+
+        if (it != keys.end() - 2)
+        {
+            result = &(*it);
+            return true;
+        }
     }
+    else if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
+    {
+        const auto it = find_if(end(keys) - 2, end(keys), [&e](const bind& b) {
+            return b.key == e.button.button;
+        });
+
+        if (it != keys.end())
+        {
+            result = &(*it);
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -485,11 +506,24 @@ bool read_event(event& ev)
                 return true;
             }
             else if (sdl_event.type == SDL_KEYDOWN ||
-                     sdl_event.type == SDL_KEYUP)
+                     sdl_event.type == SDL_KEYUP ||
+                     sdl_event.type == SDL_MOUSEBUTTONDOWN ||
+                     sdl_event.type == SDL_MOUSEBUTTONUP)
             {
                 if (check_input(sdl_event, binding))
                 {
-                    bool is_down = sdl_event.type == SDL_KEYDOWN;
+                    bool is_down;
+                    if (sdl_event.type == SDL_KEYDOWN ||
+                        sdl_event.type == SDL_KEYUP)
+                    {
+                        is_down = sdl_event.type == SDL_KEYDOWN;
+                    }
+                    if (sdl_event.type == SDL_MOUSEBUTTONDOWN ||
+                        sdl_event.type == SDL_MOUSEBUTTONUP)
+                    {
+                        is_down = sdl_event.type == SDL_MOUSEBUTTONDOWN;
+                    }
+
                     ev.info = my_engine::input_data{ binding->my_key, is_down };
                     ev.timestamp = sdl_event.common.timestamp * 0.001;
                     ev.type      = my_engine::event_type::input_key;
@@ -500,9 +534,10 @@ bool read_event(event& ev)
             {
                 ev.x    = sdl_event.motion.x;
                 ev.y    = sdl_event.motion.y;
-                ev.type = my_engine::event_type::mouse;
+                ev.type = my_engine::event_type::mouse_motion;
                 return true;
             }
+           
         }
     }
     return false;
