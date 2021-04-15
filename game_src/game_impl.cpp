@@ -454,7 +454,7 @@ void game_impl::update_imGui()
         ImGui::SetWindowPos(ImVec2{ 810, 0 });
         ImGui::SetWindowSize(ImVec2{ 300, 100 });
 
-        ImGui::TextColored(ImVec4{ 0.f, 0.f, 0.f, 1.f }," %i SCORE", gameState::score::getInstance().value());
+        ImGui::TextColored(ImVec4{ 0.f, 0.f, 0.f, 1.f }," %i SCORE", gameInfo::score::getInstance().value());
         ImGui::End();
     }
 }

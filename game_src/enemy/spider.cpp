@@ -21,10 +21,13 @@ spider::spider(my_engine::vec2       pos,
     half_size        = 0.015f;
     current_tank_direction =
         rand() % 31415 * 2 / 10000.f - gameConst::half_pi - 0.0001f;
+
+    // status
     health         = 20;
-    speed          = 0.00031250f / 3.5f;
-    speed_diagonal = 0.00022097f / 3.5f;
+    speed          = 0.00031250f / 4.5f;
+    speed_diagonal = 0.00022097f / 4.5f;
     speed_rotation = 0.0015f / 2.5f;
+    // status
 
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
@@ -34,7 +37,7 @@ spider::spider(my_engine::vec2       pos,
 
 spider::~spider()
 {
-    gameState::score::getInstance().value(2);
+    gameInfo::score::getInstance().value(2);
 #ifdef DEBUG_LEVEL
     std::cout << "--- destor spider" << std::endl;
 #endif
@@ -83,7 +86,7 @@ void spider::update(const float                          delta,
     if (melee_ready)
     {
         if (check_collison_player(t_player->getPosition_A(),
-                                 t_player->getPosition_B()))
+                                  t_player->getPosition_B()))
         {
             t_player->setHealth(melee_dmg);
             melee_ready = false;
@@ -159,7 +162,7 @@ void spider::update_direction(const float            delta,
 }
 
 bool spider::check_collison_player(const my_engine::vec2& pos_player_A,
-                                  const my_engine::vec2& pos_player_B)
+                                   const my_engine::vec2& pos_player_B)
 {
     my_engine::vec2 pos_monster_A = getPosition_A();
     my_engine::vec2 pos_monster_B = getPosition_B();

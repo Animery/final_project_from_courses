@@ -78,10 +78,10 @@ private:
     float           current_tank_direction = 0.0f;
     // float           current_head_direction = 0.0f;
 
-    float health         = 200;
-    float speed          = 0.00031250f / 5.f;
-    float speed_diagonal = 0.00022097f / 5.f;
-    float speed_rotation = 0.0015f / 2.5f;
+    float health;
+    float speed;
+    float speed_diagonal;
+    float speed_rotation;
 };
 
 } // namespace enemy

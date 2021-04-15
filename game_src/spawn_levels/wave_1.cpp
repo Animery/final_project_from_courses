@@ -1,4 +1,5 @@
 #include "wave_1.hpp"
+#include "../score.hpp"
 
 #if defined(DEBUG_LEVEL)
 #include <iostream>
@@ -29,16 +30,20 @@ wave_1::wave_1(my_game::game_impl* t_game, Player* t_player)
 
         if (current_timer < count_timer)
         {
-        wave_game->add_spider({ temp_pos_x, temp_pos_y });
-           current_timer++;
+            wave_game->add_spider({ temp_pos_x, temp_pos_y });
+            current_timer++;
         }
         else
         {
             wave_game->add_big_spider({ temp_pos_x, temp_pos_y });
+            if ((gameInfo::score::getInstance().value()) > step_lvl)
+            {
+                timer_length -= timer_length * 0.1f;
+                step_lvl += step;
+            }
             current_timer = 0;
         }
-        
-        
+
         readyTimer = true;
     });
 
@@ -59,6 +64,7 @@ void wave_1::update_wave(const float delta)
     if (readyTimer)
     {
         readyTimer = false;
+
         m_timer.start(timer_length);
     }
     else

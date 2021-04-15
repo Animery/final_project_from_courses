@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-namespace gameState
+namespace gameInfo
 {
 
 class score
@@ -21,4 +21,4 @@ private:
     score();
 };
 
-} // namespace gameState
+} // namespace gameInfo

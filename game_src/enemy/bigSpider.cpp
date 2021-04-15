@@ -29,10 +29,13 @@ bigSpider::bigSpider(my_engine::vec2       pos,
     half_size        = 0.025f;
     current_tank_direction =
         rand() % 31415 * 2 / 10000.f - gameConst::half_pi - 0.0001f;
-    health         = 20;
-    speed          = 0.00031250f / 3.5f;
-    speed_diagonal = 0.00022097f / 3.5f;
+
+    // status
+    health         = 200;
+    speed          = 0.00031250f / 6.f;
+    speed_diagonal = 0.00022097f / 6.f;
     speed_rotation = 0.0015f / 2.5f;
+    // status
 
     current_tank_pos.y /= gameConst::aspect;
 #ifdef DEBUG_LEVEL
@@ -42,7 +45,7 @@ bigSpider::bigSpider(my_engine::vec2       pos,
 
 bigSpider::~bigSpider()
 {
-    gameState::score::getInstance().value(2);
+    gameInfo::score::getInstance().value(2);
 #ifdef DEBUG_LEVEL
     std::cout << "--- destor bigSpider" << std::endl;
 #endif

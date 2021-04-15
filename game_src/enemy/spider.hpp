@@ -36,7 +36,7 @@ public:
 private:
     void update_direction(const float delta, const my_engine::vec2& player_pos);
     bool check_collison_player(const my_engine::vec2& pos_player_A,
-                              const my_engine::vec2& pos_player_B);
+                               const my_engine::vec2& pos_player_B);
 
     my_engine::RenderObj* obj_corpse = nullptr;
     Texture*              tex_corpse = nullptr;
@@ -53,9 +53,9 @@ private:
     Timer melee_timer;
     bool  melee_ready = true;
 
-    float health         = 20;
-    float speed          = 0.00031250f / 4.f;
-    float speed_diagonal = 0.00022097f / 4.f;
-    float speed_rotation = 0.0015f / 2.5f;
+    float health;
+    float speed;
+    float speed_diagonal;
+    float speed_rotation;
 };
 } // namespace enemy
