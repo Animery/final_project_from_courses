@@ -27,7 +27,18 @@ wave_1::wave_1(my_game::game_impl* t_game, Player* t_player)
                    (temp_pos_y < pos_player.y - max_min ||
                     temp_pos_y > pos_player.y + max_min)));
 
-        wave_game->add_enemy({ temp_pos_x, temp_pos_y });
+        if (current_timer < count_timer)
+        {
+        wave_game->add_spider({ temp_pos_x, temp_pos_y });
+           current_timer++;
+        }
+        else
+        {
+            wave_game->add_big_spider({ temp_pos_x, temp_pos_y });
+            current_timer = 0;
+        }
+        
+        
         readyTimer = true;
     });
 

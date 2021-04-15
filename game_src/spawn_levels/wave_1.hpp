@@ -22,11 +22,12 @@ private:
     my_game::game_impl* wave_game;
     Player*             wave_player;
 
-    Timer               m_timer;
-    size_t              current_timer = 0;
-    size_t              count_timer   = 1;
-    float               timer_length  = 300;
+    Timer         m_timer;
+    uint8_t       current_timer        = 0;
+    uint8_t       count_timer          = 10;
+    // const uint8_t count_for_big_spider = 10;
+    float         timer_length         = 300;
 
-    bool                readyTimer    = true;
+    bool readyTimer = true;
 };
 } // namespace spawn

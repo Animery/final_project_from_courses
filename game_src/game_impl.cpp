@@ -103,7 +103,7 @@ void game_impl::on_initialize()
 
     sounds.push_back(my_engine::create_sound_buffer("res/8-bit_detective.wav"));
     sounds.push_back(my_engine::create_sound_buffer("res/t2_no_problemo.wav"));
-    sounds.push_back(my_engine::create_sound_buffer("res/impact_dmg_tank.wav"));
+    sounds.push_back(my_engine::create_sound_buffer("res/impact_350ms.wav"));
 
     for (const auto it : sounds)
     {
@@ -203,10 +203,10 @@ void game_impl::on_initialize()
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
         // add_enemy({ temp_pos_x, temp_pos_y });
-        add_enemy({ 0.5, 0.5 });
-        add_enemy({ -0.5, 0.5 });
-        add_enemy({ 0.5, -0.5 });
-        add_enemy({ -0.5, -0.5 });
+        add_spider({ 0.5, 0.5 });
+        add_spider({ -0.5, 0.5 });
+        add_spider({ 0.5, -0.5 });
+        add_spider({ -0.5, -0.5 });
     }
 
     //  SPAWN Enemy
@@ -262,7 +262,6 @@ void game_impl::on_event(my_engine::event& event)
             case my_engine::event_type::mouse:
             {
                 player->setMouse_pos(my_engine::vec2{ event.x, event.y });
-
                 break;
             }
             default:
@@ -341,26 +340,22 @@ void game_impl::on_render()
     // RENDER ImGui
 }
 
-void game_impl::add_enemy(my_engine::vec2 pos_enemy)
+void game_impl::add_big_spider(my_engine::vec2 pos_enemy) 
 {
-    if (enemy_list.size() < max_enemy)
-    {
-        if (count_spider < 5)
-        {
-            enemy_list.push_back(std::make_unique<enemy::spider>(
-                pos_enemy, spider, texture_spider.get()));
-            ++count_spider;
-        }
-        else
-        {
-            enemy_list.push_back(
+    enemy_list.push_back(
                 std::make_unique<enemy::bigSpider>(pos_enemy,
                                                    big_spider,
                                                    texture_big_spider.get(),
                                                    texture_bullet.get(),
                                                    bullet_obj));
-            count_spider = 0;
-        }
+}
+
+void game_impl::add_spider(my_engine::vec2 pos_enemy)
+{
+    if (enemy_list.size() < max_enemy)
+    {
+            enemy_list.push_back(std::make_unique<enemy::spider>(
+                pos_enemy, spider, texture_spider.get()));
     }
 }
 

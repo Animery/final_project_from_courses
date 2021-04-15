@@ -21,7 +21,8 @@ public:
     void         on_update(std::chrono::microseconds frame_delta) final;
     // void on_render(my_engine::RenderObj&, Texture&) const final;
     void on_render() final;
-    void add_enemy(my_engine::vec2 pos_enemy);
+    void add_spider(my_engine::vec2 pos_enemy);
+    void add_big_spider(my_engine::vec2 pos_enemy);
 
 private:
     void update_imGui();
@@ -54,7 +55,7 @@ private:
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
     size_t                              max_enemy    = 1000;
-    uint16_t                            count_spider = 0;
+    // uint16_t                            count_spider = 0;
 
     std::vector<my_engine::SoundBuffer*> sounds;
 
