@@ -75,12 +75,21 @@ void wave_1::update_wave(const float delta)
     }
 }
 
-void wave_1::start()
+void wave_1::start_lvl()
 {
-    // if (!readyTimer)
-    // {
-    //     readyTimer = true;
-    // }
+    for (size_t i = 0; i < 1; i++)
+    {
+        // clang-format off
+        wave_game->add_nest      ({  0.6f,  0.6f });
+        wave_game->add_nest      ({ -0.6f,  0.6f });
+        wave_game->add_nest      ({  0.6f, -0.6f });
+        wave_game->add_nest      ({ -0.6f, -0.6f });
+        wave_game->add_big_spider({  0.6f,  0.6f });
+        wave_game->add_big_spider({ -0.6f,  0.6f });
+        wave_game->add_big_spider({  0.6f, -0.6f });
+        wave_game->add_big_spider({ -0.6f, -0.6f });
+        // clang-format on
+    }
 }
 
 } // namespace spawn

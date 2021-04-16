@@ -255,23 +255,8 @@ void game_impl::on_initialize()
     //  SPAWN Enemy
     srand(time(NULL));
     spawn_monster = std::make_unique<spawn::wave_1>(this, player.get());
-
-    // float temp_pos_x;
-    // float temp_pos_y;
-    for (size_t i = 0; i < 1; i++)
-    {
-        // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
-        // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
-        // add_enemy({ temp_pos_x, temp_pos_y });
-        add_nest({ 0.6, 0.6 });
-        add_nest({ -0.6, 0.6 });
-        add_nest({ 0.6, -0.6 });
-        add_nest({ -0.6, -0.6 });
-        add_big_spider({ 0.6, 0.6 });
-        add_big_spider({ -0.6, 0.6 });
-        add_big_spider({ 0.6, -0.6 });
-        add_big_spider({ -0.6, -0.6 });
-    }
+    spawn_monster->start_lvl();
+    
 
     //  SPAWN Enemy
     isRunning = true;
@@ -426,12 +411,6 @@ void game_impl::on_render()
 
 void game_impl::add_big_spider(my_engine::vec2 pos_enemy)
 {
-    // enemy_list.push_back(
-    //     std::make_unique<enemy::bigSpider>(pos_enemy,
-    //                                        big_spider,
-    //                                        texture_big_spider.get(),
-    //                                        texture_fire_ball.get(),
-    //                                        fire_ball_obj));
     enemy_list.push_back(
         std::make_unique<enemy::bigSpider>(pos_enemy,
                                            big_spider,

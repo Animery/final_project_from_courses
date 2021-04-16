@@ -15,7 +15,7 @@ public:
     wave_1(my_game::game_impl* temp_game, Player* t_player);
     ~wave_1();
     void update_wave(const float delta) final;
-    void start() final;
+    void start_lvl() final;
 
 protected:
 private:
