@@ -233,6 +233,8 @@ void game_impl::on_initialize()
     // SPRITE
     spire_big_spider = std::make_unique<Animate::sprite>(200.f);
     spire_big_spider->add_texture(
+        "res/big_spider.png", tex_name, GL_REPEAT, GL_NEAREST);
+    spire_big_spider->add_texture(
         "res/big_spider1.png", tex_name, GL_REPEAT, GL_NEAREST);
     spire_big_spider->add_texture(
         "res/big_spider2.png", tex_name, GL_REPEAT, GL_NEAREST);
