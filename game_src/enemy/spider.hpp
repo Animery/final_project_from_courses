@@ -4,13 +4,6 @@
 #include "../../engine/Timer.hpp"
 #include "iEnemy.hpp"
 
-class Texture;
-namespace my_engine
-{
-class RenderObj;
-
-} // namespace my_engine
-
 namespace enemy
 {
 

@@ -1,6 +1,5 @@
 #include "sprite.hpp"
 #include "Texture.hpp"
-// #include "Timer.hpp"
 #include "debug_level.hpp"
 
 #ifdef DEBUG_LEVEL
@@ -18,7 +17,7 @@ sprite::sprite()
     });
 
 #ifdef DEBUG_LEVEL
-    std::cout << "+++ ctor spider" << std::endl;
+    std::cout << "+++ ctor Sprite" << std::endl;
 #endif
 }
 
@@ -29,12 +28,33 @@ sprite::sprite(float value_timer)
         swap_tex();
         timer_used = false;
     });
+#ifdef DEBUG_LEVEL
+    std::cout << "+++ ctor Sprite" << std::endl;
+#endif
+}
+
+sprite::sprite(sprite& sprite_for_copy)
+{
+    this->timer_value = sprite_for_copy.timer_value;
+    this->sprite_timer.setCallback([this]() {
+        swap_tex();
+        timer_used = false;
+    });
+    timer_value = sprite_for_copy.timer_value;
+    vec_tex     = sprite_for_copy.vec_tex;
+    if (current_tex == nullptr)
+    {
+        current_tex = vec_tex.front().get();
+    }
+#ifdef DEBUG_LEVEL
+    std::cout << "+++ ctor Sprite" << std::endl;
+#endif
 }
 
 sprite::~sprite()
 {
 #ifdef DEBUG_LEVEL
-    std::cout << "--- destor spider" << std::endl;
+    std::cout << "--- destor Sprite" << std::endl;
 #endif
 }
 
@@ -61,7 +81,7 @@ void sprite::add_texture(std::string_view path,
                          int              wrap,
                          int              filter)
 {
-    vec_tex.push_back(std::make_unique<Texture>(name_u, wrap, filter));
+    vec_tex.push_back(std::make_shared<Texture>(name_u, wrap, filter));
     vec_tex.back()->loadImage(path);
 
     if (current_tex == nullptr)

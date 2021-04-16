@@ -1,4 +1,3 @@
-
 #include "spider.hpp"
 #include "../score.hpp"
 

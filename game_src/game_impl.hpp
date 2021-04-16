@@ -25,6 +25,7 @@ public:
     void on_render() final;
     void add_spider(my_engine::vec2 pos_enemy);
     void add_big_spider(my_engine::vec2 pos_enemy);
+    void add_nest(my_engine::vec2 pos_enemy);
 
 private:
     void update_imGui();
@@ -44,22 +45,31 @@ private:
     std::deque<std::unique_ptr<enemy::iEnemy>> enemy_list;
 #endif // TEST_VECTOR
 
-    std::vector<Animate::Texture*>    map_texture;
+    my_engine::RenderObj*          map_obj = nullptr;
+    std::vector<Animate::Texture*> map_texture;
+
+    my_engine::RenderObj*             tank_obj = nullptr;
     std::unique_ptr<Animate::Texture> texture_corpse;
     std::unique_ptr<Animate::Texture> texture_head;
-    std::unique_ptr<Animate::Texture> texture_bullet;
+
+    my_engine::RenderObj*             bullet_obj = nullptr;
+    // std::unique_ptr<Animate::Texture> texture_bullet;
+    std::unique_ptr<Animate::Texture> tex_light_shell;
+    std::unique_ptr<Animate::Texture> tex_medium_shell;
+    std::unique_ptr<Animate::Texture> tex_plasma;
+
+    my_engine::RenderObj*             spider = nullptr;
     std::unique_ptr<Animate::Texture> texture_spider;
+
+
+    my_engine::RenderObj* big_spider = nullptr;
     // std::unique_ptr<Animate::Texture> texture_big_spider;
+    std::unique_ptr<Animate::sprite> spire_big_spider;
+    my_engine::RenderObj*             fire_ball_obj = nullptr;
     std::unique_ptr<Animate::Texture> texture_fire_ball;
 
-    std::unique_ptr<Animate::sprite> spire_big_spider;
-
-    my_engine::RenderObj* tank_obj      = nullptr;
-    my_engine::RenderObj* bullet_obj    = nullptr;
-    my_engine::RenderObj* spider        = nullptr;
-    my_engine::RenderObj* big_spider    = nullptr;
-    my_engine::RenderObj* fire_ball_obj = nullptr;
-    my_engine::RenderObj* map_obj       = nullptr;
+    my_engine::RenderObj*             nest_obj = nullptr;
+    std::unique_ptr<Animate::Texture> tex_nest;
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
     size_t                              max_enemy = 1000;

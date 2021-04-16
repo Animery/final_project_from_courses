@@ -1,7 +1,9 @@
 #include "game_impl.hpp"
 
 #include "enemy/bigSpider.hpp"
+#include "enemy/nest.hpp"
 #include "enemy/spider.hpp"
+
 #include "gun/miniGun.hpp"
 #include "gun/shotGun.hpp"
 #include "gun/simpleGun.hpp"
@@ -84,9 +86,6 @@ void game_impl::on_initialize()
     gfx_map->link();
     // gfx_prog
 
-
-    
-
     // Render_obj
     tank_obj = my_engine::create_RenderObj();
     tank_obj->setProg(gfx_obj);
@@ -107,6 +106,10 @@ void game_impl::on_initialize()
     fire_ball_obj = my_engine::create_RenderObj();
     fire_ball_obj->setProg(gfx_obj);
     fire_ball_obj->load_mesh_from_file("res/fire_ball.txt");
+
+    nest_obj = my_engine::create_RenderObj();
+    nest_obj->setProg(gfx_obj);
+    nest_obj->load_mesh_from_file("res/nest.txt");
 
     map_obj = my_engine::create_RenderObj();
     map_obj->setProg(gfx_map);
@@ -180,12 +183,23 @@ void game_impl::on_initialize()
         texture_corpse->setImage(image);
     }
 
-    texture_bullet =
+    // texture_bullet =
+    //     std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    // {
+    //     Animate::Image image =
+    //     Animate::Image::loadFromFile("res/bullet.png");
+    //     texture_bullet->setImage(image);
+    // }
+
+    tex_light_shell =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
-    {
-        Animate::Image image = Animate::Image::loadFromFile("res/bullet.png");
-        texture_bullet->setImage(image);
-    }
+    tex_light_shell->loadImage("res/light_shell.png");
+    tex_medium_shell =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    tex_medium_shell->loadImage("res/medium_shell.png");
+    tex_plasma =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    tex_plasma->loadImage("res/plasma.png");
 
     texture_spider =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
@@ -210,22 +224,28 @@ void game_impl::on_initialize()
         texture_fire_ball->setImage(image);
     }
 
+    tex_nest =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    tex_nest->loadImage("res/nest.png");
+
     // Texture init
 
     // SPRITE
     spire_big_spider = std::make_unique<Animate::sprite>(200.f);
-    spire_big_spider->add_texture("res/big_spider1.png",tex_name, GL_REPEAT, GL_NEAREST);
-    spire_big_spider->add_texture("res/big_spider2.png",tex_name, GL_REPEAT, GL_NEAREST);
+    spire_big_spider->add_texture(
+        "res/big_spider1.png", tex_name, GL_REPEAT, GL_NEAREST);
+    spire_big_spider->add_texture(
+        "res/big_spider2.png", tex_name, GL_REPEAT, GL_NEAREST);
     // SPRITE
 
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
     guns.push_back(
-        std::make_unique<guns::GunSimple>(texture_bullet.get(), bullet_obj));
+        std::make_unique<guns::GunSimple>(tex_plasma.get(), bullet_obj));
     guns.push_back(
-        std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj));
+        std::make_unique<guns::shotGun>(tex_light_shell.get(), bullet_obj));
     guns.push_back(
-        std::make_unique<guns::miniGun>(texture_bullet.get(), bullet_obj));
+        std::make_unique<guns::miniGun>(tex_light_shell.get(), bullet_obj));
     gun_current = guns[gun_current_ID].get();
     // Gun
 
@@ -238,15 +258,19 @@ void game_impl::on_initialize()
 
     // float temp_pos_x;
     // float temp_pos_y;
-    for (size_t i = 0; i < 1000; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         // temp_pos_x = (rand() % 2000 / 1000.0f) - 1;
         // temp_pos_y = (rand() % 2000 / 1000.0f) - 1;
         // add_enemy({ temp_pos_x, temp_pos_y });
-        add_spider({ 0.5, 0.5 });
-        add_spider({ -0.5, 0.5 });
-        add_spider({ 0.5, -0.5 });
-        add_spider({ -0.5, -0.5 });
+        add_nest({ 0.6, 0.6 });
+        add_nest({ -0.6, 0.6 });
+        add_nest({ 0.6, -0.6 });
+        add_nest({ -0.6, -0.6 });
+        add_big_spider({ 0.6, 0.6 });
+        add_big_spider({ -0.6, 0.6 });
+        add_big_spider({ 0.6, -0.6 });
+        add_big_spider({ -0.6, -0.6 });
     }
 
     //  SPAWN Enemy
@@ -408,12 +432,21 @@ void game_impl::add_big_spider(my_engine::vec2 pos_enemy)
     //                                        texture_big_spider.get(),
     //                                        texture_fire_ball.get(),
     //                                        fire_ball_obj));
-     enemy_list.push_back(
+    enemy_list.push_back(
         std::make_unique<enemy::bigSpider>(pos_enemy,
                                            big_spider,
                                            spire_big_spider.get(),
                                            texture_fire_ball.get(),
                                            fire_ball_obj));
+}
+
+void game_impl::add_nest(my_engine::vec2 pos_enemy)
+{
+    if (enemy_list.size() < max_enemy)
+    {
+        enemy_list.push_back(std::make_unique<enemy::nest>(
+            pos_enemy, nest_obj, tex_nest.get(), this));
+    }
 }
 
 void game_impl::add_spider(my_engine::vec2 pos_enemy)
@@ -457,7 +490,7 @@ void game_impl::update_imGui()
                      /*ImGuiWindowFlags_NoTitleBar */);
 
         ImGui::SetWindowPos(ImVec2{ 0, 0 });
-        ImGui::SetWindowSize(ImVec2{ 210, 220 });
+        ImGui::SetWindowSize(ImVec2{ 230, 200 });
         // ImGui::Text("Health  =  %.0f", player->getHealth());
 
         float alfa_red = 1 - player->getHealth() / 1000.f;
@@ -495,8 +528,8 @@ void game_impl::update_imGui()
         ImGui::Begin("Score",
                      nullptr,
                      ImGuiWindowFlags_NoTitleBar |
-                         ImGuiWindowFlags_NoBackground /* |
-                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove */);
+                         ImGuiWindowFlags_NoBackground |
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
         ImGui::SetWindowPos(ImVec2{ 810, 0 });
         ImGui::SetWindowSize(ImVec2{ 300, 100 });

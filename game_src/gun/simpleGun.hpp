@@ -59,7 +59,7 @@ private:
     // 1 in X milliseconds
     unsigned int speed_shoot   = 150;
     float        speed_bullet  = 0.001f;
-    float        damage_bullet = 20.f;
+    float        damage_bullet = 35.f;
 
     Timer          timer_to_clip;
     uint16_t       currentClip  = 50;

@@ -27,7 +27,7 @@ public:
     //           my_engine::RenderObj* t_bul_obj);
     bigSpider(my_engine::vec2       pos,
               my_engine::RenderObj* t_obj,
-              Animate::sprite*     t_tex,
+              Animate::sprite*      t_tex,
               Animate::Texture*     t_tex_bullet,
               my_engine::RenderObj* t_bul_obj);
     ~bigSpider();
@@ -56,7 +56,7 @@ private:
                         std::deque<std::unique_ptr<iEnemy>>& enemy_list,
                         Player*                              t_player);
 
-    Animate::sprite* sprite_corpse = nullptr;
+    std::unique_ptr<Animate::sprite> sprite_corpse;
 
     Animate::Texture*     tex_corpse = nullptr;
     my_engine::RenderObj* obj_corpse = nullptr;

@@ -51,7 +51,7 @@ bigSpider::bigSpider(my_engine::vec2       pos,
                      my_engine::RenderObj* t_bul_obj)
 {
     obj_corpse = t_obj;
-    sprite_corpse = t_sprite;
+    sprite_corpse = std::make_unique<Animate::sprite>(*t_sprite);
     obj_bullet = t_bul_obj;
     tex_bullet = t_tex_bullet;
 
