@@ -20,8 +20,8 @@ class bigSpider : public iEnemy
 public:
     bigSpider(my_engine::vec2       pos,
               my_engine::RenderObj* t_obj,
-              Texture*              t_tex,
-              Texture*              t_tex_bullet,
+              Animate::Texture*              t_tex,
+              Animate::Texture*              t_tex_bullet,
               my_engine::RenderObj* t_bul_obj);
     ~bigSpider();
 
@@ -49,9 +49,9 @@ private:
                         std::deque<std::unique_ptr<iEnemy>>& enemy_list,
                         Player*                              t_player);
 
-    Texture*              tex_corpse = nullptr;
+    Animate::Texture*              tex_corpse = nullptr;
     my_engine::RenderObj* obj_corpse = nullptr;
-    Texture*              tex_bullet = nullptr;
+    Animate::Texture*              tex_bullet = nullptr;
     my_engine::RenderObj* obj_bullet = nullptr;
 
     my_engine::matrix2x3 matrix_corpse;

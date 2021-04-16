@@ -9,6 +9,9 @@
 #define GL_NEAREST 0x2600
 
 typedef unsigned int GLuint;
+namespace Animate
+{
+
 class Image;
 
 class Texture
@@ -31,3 +34,4 @@ public:
     std::string getName() const { return name_uniform; }
     GLuint      getTexID() { return mHandle; }
 };
+} // namespace Animate

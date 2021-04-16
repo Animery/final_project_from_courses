@@ -103,8 +103,8 @@ bool read_event(event& e);
 // void update_imGui();
 void render_imgui();
 
-void render(const RenderObj&, const Texture&, const matrix2x3&);
-void render(const RenderObj&, const std::vector<Texture*>&, const matrix2x3&);
+void render(const RenderObj&, const Animate::Texture&, const matrix2x3&);
+void render(const RenderObj&, const std::vector<Animate::Texture*>&, const matrix2x3&);
 void swap_buffers();
 
 void uninitialize();
@@ -120,8 +120,8 @@ public:
     // virtual GLuint getProg_id(){return prog_id;}
     // Check the validate status
     virtual void check_validate()                               = 0;
-    virtual void setUniform(const Texture& tex) const           = 0;
-    virtual void setUniform(const std::vector<Texture*>&) const = 0;
+    virtual void setUniform(const Animate::Texture& tex) const           = 0;
+    virtual void setUniform(const std::vector<Animate::Texture*>&) const = 0;
     virtual void setUniform(std::string_view name,
                             const matrix2x3& m) const           = 0;
 };
@@ -139,8 +139,8 @@ public:
     virtual void setProg(gfx_prog* prog_)                         = 0;
     // virtual void linkProg()                                           = 0;
     virtual void useProg() const                                = 0;
-    virtual void setUniform(const Texture& tex) const           = 0;
-    virtual void setUniform(const std::vector<Texture*>&) const = 0;
+    virtual void setUniform(const Animate::Texture& tex) const           = 0;
+    virtual void setUniform(const std::vector<Animate::Texture*>&) const = 0;
     virtual void setUniform(std::string_view name,
                             const matrix2x3& mat) const         = 0;
     // virtual void bind_attrib(GLuint index, std::string_view attrib)   = 0;

@@ -20,7 +20,6 @@ RenderObj_impl::RenderObj_impl()
 void RenderObj_impl::bind() const
 {
     glBindVertexArray(vao_id);
-    
 }
 
 void RenderObj_impl::load_mesh_from_file(const std::string_view path)
@@ -115,7 +114,7 @@ void RenderObj_impl::load_mesh_from_file(const std::string_view path)
     // Indices
     key.clear();
     file >> key;
-    size_t      num_of_indices = 0;
+    size_t num_of_indices = 0;
     file >> num_of_indices;
 
     if (key == "indices")
@@ -195,7 +194,7 @@ void RenderObj_impl::useProg() const
     }
 }
 
-void RenderObj_impl::setUniform(const Texture& tex) const
+void RenderObj_impl::setUniform(const Animate::Texture& tex) const
 {
     if (prog == nullptr)
     {
@@ -207,7 +206,8 @@ void RenderObj_impl::setUniform(const Texture& tex) const
     }
 }
 
-void RenderObj_impl::setUniform(std::string_view name, const matrix2x3& mat) const
+void RenderObj_impl::setUniform(std::string_view name,
+                                const matrix2x3& mat) const
 {
     if (prog == nullptr)
     {
@@ -219,7 +219,8 @@ void RenderObj_impl::setUniform(std::string_view name, const matrix2x3& mat) con
     }
 }
 
-void RenderObj_impl::setUniform(const std::vector<Texture*>& tex_arr) const
+void RenderObj_impl::setUniform(
+    const std::vector<Animate::Texture*>& tex_arr) const
 {
     if (prog == nullptr)
     {

@@ -4,8 +4,8 @@
 #include <iostream>
 
 Player::Player(my_engine::RenderObj*   temp_obj,
-               Texture*                temp_tex_head,
-               Texture*                temp_tex_corpse,
+               Animate::Texture*                temp_tex_head,
+               Animate::Texture*                temp_tex_corpse,
                my_engine::SoundBuffer* t_sound_dmg)
 {
     tank_obj       = temp_obj;

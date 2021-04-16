@@ -3,6 +3,10 @@
 
 // #define STB_IMAGE_IMPLEMENTATION
 // #include "../include/stb_image.h"
+namespace Animate
+{
+    
+
 
 Image::~Image()
 {
@@ -86,3 +90,4 @@ Image::Image(uint                          in_width,
 {
     std::cout << "+++ ctor Image" << std::endl;
 }
+} // namespace Animate

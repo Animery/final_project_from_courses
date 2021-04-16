@@ -58,7 +58,7 @@ GLuint gfx_prog_impl::create_shader(std::string_view path, GLuint type)
 //     OM_GL_CHECK()
 // }
 
-void gfx_prog_impl::setUniform(const Texture& tex) const
+void gfx_prog_impl::setUniform(const Animate::Texture& tex) const
 {
     assert(&tex != nullptr);
 
@@ -81,7 +81,7 @@ void gfx_prog_impl::setUniform(const Texture& tex) const
     OM_GL_CHECK()
 }
 
-void gfx_prog_impl::setUniform(const std::vector<Texture*>& tex_arr) const
+void gfx_prog_impl::setUniform(const std::vector<Animate::Texture*>& tex_arr) const
 {
     for (auto&& it : tex_arr)
     {

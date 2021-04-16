@@ -10,14 +10,16 @@ class shotGun : public Gun
 {
 
 public:
-    shotGun(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
+    shotGun(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
     ~shotGun();
 
 #if defined(TEST_VECTOR)
     void update_gun(float delta, std::vector<Enemy*>& enemy_list) override;
     std::vector<Bullet*>* getList_bullets();
 #else
-    void update_gun(float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
+    void update_gun(
+        float                                       delta,
+        std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
     // std::deque<Bullet*>* getList_bullets();
 
 #endif // TEST_VECTOR
@@ -35,16 +37,19 @@ protected:
                          std::vector<Enemy*>& enemy_list) override;
     void update_bullets(float delta, std::vector<Enemy*>& enemy_list) override;
 #else
-    bool check_collision(Bullet*             bullet,
-                         std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
+    bool check_collision(
+        Bullet*                                     bullet,
+        std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
     bool out_screen(const Bullet* bullet) override;
-    void update_bullets(float delta,std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
+    void update_bullets(
+        float                                       delta,
+        std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list) override;
 #endif // TEST_VECTOR
 
 private:
     std::string name = "ShotGun";
 
-    Texture*              texture_bullet;
+    Animate::Texture*     texture_bullet;
     my_engine::RenderObj* bullet_obj;
 
 #if defined(TEST_VECTOR)

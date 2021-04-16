@@ -4,6 +4,10 @@
 #include <string>
 #include <iostream>
 
+namespace Animate
+{
+	
+
 class Image
 {
 // public:
@@ -48,3 +52,4 @@ public:
 
     static Image loadFromFile(const std::string& path);
 };
+} // namespace Animate

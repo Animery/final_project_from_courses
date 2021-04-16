@@ -2,8 +2,9 @@
 
 #include "enemy/bigSpider.hpp"
 #include "enemy/spider.hpp"
-#include "gun/shotGun.hpp"
 #include "gun/simpleGun.hpp"
+#include "gun/shotGun.hpp"
+#include "gun/miniGun.hpp"
 #include "score.hpp"
 #include "spawn_levels/wave_1.hpp"
 
@@ -127,8 +128,8 @@ void game_impl::on_initialize()
                                              "res/stone.png",
                                              "res/rock.png" };
 
-        Texture* temp_tex_map =
-            new Texture(tex_name[0], GL_CLAMP_TO_BORDER, GL_LINEAR);
+        Animate::Texture* temp_tex_map =
+            new Animate::Texture(tex_name[0], GL_CLAMP_TO_BORDER, GL_LINEAR);
         map_texture.push_back(temp_tex_map);
         {
             // Image image = Image::loadFromFile(tex_path[0]);
@@ -138,7 +139,8 @@ void game_impl::on_initialize()
 
         for (size_t i = 1; i < 5; i++)
         {
-            Texture* temp_tex = new Texture(tex_name[i], GL_REPEAT, GL_NEAREST);
+            Animate::Texture* temp_tex =
+                new Animate::Texture(tex_name[i], GL_REPEAT, GL_NEAREST);
             map_texture.push_back(temp_tex);
             {
                 // Image image = Image::loadFromFile(tex_path[i]);
@@ -151,34 +153,39 @@ void game_impl::on_initialize()
 
     std::string tex_name = "s_texture";
 
-    texture_head = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    texture_head =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
-        Image image = Image::loadFromFile("res/head.png");
+        Animate::Image image = Animate::Image::loadFromFile("res/head.png");
         texture_head->setImage(image);
     }
 
-    texture_corpse = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    texture_corpse =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
-        Image image = Image::loadFromFile("res/corpse.png");
+        Animate::Image image = Animate::Image::loadFromFile("res/corpse.png");
         texture_corpse->setImage(image);
     }
 
-    texture_bullet = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    texture_bullet =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
-        Image image = Image::loadFromFile("res/bullet.png");
+        Animate::Image image = Animate::Image::loadFromFile("res/bullet.png");
         texture_bullet->setImage(image);
     }
 
-    texture_spider = std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    texture_spider =
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
-        Image image = Image::loadFromFile("res/spider.png");
+        Animate::Image image = Animate::Image::loadFromFile("res/spider.png");
         texture_spider->setImage(image);
     }
 
     texture_big_spider =
-        std::make_unique<Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+        std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
-        Image image = Image::loadFromFile("res/big_spider2.png");
+        Animate::Image image =
+            Animate::Image::loadFromFile("res/big_spider2.png");
         texture_big_spider->setImage(image);
     }
 
@@ -190,6 +197,8 @@ void game_impl::on_initialize()
         std::make_unique<guns::GunSimple>(texture_bullet.get(), bullet_obj));
     guns.push_back(
         std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj));
+        guns.push_back(
+        std::make_unique<guns::miniGun>(texture_bullet.get(), bullet_obj));
     gun_current = guns[gun_current_ID].get();
     // Gun
 
@@ -417,7 +426,7 @@ void game_impl::update_imGui()
                      /*ImGuiWindowFlags_NoTitleBar */);
 
         ImGui::SetWindowPos(ImVec2{ 0, 0 });
-        ImGui::SetWindowSize(ImVec2{ 210, 200 });
+        ImGui::SetWindowSize(ImVec2{ 210, 220 });
         // ImGui::Text("Health  =  %.0f", player->getHealth());
 
         float alfa_red = 1 - player->getHealth() / 1000.f;
@@ -481,8 +490,7 @@ void game_impl::update_imGui()
             ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
                                " %i SCORE",
                                gameInfo::score::getInstance().value());
-            ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f },
-                               "Game Over");
+            ImGui::TextColored(ImVec4{ 1.f, 0.f, 0.f, 1.f }, "Game Over");
             ImGui::End();
         }
     }

@@ -19,7 +19,7 @@ class spider : public iEnemy
 public:
     spider(my_engine::vec2       pos,
            my_engine::RenderObj* temp_obj,
-           Texture*              temp_tex);
+           Animate::Texture*              temp_tex);
     ~spider();
 
     void update(const float                          delta,
@@ -39,7 +39,7 @@ private:
                                const my_engine::vec2& pos_player_B);
 
     my_engine::RenderObj* obj_corpse = nullptr;
-    Texture*              tex_corpse = nullptr;
+    Animate::Texture*              tex_corpse = nullptr;
 
     my_engine::matrix2x3 matrix_corpse;
 

@@ -71,8 +71,8 @@ public:
     // Check the validate status
     void check_validate();
 
-    void setUniform(const Texture& tex) const;
-    void setUniform(const std::vector<Texture*>& tex_arr) const;
+    void setUniform(const Animate::Texture& tex) const;
+    void setUniform(const std::vector<Animate::Texture*>& tex_arr) const;
     void setUniform(std::string_view name, const matrix2x3& m) const;
 };
 

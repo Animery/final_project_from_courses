@@ -5,7 +5,8 @@
 namespace guns
 {
 
-shotGun::shotGun(Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
+shotGun::shotGun(Animate::Texture*     temp_tex_bul,
+                 my_engine::RenderObj* temp_bul_obj)
 // : readyGun(true)
 // , texture_bullet(temp_tex_bul)
 // , bullet_obj(temp_bul_obj)

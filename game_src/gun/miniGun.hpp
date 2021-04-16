@@ -1,18 +1,18 @@
 #pragma once
 
-// #include "../include/engine.hpp"
 #include "../include/engine.hpp"
 #include "gun.hpp"
 
 namespace guns
 {
+    
 
-class GunSimple : public Gun
+class miniGun : public Gun
 {
 
 public:
-    GunSimple(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
-    ~GunSimple();
+    miniGun(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj);
+    ~miniGun();
 
 #if defined(TEST_VECTOR)
     void update_gun(float delta, std::vector<Enemy*>& enemy_list) override;
@@ -42,7 +42,7 @@ protected:
 #endif // TEST_VECTOR
 
 private:
-    std::string name = "Rifle";
+    std::string name = "MiniGun";
 
     Animate::Texture*              texture_bullet;
     my_engine::RenderObj* bullet_obj;
@@ -57,14 +57,14 @@ private:
     Timer timer_to_shoot;
     bool readyGun;
     // 1 in X milliseconds
-    unsigned int speed_shoot   = 150;
+    unsigned int speed_shoot   = 200;
     float        speed_bullet  = 0.001f;
-    float        damage_bullet = 20.f;
+    float        damage_bullet = 15.f;
 
     Timer          timer_to_clip;
-    uint16_t       currentClip  = 50;
-    const uint16_t maxClip      = 50;
-    float          speed_reload = 2000;
+    uint16_t       currentClip  = 200;
+    const uint16_t maxClip      = 200;
+    float          speed_reload = 3000;
 
 
     // Bullet* bullet = nullptr;

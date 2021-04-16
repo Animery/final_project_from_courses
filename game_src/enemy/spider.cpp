@@ -10,7 +10,7 @@ namespace enemy
 
 spider::spider(my_engine::vec2       pos,
                my_engine::RenderObj* temp_obj,
-               Texture*              temp_tex)
+               Animate::Texture*              temp_tex)
 {
     obj_corpse = temp_obj;
     tex_corpse = temp_tex;

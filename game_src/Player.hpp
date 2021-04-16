@@ -8,7 +8,7 @@
 class Player
 {
 public:
-    Player(my_engine::RenderObj*, Texture*, Texture*, my_engine::SoundBuffer*);
+    Player(my_engine::RenderObj*, Animate::Texture*, Animate::Texture*, my_engine::SoundBuffer*);
     ~Player();
     void update(std::array<bool, 10>& controls, float delta);
 
@@ -33,8 +33,8 @@ public:
 
 protected:
     my_engine::RenderObj* tank_obj       = nullptr;
-    Texture*              texture_corpse = nullptr;
-    Texture*              texture_head   = nullptr;
+    Animate::Texture*              texture_corpse = nullptr;
+    Animate::Texture*              texture_head   = nullptr;
 
     my_engine::matrix2x3 matrix_corpse;
     my_engine::matrix2x3 matrix_head;

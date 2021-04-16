@@ -537,7 +537,6 @@ bool read_event(event& ev)
                 ev.type = my_engine::event_type::mouse_motion;
                 return true;
             }
-           
         }
     }
     return false;
@@ -670,7 +669,9 @@ void render_imgui()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void render(const RenderObj& vao, const Texture& tex, const matrix2x3& mat)
+void render(const RenderObj&        vao,
+            const Animate::Texture& tex,
+            const matrix2x3&        mat)
 {
     vao.useProg();
     vao.setUniform(tex); // 0 - magic
@@ -679,9 +680,9 @@ void render(const RenderObj& vao, const Texture& tex, const matrix2x3& mat)
     tex.unBind();
 }
 
-void render(const RenderObj&             vao,
-            const std::vector<Texture*>& tex_arr,
-            const matrix2x3&             mat)
+void render(const RenderObj&                      vao,
+            const std::vector<Animate::Texture*>& tex_arr,
+            const matrix2x3&                      mat)
 {
     vao.useProg();
     vao.setUniform(tex_arr); // 0 - magic

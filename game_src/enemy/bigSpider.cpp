@@ -9,8 +9,8 @@ namespace enemy
 
 bigSpider::bigSpider(my_engine::vec2       pos,
                      my_engine::RenderObj* t_obj,
-                     Texture*              t_tex,
-                     Texture*              t_tex_bullet,
+                     Animate::Texture*              t_tex,
+                     Animate::Texture*              t_tex_bullet,
                      my_engine::RenderObj* t_bul_obj)
 {
     obj_corpse = t_obj;

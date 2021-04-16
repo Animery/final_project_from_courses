@@ -1,34 +1,42 @@
-#include "simpleGun.hpp"
+#include "miniGun.hpp"
 
 namespace guns
 {
 
-GunSimple::GunSimple(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
+miniGun::miniGun(Animate::Texture*     temp_tex_bul,
+                 my_engine::RenderObj* temp_bul_obj)
 {
     readyGun       = true;
     texture_bullet = temp_tex_bul;
     bullet_obj     = temp_bul_obj;
 
-    timer_to_shoot.setCallback([this]() { readyGun = true; });
+    timer_to_shoot.setCallback([this]() {
+        if (speed_shoot > 20)
+        {
+            speed_shoot -= 10;
+        }
+        readyGun = true;
+    });
     timer_to_clip.setCallback([this]() {
+        speed_shoot = 200;
         currentClip = maxClip;
         readyGun    = true;
     });
     std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
-    std::cout << "+++ ctor GunSimple" << std::endl;
+    std::cout << "+++ ctor miniGun" << std::endl;
 }
 
-GunSimple::~GunSimple()
+miniGun::~miniGun()
 {
     for (auto it = bullets.begin(); it != bullets.end();)
     {
         // delete it.operator*();
         it = bullets.erase(it);
     }
-    std::cout << "--- destor GunSimple" << std::endl;
+    std::cout << "--- destor miniGun" << std::endl;
 }
 
-void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
+void miniGun::shoot(my_engine::vec2& temp_position, float temp_direction)
 {
     if (readyGun)
     {
@@ -50,26 +58,26 @@ void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
     }
 }
 
-std::string_view GunSimple::getNameGun()
+std::string_view miniGun::getNameGun()
 {
     return name.data();
 }
 
-uint16_t GunSimple::getMaxClip() const
+uint16_t miniGun::getMaxClip() const
 {
     return maxClip;
 }
 
-uint16_t GunSimple::getCurrentClip() const
+uint16_t miniGun::getCurrentClip() const
 {
     return currentClip;
 }
 
 #if defined(TEST_VECTOR)
-void GunSimple::update_gun(float delta, std::vector<Enemy*>& enemy_list)
+void miniGun::update_gun(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_gun(
-    float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
+void miniGun::update_gun(float                                       delta,
+                         std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
     update_bullets(delta, enemy_list);
@@ -78,12 +86,12 @@ void GunSimple::update_gun(
     timer_to_clip.update_timer(delta);
 }
 
-unsigned int GunSimple::count_bullets()
+unsigned int miniGun::count_bullets()
 {
     return bullets.size();
 }
 
-void GunSimple::render_bullets()
+void miniGun::render_bullets()
 {
     for (auto&& bullet : bullets)
     {
@@ -92,9 +100,9 @@ void GunSimple::render_bullets()
 }
 
 #if defined(TEST_VECTOR)
-void GunSimple::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
+void miniGun::update_bullets(float delta, std::vector<Enemy*>& enemy_list)
 #else
-void GunSimple::update_bullets(
+void miniGun::update_bullets(
     float delta, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 {
@@ -111,18 +119,18 @@ void GunSimple::update_bullets(
 }
 
 // #if defined(TEST_VECTOR)
-// std::vector<Bullet*>* GunSimple::getList_bullets()
+// std::vector<Bullet*>* miniGun::getList_bullets()
 // #else
-// std::deque<Bullet*>* GunSimple::getList_bullets()
+// std::deque<Bullet*>* miniGun::getList_bullets()
 // #endif // TEST_VECTOR
 // {
 //     return &bullets;
 // }
 
 #if defined(TEST_VECTOR)
-bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
+bool miniGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)
 #else
-bool GunSimple::check_collision(
+bool miniGun::check_collision(
     Bullet* bullet, std::deque<std::unique_ptr<enemy::iEnemy>>& enemy_list)
 #endif // TEST_VECTOR
 
@@ -158,7 +166,7 @@ bool GunSimple::check_collision(
     return false;
 }
 
-bool GunSimple::out_screen(const Bullet* bullet)
+bool miniGun::out_screen(const Bullet* bullet)
 {
     return bullet->getPosition().x > (1 / gameConst::size) ||
            bullet->getPosition().x < -(1 / gameConst::size) ||

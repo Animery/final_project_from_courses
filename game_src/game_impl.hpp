@@ -42,12 +42,12 @@ private:
     std::deque<std::unique_ptr<enemy::iEnemy>> enemy_list;
 #endif // TEST_VECTOR
 
-    std::vector<Texture*>    map_texture;
-    std::unique_ptr<Texture> texture_corpse;
-    std::unique_ptr<Texture> texture_head;
-    std::unique_ptr<Texture> texture_bullet;
-    std::unique_ptr<Texture> texture_spider;
-    std::unique_ptr<Texture> texture_big_spider;
+    std::vector<Animate::Texture*>    map_texture;
+    std::unique_ptr<Animate::Texture> texture_corpse;
+    std::unique_ptr<Animate::Texture> texture_head;
+    std::unique_ptr<Animate::Texture> texture_bullet;
+    std::unique_ptr<Animate::Texture> texture_spider;
+    std::unique_ptr<Animate::Texture> texture_big_spider;
 
     my_engine::RenderObj* tank_obj   = nullptr;
     my_engine::RenderObj* bullet_obj = nullptr;

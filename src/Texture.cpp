@@ -4,6 +4,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
 
+namespace Animate
+{
+    
+
 Texture::Texture(std::string& name_u, int wrap, int filter)
 {
     // static unsigned number_tex = 0;
@@ -95,3 +99,5 @@ void Texture::loadImage(std::string_view path)
     stbi_image_free(decoded_img);
     unBind();
 }
+
+} // namespace Animate
