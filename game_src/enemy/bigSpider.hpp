@@ -1,8 +1,10 @@
 #pragma once
+#include "../../engine/Timer.hpp"
 #include "../GameConst.hpp"
-#include "../Timer.hpp"
 #include "../gun/Bullet.hpp"
 #include "iEnemy.hpp"
+
+#include "../../engine/sprite.hpp"
 
 class Texture;
 namespace my_engine
@@ -18,10 +20,15 @@ class bigSpider : public iEnemy
 {
 
 public:
+    // bigSpider(my_engine::vec2       pos,
+    //           my_engine::RenderObj* t_obj,
+    //           Animate::Texture*     t_tex,
+    //           Animate::Texture*     t_tex_bullet,
+    //           my_engine::RenderObj* t_bul_obj);
     bigSpider(my_engine::vec2       pos,
               my_engine::RenderObj* t_obj,
-              Animate::Texture*              t_tex,
-              Animate::Texture*              t_tex_bullet,
+              Animate::sprite*     t_tex,
+              Animate::Texture*     t_tex_bullet,
               my_engine::RenderObj* t_bul_obj);
     ~bigSpider();
 
@@ -49,9 +56,11 @@ private:
                         std::deque<std::unique_ptr<iEnemy>>& enemy_list,
                         Player*                              t_player);
 
-    Animate::Texture*              tex_corpse = nullptr;
+    Animate::sprite* sprite_corpse = nullptr;
+
+    Animate::Texture*     tex_corpse = nullptr;
     my_engine::RenderObj* obj_corpse = nullptr;
-    Animate::Texture*              tex_bullet = nullptr;
+    Animate::Texture*     tex_bullet = nullptr;
     my_engine::RenderObj* obj_bullet = nullptr;
 
     my_engine::matrix2x3 matrix_corpse;

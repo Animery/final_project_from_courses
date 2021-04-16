@@ -19,6 +19,7 @@ public:
 private:
     size_t val_score = 0;
     score();
+    ~score();
 };
 
 } // namespace gameInfo

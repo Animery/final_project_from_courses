@@ -1,4 +1,5 @@
 #include "iEnemy.hpp"
+#include "../../engine/debug_level.hpp"
 
 #ifdef DEBUG_LEVEL
 #include <iostream>

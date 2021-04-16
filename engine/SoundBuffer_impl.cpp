@@ -1,4 +1,4 @@
-#include "../include/SoundBuffer_impl.hpp"
+#include "SoundBuffer_impl.hpp"
 
 
 // static std::string_view get_sound_format_name(uint16_t format_value)

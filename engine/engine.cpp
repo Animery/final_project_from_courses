@@ -1,15 +1,15 @@
 // #define DEBUG_more
 
 #include "../game_src/GameConst.hpp"
-#include "../include/RenderObj_impl.hpp"
-#include "../include/SoundBuffer_impl.hpp"
-#include "../include/shader.hpp"
+#include "RenderObj_impl.hpp"
+#include "SoundBuffer_impl.hpp"
+#include "shader.hpp"
 
 #include "../imgui_src/imgui.h"
 #include "../imgui_src/imgui_impl_opengl3.h"
 #include "../imgui_src/imgui_impl_sdl.h"
 
-#include "../include/glad/glad.h"
+#include "glad/glad.h"
 #include <SDL2/SDL.h>
 
 #include <algorithm>

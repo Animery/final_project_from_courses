@@ -1,19 +1,8 @@
-// #include "game_src/game_impl.hpp"
-// #include "include/Image.hpp"
-// #include "include/Texture.hpp"
-// #include "game_src/GameConst.hpp"
-#include "include/engine.hpp"
+#include "engine/engine.hpp"
 
-// #include <algorithm>
-// #include <array>
 #include <cassert>
-// #include <cmath>
-// #include <cstdlib>
-// #include <fstream>
 #include <iostream>
 #include <memory>
-// #include <numbers>
-// #include <string_view>
 #include <thread>
 
 using clock_timer = std::chrono::high_resolution_clock;

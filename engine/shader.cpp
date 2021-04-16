@@ -1,6 +1,6 @@
-#include "../include/shader.hpp"
+#include "shader.hpp"
 
-#include "../include/glad/glad.h"
+#include "glad/glad.h"
 
 #include <fstream>
 #include <iostream> // for DEBUG

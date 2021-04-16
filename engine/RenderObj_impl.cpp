@@ -1,7 +1,7 @@
-#include "../include/RenderObj_impl.hpp"
-#include "../include/configuration_loader.hxx"
+#include "RenderObj_impl.hpp"
+#include "configuration_loader.hxx"
 
-#include "../include/glad/glad.h"
+#include "glad/glad.h"
 
 #include <cassert>
 #include <iostream>

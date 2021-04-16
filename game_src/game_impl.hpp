@@ -5,6 +5,8 @@
 #include "gun/gun.hpp"
 #include "spawn_levels/spawn_enemy.hpp"
 
+#include "../engine/sprite.hpp"
+
 #include <memory>
 
 namespace my_game
@@ -47,18 +49,21 @@ private:
     std::unique_ptr<Animate::Texture> texture_head;
     std::unique_ptr<Animate::Texture> texture_bullet;
     std::unique_ptr<Animate::Texture> texture_spider;
-    std::unique_ptr<Animate::Texture> texture_big_spider;
+    // std::unique_ptr<Animate::Texture> texture_big_spider;
+    std::unique_ptr<Animate::Texture> texture_fire_ball;
 
-    my_engine::RenderObj* tank_obj   = nullptr;
-    my_engine::RenderObj* bullet_obj = nullptr;
-    my_engine::RenderObj* spider     = nullptr;
-    my_engine::RenderObj* big_spider = nullptr;
-    my_engine::RenderObj* map_obj    = nullptr;
+    std::unique_ptr<Animate::sprite> spire_big_spider;
+
+    my_engine::RenderObj* tank_obj      = nullptr;
+    my_engine::RenderObj* bullet_obj    = nullptr;
+    my_engine::RenderObj* spider        = nullptr;
+    my_engine::RenderObj* big_spider    = nullptr;
+    my_engine::RenderObj* fire_ball_obj = nullptr;
+    my_engine::RenderObj* map_obj       = nullptr;
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
     size_t                              max_enemy = 1000;
-    std::array<bool, 10> controls{ false };
-
+    std::array<bool, 10>                controls{ false };
 
     // uint16_t                            count_spider = 0;
 

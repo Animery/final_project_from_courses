@@ -1,5 +1,7 @@
 #include "Player.hpp"
 
+#include "../engine/debug_level.hpp"
+
 #include <cmath>
 #include <iostream>
 
@@ -203,19 +205,11 @@ void Player::update_Head_dirrection()
 
     temp.y /= gameConst::aspect;
 
-    // std::cout << "current_pos_tank\t" << temp_pos_tank << std::endl;
-    // std::cout << "mouse_pos\t" << mouse_pos_vec << std::endl;
-    // std::cout << "temp\t" << temp << std::endl;
-
     float a;
     a = std::atan2(temp.y, temp.x) + gameConst::pi / 2.0f;
 
-    // std::cout << "current_head_direction : " << a << std::endl;
-    // std::cout << "####################" << std::endl;
 
     current_head_direction = -a;
-    // std::cout << "current_head_direction : " << current_head_direction <<
-    // std::endl;
 }
 
 // void Player::loadRenderObj() {}

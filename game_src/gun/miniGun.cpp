@@ -1,5 +1,7 @@
 #include "miniGun.hpp"
 
+#include "../../engine/debug_level.hpp"
+
 namespace guns
 {
 
@@ -22,8 +24,9 @@ miniGun::miniGun(Animate::Texture*     temp_tex_bul,
         currentClip = maxClip;
         readyGun    = true;
     });
-    std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor miniGun" << std::endl;
+#endif
 }
 
 miniGun::~miniGun()
@@ -33,15 +36,15 @@ miniGun::~miniGun()
         // delete it.operator*();
         it = bullets.erase(it);
     }
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor miniGun" << std::endl;
+#endif
 }
 
 void miniGun::shoot(my_engine::vec2& temp_position, float temp_direction)
 {
     if (readyGun)
     {
-        // bullets.push_back(new Bullet(
-        //     temp_position, temp_direction, speed_bullet, damage_bullet));
         bullets.push_back(std::make_unique<Bullet>(
             temp_position, temp_direction, speed_bullet, damage_bullet));
         --currentClip;
@@ -118,14 +121,7 @@ void miniGun::update_bullets(
         bullets.end());
 }
 
-// #if defined(TEST_VECTOR)
-// std::vector<Bullet*>* miniGun::getList_bullets()
-// #else
-// std::deque<Bullet*>* miniGun::getList_bullets()
-// #endif // TEST_VECTOR
-// {
-//     return &bullets;
-// }
+
 
 #if defined(TEST_VECTOR)
 bool miniGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)

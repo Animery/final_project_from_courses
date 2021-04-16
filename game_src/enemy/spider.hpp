@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../GameConst.hpp"
-#include "../Timer.hpp"
+#include "../../engine/Timer.hpp"
 #include "iEnemy.hpp"
 
 class Texture;

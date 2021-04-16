@@ -7,7 +7,8 @@ find_package(SDL2 REQUIRED)
 include_directories(src)
 include_directories(include)
 
-file(GLOB_RECURSE SRCS src/*.cpp src/*.c include/*.hpp include/*.h)
+# file(GLOB_RECURSE SRCS engine/*.cpp engine/*.c engine/*.hpp engine/*.h)
+file(GLOB_RECURSE SRCS engine/*.*)
 add_library(engine SHARED ${SRCS})
 
 # target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -1,4 +1,7 @@
 #include "Bullet.hpp"
+
+#include "../../engine/debug_level.hpp"
+
 #include <iostream>
 
 Bullet::Bullet(my_engine::vec2& temp_position,

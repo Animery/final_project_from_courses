@@ -1,5 +1,7 @@
 #include "spawn_enemy.hpp"
 
+#include "../../engine/debug_level.hpp"
+
 #if defined(DEBUG_LEVEL)
 #include <iostream>
 #endif // DEBUG_LEVEL

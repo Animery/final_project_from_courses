@@ -1,5 +1,7 @@
 #include "shotGun.hpp"
-// #include "../include/engine.hpp"
+
+#include "../../engine/debug_level.hpp"
+
 #include <algorithm>
 
 namespace guns
@@ -20,8 +22,9 @@ shotGun::shotGun(Animate::Texture*     temp_tex_bul,
         currentClip = maxClip;
         readyGun    = true;
     });
-    std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor shotGun" << std::endl;
+#endif
 }
 
 shotGun::~shotGun()
@@ -31,7 +34,9 @@ shotGun::~shotGun()
         // delete it.operator*();
         it = bullets.erase(it);
     }
+    #ifdef DEBUG_LEVEL
     std::cout << "--- destor shotGun" << std::endl;
+#endif
 }
 
 void shotGun::shoot(my_engine::vec2& temp_position, float temp_direction)
@@ -128,14 +133,6 @@ void shotGun::update_bullets(
         bullets.end());
 }
 
-// #if defined(TEST_VECTOR)
-// std::vector<Bullet*>* shotGun::getList_bullets()
-// #else
-// std::deque<Bullet*>* shotGun::getList_bullets()
-// #endif // TEST_VECTOR
-// {
-//     return &bullets;
-// }
 
 #if defined(TEST_VECTOR)
 bool shotGun::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)

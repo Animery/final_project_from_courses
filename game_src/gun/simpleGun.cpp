@@ -1,9 +1,12 @@
 #include "simpleGun.hpp"
 
+#include "../../engine/debug_level.hpp"
+
 namespace guns
 {
 
-GunSimple::GunSimple(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_bul_obj)
+GunSimple::GunSimple(Animate::Texture*     temp_tex_bul,
+                     my_engine::RenderObj* temp_bul_obj)
 {
     readyGun       = true;
     texture_bullet = temp_tex_bul;
@@ -14,8 +17,9 @@ GunSimple::GunSimple(Animate::Texture* temp_tex_bul, my_engine::RenderObj* temp_
         currentClip = maxClip;
         readyGun    = true;
     });
-    std::cout << "size Bullet" << sizeof(Bullet) << std::endl;
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor GunSimple" << std::endl;
+#endif
 }
 
 GunSimple::~GunSimple()
@@ -25,15 +29,15 @@ GunSimple::~GunSimple()
         // delete it.operator*();
         it = bullets.erase(it);
     }
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor GunSimple" << std::endl;
+#endif
 }
 
 void GunSimple::shoot(my_engine::vec2& temp_position, float temp_direction)
 {
     if (readyGun)
     {
-        // bullets.push_back(new Bullet(
-        //     temp_position, temp_direction, speed_bullet, damage_bullet));
         bullets.push_back(std::make_unique<Bullet>(
             temp_position, temp_direction, speed_bullet, damage_bullet));
         --currentClip;
@@ -109,15 +113,6 @@ void GunSimple::update_bullets(
             }),
         bullets.end());
 }
-
-// #if defined(TEST_VECTOR)
-// std::vector<Bullet*>* GunSimple::getList_bullets()
-// #else
-// std::deque<Bullet*>* GunSimple::getList_bullets()
-// #endif // TEST_VECTOR
-// {
-//     return &bullets;
-// }
 
 #if defined(TEST_VECTOR)
 bool GunSimple::check_collision(Bullet* bullet, std::vector<Enemy*>& enemy_list)

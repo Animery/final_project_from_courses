@@ -1,5 +1,5 @@
-#include "../include/Image.hpp"
-#include "../include/picopng.hpp"
+#include "Image.hpp"
+#include "picopng.hpp"
 
 // #define STB_IMAGE_IMPLEMENTATION
 // #include "../include/stb_image.h"

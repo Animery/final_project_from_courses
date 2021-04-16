@@ -1,20 +1,57 @@
 #include "bigSpider.hpp"
-#include "../../include/engine.hpp"
 #include "../score.hpp"
+
+#include "../../engine/engine.hpp"
+#include "../../engine/debug_level.hpp"
 
 #include <cmath>
 
 namespace enemy
 {
 
+// bigSpider::bigSpider(my_engine::vec2       pos,
+//                      my_engine::RenderObj* t_obj,
+//                      Animate::Texture*              t_tex,
+//                      Animate::Texture*              t_tex_bullet,
+//                      my_engine::RenderObj* t_bul_obj)
+// {
+//     obj_corpse = t_obj;
+//     tex_corpse = t_tex;
+//     obj_bullet = t_bul_obj;
+//     tex_bullet = t_tex_bullet;
+
+//     timer_to_shoot.setCallback([this]() {
+//         shoot();
+//         timer_use = false;
+//     });
+
+//     melee_timer.setCallback([this]() { melee_ready = true; });
+
+//     current_tank_pos = pos;
+//     half_size        = 0.025f;
+//     current_tank_direction =
+//         rand() % 31415 * 2 / 10000.f - gameConst::half_pi - 0.0001f;
+
+//     // status
+//     health         = 200;
+//     speed          = 0.00031250f / 6.f;
+//     speed_diagonal = 0.00022097f / 6.f;
+//     speed_rotation = 0.0015f / 2.5f;
+//     // status
+
+//     current_tank_pos.y /= gameConst::aspect;
+// #ifdef DEBUG_LEVEL
+//     std::cout << "+++ ctor bigSpider" << std::endl;
+// #endif
+// }
 bigSpider::bigSpider(my_engine::vec2       pos,
                      my_engine::RenderObj* t_obj,
-                     Animate::Texture*              t_tex,
+                     Animate::sprite*              t_sprite,
                      Animate::Texture*              t_tex_bullet,
                      my_engine::RenderObj* t_bul_obj)
 {
     obj_corpse = t_obj;
-    tex_corpse = t_tex;
+    sprite_corpse = t_sprite;
     obj_bullet = t_bul_obj;
     tex_bullet = t_tex_bullet;
 
@@ -79,6 +116,8 @@ void bigSpider::update(const float                          delta,
                        Player*                              t_player,
                        std::deque<std::unique_ptr<iEnemy>>& enemy_list)
 {
+    sprite_corpse->update_sprite(delta);
+
     update_direction(delta, t_player->getCurrent_current_pos());
 
     if (timer_use)
@@ -120,7 +159,8 @@ void bigSpider::update(const float                          delta,
 
 void bigSpider::render_enemy()
 {
-    my_engine::render(*obj_corpse, *tex_corpse, matrix_corpse);
+    // my_engine::render(*obj_corpse, *tex_corpse, matrix_corpse);
+    my_engine::render(*obj_corpse, *(sprite_corpse->getCurrent_tex()), matrix_corpse);
     for (auto&& bullet : bullets)
     {
         my_engine::render(*obj_bullet, *tex_bullet, bullet->getMatrix());

@@ -2,9 +2,9 @@
 
 #include "enemy/bigSpider.hpp"
 #include "enemy/spider.hpp"
-#include "gun/simpleGun.hpp"
-#include "gun/shotGun.hpp"
 #include "gun/miniGun.hpp"
+#include "gun/shotGun.hpp"
+#include "gun/simpleGun.hpp"
 #include "score.hpp"
 #include "spawn_levels/wave_1.hpp"
 
@@ -16,15 +16,17 @@
 #include "../imgui_src/imgui_impl_opengl3.h"
 #include "../imgui_src/imgui_impl_sdl.h"
 
+#include "../engine/debug_level.hpp"
+
 namespace my_game
 {
 
 game_impl::game_impl()
 {
 
-    // std::cout << "sizeof Player" << sizeof(Player) << std::endl;
-    // std::cout << "sizeof Enemy" << sizeof(Enemy) << std::endl;
+#if defined(DEBUG_LEVEL)
     std::cout << "+++ ctor game_impl" << std::endl;
+#endif // DEBUG_LEVEL
 }
 
 game_impl::~game_impl()
@@ -46,9 +48,12 @@ game_impl::~game_impl()
     delete bullet_obj;
     delete spider;
     delete big_spider;
+    delete fire_ball_obj;
     delete map_obj;
 
+#if defined(DEBUG_LEVEL)
     std::cout << "--- destor game_impl" << std::endl;
+#endif // DEBUG_LEVEL
 }
 
 bool game_impl::getIsRunning()
@@ -79,6 +84,9 @@ void game_impl::on_initialize()
     gfx_map->link();
     // gfx_prog
 
+
+    
+
     // Render_obj
     tank_obj = my_engine::create_RenderObj();
     tank_obj->setProg(gfx_obj);
@@ -96,9 +104,14 @@ void game_impl::on_initialize()
     big_spider->setProg(gfx_obj);
     big_spider->load_mesh_from_file("res/big_spider.txt");
 
+    fire_ball_obj = my_engine::create_RenderObj();
+    fire_ball_obj->setProg(gfx_obj);
+    fire_ball_obj->load_mesh_from_file("res/fire_ball.txt");
+
     map_obj = my_engine::create_RenderObj();
     map_obj->setProg(gfx_map);
     map_obj->load_mesh_from_file("res/map.txt");
+
     // Render_obj
 
     // SoundBuffer
@@ -181,15 +194,29 @@ void game_impl::on_initialize()
         texture_spider->setImage(image);
     }
 
-    texture_big_spider =
+    // texture_big_spider =
+    //     std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
+    // {
+    //     Animate::Image image =
+    //         Animate::Image::loadFromFile("res/big_spider2.png");
+    //     texture_big_spider->setImage(image);
+    // }
+
+    texture_fire_ball =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
     {
         Animate::Image image =
-            Animate::Image::loadFromFile("res/big_spider2.png");
-        texture_big_spider->setImage(image);
+            Animate::Image::loadFromFile("res/fire_ball.png");
+        texture_fire_ball->setImage(image);
     }
 
     // Texture init
+
+    // SPRITE
+    spire_big_spider = std::make_unique<Animate::sprite>(200.f);
+    spire_big_spider->add_texture("res/big_spider1.png",tex_name, GL_REPEAT, GL_NEAREST);
+    spire_big_spider->add_texture("res/big_spider2.png",tex_name, GL_REPEAT, GL_NEAREST);
+    // SPRITE
 
     // Gun
     // gun_current = std::make_unique<guns::shotGun>();
@@ -197,7 +224,7 @@ void game_impl::on_initialize()
         std::make_unique<guns::GunSimple>(texture_bullet.get(), bullet_obj));
     guns.push_back(
         std::make_unique<guns::shotGun>(texture_bullet.get(), bullet_obj));
-        guns.push_back(
+    guns.push_back(
         std::make_unique<guns::miniGun>(texture_bullet.get(), bullet_obj));
     gun_current = guns[gun_current_ID].get();
     // Gun
@@ -308,9 +335,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
         // UPDATE Monsters
 
         // UPDATE Bullets
-        if (/* controls[static_cast<unsigned>(my_engine::keys_type::button2)] ||
-             */
-            controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
+        if (controls[static_cast<unsigned>(my_engine::keys_type::mouse_L)])
         {
             gun_current->shoot(player->getCurrent_current_pos(),
                                player->getCurrent_head_direction());
@@ -377,12 +402,18 @@ void game_impl::on_render()
 
 void game_impl::add_big_spider(my_engine::vec2 pos_enemy)
 {
-    enemy_list.push_back(
+    // enemy_list.push_back(
+    //     std::make_unique<enemy::bigSpider>(pos_enemy,
+    //                                        big_spider,
+    //                                        texture_big_spider.get(),
+    //                                        texture_fire_ball.get(),
+    //                                        fire_ball_obj));
+     enemy_list.push_back(
         std::make_unique<enemy::bigSpider>(pos_enemy,
                                            big_spider,
-                                           texture_big_spider.get(),
-                                           texture_bullet.get(),
-                                           bullet_obj));
+                                           spire_big_spider.get(),
+                                           texture_fire_ball.get(),
+                                           fire_ball_obj));
 }
 
 void game_impl::add_spider(my_engine::vec2 pos_enemy)

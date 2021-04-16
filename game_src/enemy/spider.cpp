@@ -1,7 +1,9 @@
 
 #include "spider.hpp"
-#include "../../include/engine.hpp"
 #include "../score.hpp"
+
+#include "../../engine/engine.hpp"
+#include "../../engine/debug_level.hpp"
 
 #include <cmath>
 
