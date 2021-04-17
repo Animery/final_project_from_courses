@@ -35,7 +35,7 @@ nest::nest(my_engine::vec2       pos,
 
 nest::~nest()
 {
-    gameInfo::score::getInstance().value(2);
+    gameInfo::score::getInstance().value(100);
 #ifdef DEBUG_LEVEL
     std::cout << "--- destor nest" << std::endl;
 #endif

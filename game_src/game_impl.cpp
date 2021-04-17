@@ -33,12 +33,6 @@ game_impl::game_impl()
 
 game_impl::~game_impl()
 {
-    // delete engine;
-    // for (auto it : enemy_list)
-    // {
-    //     delete it;
-    // }
-
     for (auto tex : map_texture)
     {
         delete tex;
@@ -46,6 +40,7 @@ game_impl::~game_impl()
 
     delete gfx_obj;
     delete gfx_map;
+
     delete tank_obj;
     delete bullet_obj;
     delete spider;
@@ -171,17 +166,20 @@ void game_impl::on_initialize()
 
     texture_head =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
-    {
-        Animate::Image image = Animate::Image::loadFromFile("res/head.png");
-        texture_head->setImage(image);
-    }
+    texture_head->loadImage("res/head.png");
+    // {
+    //     Animate::Image image = Animate::Image::loadFromFile("res/head.png");
+    //     texture_head->setImage(image);
+    // }
 
     texture_corpse =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
-    {
-        Animate::Image image = Animate::Image::loadFromFile("res/corpse.png");
-        texture_corpse->setImage(image);
-    }
+    texture_corpse->loadImage("res/corpse.png");
+    // {
+    //     Animate::Image image =
+    //     Animate::Image::loadFromFile("res/corpse.png");
+    //     texture_corpse->setImage(image);
+    // }
 
     // texture_bullet =
     //     std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
@@ -203,10 +201,12 @@ void game_impl::on_initialize()
 
     texture_spider =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
-    {
-        Animate::Image image = Animate::Image::loadFromFile("res/spider.png");
-        texture_spider->setImage(image);
-    }
+    texture_spider->loadImage("res/spider.png");
+    // {
+    //     Animate::Image image =
+    //     Animate::Image::loadFromFile("res/spider.png");
+    //     texture_spider->setImage(image);
+    // }
 
     // texture_big_spider =
     //     std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
@@ -218,11 +218,12 @@ void game_impl::on_initialize()
 
     texture_fire_ball =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
-    {
-        Animate::Image image =
-            Animate::Image::loadFromFile("res/fire_ball.png");
-        texture_fire_ball->setImage(image);
-    }
+    texture_fire_ball->loadImage("res/fire_ball.png");
+    // {
+    //     Animate::Image image =
+    //         Animate::Image::loadFromFile("res/fire_ball.png");
+    //     texture_fire_ball->setImage(image);
+    // }
 
     tex_nest =
         std::make_unique<Animate::Texture>(tex_name, GL_REPEAT, GL_NEAREST);
@@ -258,7 +259,6 @@ void game_impl::on_initialize()
     srand(time(NULL));
     spawn_monster = std::make_unique<spawn::wave_1>(this, player.get());
     spawn_monster->start_lvl();
-    
 
     //  SPAWN Enemy
     isRunning = true;
