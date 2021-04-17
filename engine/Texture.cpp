@@ -1,6 +1,10 @@
 #include "Texture.hpp"
 #include "glad/glad.h"
 #include <iostream>
+
+#include "debug_level.hpp"
+
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -29,13 +33,17 @@ Texture::Texture(std::string& name_u, int wrap, int filter)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
     unBind();
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Texture" << std::endl;
+#endif
 }
 
 Texture::~Texture()
 {
     glDeleteTextures(1, &mHandle);
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor Texture" << std::endl;
+#endif
 }
 
 void Texture::bind() const

@@ -72,7 +72,7 @@ private:
     std::unique_ptr<Animate::Texture> tex_nest;
 
     std::unique_ptr<spawn::spawn_enemy> spawn_monster;
-    size_t                              max_enemy = 1000;
+    size_t                              max_enemy = 2500;
     std::array<bool, 10>                controls{ false };
 
     // uint16_t                            count_spider = 0;
