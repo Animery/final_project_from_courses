@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.15)
 project(game_project CXX C)
 
 # ENGINE
@@ -7,11 +7,9 @@ find_package(SDL2 REQUIRED)
 include_directories(src)
 include_directories(include)
 
-# file(GLOB_RECURSE SRCS engine/*.cpp engine/*.c engine/*.hpp engine/*.h)
 file(GLOB_RECURSE SRCS engine/*.*)
 add_library(engine SHARED ${SRCS})
 
-# target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_features(engine PUBLIC cxx_std_20)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/imgui_src)
