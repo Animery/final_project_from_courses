@@ -79,6 +79,14 @@ void wave_1::start_lvl()
 {
     for (size_t i = 0; i < 1; i++)
     {
+        for (size_t j = 0; j < 500; j++)
+        {
+            wave_game->add_spider({  0.6f,  0.6f });
+            wave_game->add_spider({ -0.6f,  0.6f });
+            wave_game->add_spider({  0.6f, -0.6f });
+            wave_game->add_spider({ -0.6f, -0.6f });
+        }
+        
         // clang-format off
         wave_game->add_nest      ({  0.6f,  0.6f });
         wave_game->add_nest      ({ -0.6f,  0.6f });

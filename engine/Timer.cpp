@@ -1,14 +1,22 @@
 #include "Timer.hpp"
-# include <iostream>
+#include "debug_level.hpp"
+
+#ifdef DEBUG_LEVEL
+#include <iostream>
+#endif
 
 Timer::Timer()
 {
+#ifdef DEBUG_LEVEL
     std::cout << "+++ ctor Timer" << std::endl;
+#endif
 }
 
 Timer::~Timer()
 {
+#ifdef DEBUG_LEVEL
     std::cout << "--- destor Timer" << std::endl;
+#endif
 }
 
 void Timer::update_timer(const float delta)
