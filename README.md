@@ -1,4 +1,4 @@
-# my Game  - Home work from course GameDev C++
+# Top-down Shooter  - my final project for course GameDev C++
 
 ### Features
 
