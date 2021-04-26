@@ -79,7 +79,7 @@ void wave_1::start_lvl()
 {
     for (size_t i = 0; i < 1; i++)
     {
-        for (size_t j = 0; j < 25; j++)
+        for (size_t j = 0; j < 250; j++)
         {
             wave_game->add_spider({  0.6f,  0.6f });
             wave_game->add_spider({ -0.6f,  0.6f });

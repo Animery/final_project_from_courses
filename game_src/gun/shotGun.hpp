@@ -61,9 +61,9 @@ private:
 
     Timer timer_to_shoot;
     // 1 in X milliseconds
-    unsigned int speed_shoot   = 300;
+    unsigned int speed_shoot   = 100;
     float        speed_bullet  = 0.002f;
-    float        damage_bullet = 10.f;
+    float        damage_bullet = 12.f;
 
     Timer          timer_to_clip;
     uint16_t       currentClip  = 10;
