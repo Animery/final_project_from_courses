@@ -1,4 +1,4 @@
-# my Game  - Home work from course GameDev C++
+# Top-down Shooter  - my final project for course GameDev C++
 
 
 ![Image alt](https://github.com/Animery/final_project_from_courses/raw/master/sceenshots/screenshot_1.png)
