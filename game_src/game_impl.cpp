@@ -331,9 +331,7 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
 {
     if (player->getHealth() > 0)
     {
-        /* code */
 
-        // std::cout << "frame_delta:\t" << frame_delta.count() << std::endl;
         const float delta = frame_delta.count() * 0.001f;
 
         // UPDATE Monsters
@@ -358,8 +356,6 @@ void game_impl::on_update(std::chrono::microseconds frame_delta)
         {
             gun->update_gun(delta, enemy_list);
         }
-
-        // gun_current->update_gun(delta, enemy_list);
         // UPDATE Gun
 
         // UPDATE Player
