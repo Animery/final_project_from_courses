@@ -2,7 +2,7 @@
 
 ![Image alt](https://github.com/Animery/final_project_from_courses/raw/master/sceenshots/screenshot_2.png)
 
-![Image alt](https://github.com/Animery/final_project_from_courses/raw/master/sceenshots/screenshot_3.png)
+![Image alt](https://github.com/Animery/final_project_from_courses/raw/master/sceenshots/screenshot_3.1.png)
 
 
 
